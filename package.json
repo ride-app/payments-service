@@ -1,19 +1,23 @@
 {
   "private": true,
-  "main": "build/index.js",
+  "main": "build/server.js",
   "engines": {
     "node": ">=16"
   },
   "scripts": {
     "lint": "eslint ./src",
     "format": "eslint ./src --fix",
-    "debug": "nodemon -r dotenv/config src/index.ts",
+    "debug": "nodemon -r dotenv/config src/server.ts",
+    "build:proto": "proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ *.proto",
     "test": "NODE_ENV=test jest",
     "integration-test": "NODE_ENV=test jest --group=integration",
-    "start": "node build/index.js",
+    "start": "node build/server.js",
     "docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@grpc/grpc-js": "^1.5.0",
+    "@grpc/proto-loader": "^0.6.9"
+  },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
     "@types/jest": "^27.4.0",
@@ -35,11 +39,11 @@
     "jest": "^27.4.7",
     "jest-node-exports-resolver": "^1.1.2",
     "jest-runner-groups": "^2.1.0",
+    "nodemon": "^2.0.15",
     "prettier": "^2.5.1",
     "supertest": "^6.2.0",
     "ts-jest": "^27.1.2",
-    "typescript": "^4.5.4",
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.4.0"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
   }
 }

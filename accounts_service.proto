@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "app.ride.AccountsServiceProto";
+option java_outer_classname = "AccountsServiceProto";
+option objc_class_prefix = "AS";
+
+import "google/protobuf/field_mask.proto";
+
+package accountsService;
+
+service AccountRepository {
+  rpc createAccount(createAccountRequest) returns (Account) {}
+  rpc getAccount(getAccountRequest) returns (Account) {}
+  rpc getAccountByUid(getAccountByUidRequest) returns (Account) {}
+}
+
+message createAccountRequest {
+  string uid = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message getAccountRequest {
+  string accountId = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message getAccountByUidRequest {
+  string uId = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message Account {
+  string accountId = 1;
+  string uid = 2;
+  int64 balance = 3;
+  string createdAt = 7;
+  string updatedAt = 8;
+  string salt = 9;
+}
+
+service LedgerRepository {
+  rpc addTransactions(addTransactionsRequest) returns (addTransactionsResponse) {}
+  rpc getTransaction(getTransactionRequest) returns (Transaction) {}
+  rpc listTransactionsForAccountId(listTransactionRequest) returns (listTransactionResponse) {}
+}
+
+message addTransactionsRequest {
+  string accountId = 1;
+  repeated Entry transactions = 2;
+
+  message Entry {
+    string accountId = 2;
+    int64 amount = 3;
+    TransactionType type = 4;
+  }
+}
+
+message addTransactionsResponse {
+  string accountId = 1;
+  repeated string transactionIds = 2;
+}
+
+message getTransactionRequest {
+  string transactionId = 1;
+}
+
+message listTransactionRequest {
+  string accountId = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message listTransactionResponse {
+  repeated Transaction transactions = 1;
+}
+
+enum TransactionType {
+  DEBIT = 0;
+  CREDIT = 1;
+};
+
+message Transaction {
+  string transactionId = 1;
+  string accountId = 2;
+  int64 amount = 3;
+  string timestamp = 4;
+  TransactionType type = 5;
+}

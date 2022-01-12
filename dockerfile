@@ -14,4 +14,4 @@ COPY --from=build node_modules node_modules
 
 COPY . .
 
-CMD node build/index.js
+CMD npm start
