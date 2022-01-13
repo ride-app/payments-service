@@ -1,18 +1,25 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "app.ride.AccountsServiceProto";
-option java_outer_classname = "AccountsServiceProto";
-option objc_class_prefix = "AS";
+option java_package = "app.ride.WalletServoceProto";
+option java_outer_classname = "WalletServoceProto";
+option objc_class_prefix = "WS";
 
 import "google/protobuf/field_mask.proto";
 
-package accountsService;
+package walletService;
 
-service AccountRepository {
+service WalletService {
+  // Account related methods
   rpc createAccount(createAccountRequest) returns (Account) {}
   rpc getAccount(getAccountRequest) returns (Account) {}
   rpc getAccountByUid(getAccountByUidRequest) returns (Account) {}
+
+  // Transaction related methods
+  rpc addTransactions(addTransactionsRequest) returns (addTransactionsResponse) {}
+  rpc getTransaction(getTransactionRequest) returns (Transaction) {}
+  rpc getTransactionsByBatchId(getTransactionsByBatchIdRequest) returns (getTransactionsByBatchIdResponse) {}
+  rpc listTransactionsForAccount(listTransactionRequest) returns (listTransactionResponse) {}
 }
 
 message createAccountRequest {
@@ -39,14 +46,7 @@ message Account {
   string salt = 9;
 }
 
-service LedgerRepository {
-  rpc addTransactions(addTransactionsRequest) returns (addTransactionsResponse) {}
-  rpc getTransaction(getTransactionRequest) returns (Transaction) {}
-  rpc listTransactionsForAccountId(listTransactionRequest) returns (listTransactionResponse) {}
-}
-
 message addTransactionsRequest {
-  string accountId = 1;
   repeated Entry transactions = 2;
 
   message Entry {
@@ -57,12 +57,22 @@ message addTransactionsRequest {
 }
 
 message addTransactionsResponse {
-  string accountId = 1;
+  string batchId = 1;
   repeated string transactionIds = 2;
 }
 
 message getTransactionRequest {
   string transactionId = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message getTransactionsByBatchIdRequest {
+  string batchId = 1;
+  google.protobuf.FieldMask field_mask = 99;
+}
+
+message getTransactionsByBatchIdResponse {
+  repeated Transaction transactions = 1;
 }
 
 message listTransactionRequest {
@@ -83,6 +93,7 @@ message Transaction {
   string transactionId = 1;
   string accountId = 2;
   int64 amount = 3;
-  string timestamp = 4;
-  TransactionType type = 5;
+  TransactionType type = 4;
+  string timestamp = 5;
+  string batchId = 6;
 }

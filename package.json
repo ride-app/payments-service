@@ -8,15 +8,17 @@
     "lint": "eslint ./src",
     "format": "eslint ./src --fix",
     "debug": "nodemon -r dotenv/config src/server.ts",
-    "build:proto": "proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ *.proto",
     "test": "NODE_ENV=test jest",
     "integration-test": "NODE_ENV=test jest --group=integration",
+    "build": "tsc",
+    "build:proto": "proto-loader-gen-types --longs=Number --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ *.proto",
     "start": "node build/server.js",
-    "docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
+    "start:docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.5.0",
-    "@grpc/proto-loader": "^0.6.9"
+    "@grpc/proto-loader": "^0.6.9",
+    "firebase-admin": "^10.0.1"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
