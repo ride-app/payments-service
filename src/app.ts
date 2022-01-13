@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
-import { ProtoGrpcType } from './proto/accounts_service';
+import { ProtoGrpcType } from './proto/wallet-service';
 import walletServiceHandlers from './wallet-service-handlers';
 
 // Suggested options for similarity to existing grpc.load behavior
