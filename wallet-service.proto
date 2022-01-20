@@ -3,11 +3,11 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "app.ride.WalletServoceProto";
 option java_outer_classname = "WalletServoceProto";
-option objc_class_prefix = "WS";
+option objc_class_prefix = "WS"; 
 
 import "google/protobuf/field_mask.proto";
 
-package walletService;
+package app.ride.walletService;
 
 service WalletService {
   // Account related methods
@@ -24,17 +24,16 @@ service WalletService {
 
 message createAccountRequest {
   string uid = 1;
-  google.protobuf.FieldMask field_mask = 99;
 }
 
 message getAccountRequest {
   string accountId = 1;
-  google.protobuf.FieldMask field_mask = 99;
+  optional google.protobuf.FieldMask field_mask = 99;
 }
 
 message getAccountByUidRequest {
-  string uId = 1;
-  google.protobuf.FieldMask field_mask = 99;
+  string uid = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
 }
 
 message Account {
@@ -43,7 +42,6 @@ message Account {
   int64 balance = 3;
   string createdAt = 7;
   string updatedAt = 8;
-  string salt = 9;
 }
 
 message addTransactionsRequest {
@@ -63,12 +61,12 @@ message addTransactionsResponse {
 
 message getTransactionRequest {
   string transactionId = 1;
-  google.protobuf.FieldMask field_mask = 99;
+  optional google.protobuf.FieldMask field_mask = 99;
 }
 
 message getTransactionsByBatchIdRequest {
   string batchId = 1;
-  google.protobuf.FieldMask field_mask = 99;
+  optional google.protobuf.FieldMask field_mask = 99;
 }
 
 message getTransactionsByBatchIdResponse {
@@ -77,7 +75,7 @@ message getTransactionsByBatchIdResponse {
 
 message listTransactionRequest {
   string accountId = 1;
-  google.protobuf.FieldMask field_mask = 99;
+  optional google.protobuf.FieldMask field_mask = 99;
 }
 
 message listTransactionResponse {

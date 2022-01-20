@@ -1,17 +1,28 @@
-import * as grpc from '@grpc/grpc-js';
-import server from './app';
+import { loadPackageDefinition, Server } from '@grpc/grpc-js';
+import { loadSync } from '@grpc/proto-loader';
+import { ProtoGrpcType } from './proto/wallet-service';
+import walletServiceHandlers from './handlers';
 
-const port = process.env.PORT || 5000;
+// Suggested options for similarity to existing grpc.load behavior
+const packageDefinition = loadSync(`${__dirname}/../wallet-service.proto`, {
+	keepCase: true,
+	longs: Number,
+	enums: String,
+	defaults: true,
+	oneofs: true,
+});
+const protoDescriptor = loadPackageDefinition(
+	packageDefinition
+) as unknown as ProtoGrpcType;
 
-server.bindAsync(
-	`localhost:${port}`,
-	grpc.ServerCredentials.createInsecure(),
-	(err, p) => {
-		if (err) {
-			throw err;
-		}
+// The protoDescriptor object has the full package hierarchy
+const { app } = protoDescriptor;
 
-		server.start();
-		console.info(`${Date.now()}: server listening to port ${p}`);
-	}
+const server = new Server();
+
+server.addService(
+	app.ride.walletService.WalletService.service,
+	walletServiceHandlers
 );
+
+export default server;

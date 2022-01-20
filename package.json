@@ -1,18 +1,18 @@
 {
   "private": true,
-  "main": "build/server.js",
+  "main": "build/main.js",
   "engines": {
     "node": ">=16"
   },
   "scripts": {
     "lint": "eslint ./src",
     "format": "eslint ./src --fix",
-    "debug": "nodemon -r dotenv/config src/server.ts",
+    "debug": "nodemon -r dotenv/config src/main.ts",
     "test": "NODE_ENV=test jest",
     "integration-test": "NODE_ENV=test jest --group=integration",
     "build": "tsc",
     "build:proto": "proto-loader-gen-types --longs=Number --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ *.proto",
-    "start": "node build/server.js",
+    "start": "node build/main.js",
     "start:docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "firebase-admin": "^10.0.1"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^2.0.1",
     "@tsconfig/node16": "^1.0.2",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.8",
