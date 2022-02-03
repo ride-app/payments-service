@@ -1,15 +1,15 @@
 /**
- * Unit Tests for TripRequest Model
- *
- * @group unit/api/create-account
+ * @group api/create-account
  */
 
 import { status } from '@grpc/grpc-js';
 import { createAccount } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/proto/app/ride/walletService/WalletService';
-import { Account } from '../../src/proto/app/ride/walletService/Account';
+import { WalletServiceClient } from '../../src/generated/ride/wallet/v1/WalletService';
+import { Account } from '../../src/generated/ride/wallet/v1/Account';
 import { ExpectedError } from '../../src/errors/expected-error';
 import { closeTestClient, startTestClient } from '../utils/test-client';
+
+import { Timestamp__Output } from '../../src/generated/google/protobuf/Timestamp';
 
 jest.mock('../../src/wallet-service');
 const mockedCreateAccount = jest.mocked(createAccount);
@@ -55,11 +55,11 @@ describe('Create Account', () => {
 
 	it('When uid is valid returns Account', () => {
 		const account: Account = {
-			accountId: 'accountId',
+			accountId: 'test-account-id',
 			uid: 'uid',
 			balance: 0,
-			createdAt: Date.now().toString(),
-			updatedAt: Date.now().toString(),
+			createTime: { seconds: new Date().getSeconds(), nanos: 0 },
+			updateTime: { seconds: new Date().getSeconds(), nanos: 0 },
 		};
 
 		mockedCreateAccount.mockImplementationOnce(async () => {
@@ -71,7 +71,19 @@ describe('Create Account', () => {
 				expect(mockedCreateAccount).toHaveBeenCalledTimes(1);
 				expect(err).toBeFalsy();
 				expect(res).toBeDefined();
-				expect(res).toStrictEqual(account);
+				expect(res).toEqual({
+					accountId: 'test-account-id',
+					uid: 'uid',
+					balance: 0,
+					createTime: expect.objectContaining({
+						seconds: expect.any(Number),
+						nanos: expect.any(Number),
+					}),
+					updateTime: expect.objectContaining({
+						seconds: expect.any(Number),
+						nanos: expect.any(Number),
+					}),
+				});
 				resolve();
 			});
 		});

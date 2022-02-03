@@ -1,15 +1,16 @@
 import { status } from '@grpc/grpc-js';
-import { WalletServiceHandlers } from './proto/app/ride/walletService/WalletService';
+import { WalletServiceHandlers } from './generated/ride/wallet/v1/WalletService';
 import {
 	createAccount,
 	getAccount,
 	getAccountByUid,
+	createTransactions,
 	getTransaction,
-	getTransactionsByBatchId,
-	listTransactionsForAccount,
-	addTransactions,
+	listTransactionsByBatchId,
+	listTransactionsByAccountId,
 } from './wallet-service';
 import { ExpectedError, Reason } from './errors/expected-error';
+import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
 
 function handleError(callback: CallableFunction, error: unknown) {
 	let code = status.INTERNAL;
@@ -35,13 +36,6 @@ function handleError(callback: CallableFunction, error: unknown) {
 		}
 		message = error.message;
 	}
-	// if (error instanceof InvalidArgumentError) {
-	// 	code = status.INVALID_ARGUMENT;
-	// 	message = error.message;
-	// } else if (error instanceof InternalError) {
-	// 	code = status.INTERNAL;
-	// 	message = error.message;
-	// }
 
 	callback({
 		code,
@@ -50,7 +44,7 @@ function handleError(callback: CallableFunction, error: unknown) {
 }
 
 const handlers: WalletServiceHandlers = {
-	createAccount: async (call, callback) => {
+	CreateAccount: async (call, callback) => {
 		try {
 			if (call.request.uid === '') {
 				throw new ExpectedError('uid is empty', Reason.INVALID_ARGUMENT);
@@ -60,7 +54,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	getAccount: async (call, callback) => {
+	GetAccount: async (call, callback) => {
 		try {
 			if (call.request.accountId === '') {
 				throw new ExpectedError('accountId is empty', Reason.INVALID_ARGUMENT);
@@ -70,7 +64,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	getAccountByUid: async (call, callback) => {
+	GetAccountByUid: async (call, callback) => {
 		try {
 			if (call.request.uid === '') {
 				throw new ExpectedError('uid is empty', Reason.INVALID_ARGUMENT);
@@ -80,30 +74,74 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	addTransactions: async (call, callback) => {
+	CreateTransactions: async (call, callback) => {
 		try {
-			callback(null, await addTransactions(call.request));
+			if (call.request.transactions.length === 0) {
+				throw new ExpectedError(
+					'transactions is empty',
+					Reason.INVALID_ARGUMENT
+				);
+			}
+
+			call.request.transactions.every((transaction, i) => {
+				if (transaction.accountId === '') {
+					throw new ExpectedError(
+						`accountId is empty for transaction ${i}`,
+						Reason.INVALID_ARGUMENT
+					);
+				}
+				if (transaction.amount < 0) {
+					throw new ExpectedError(
+						`Transaction amount must be positive. Got ${transaction.amount} for transaction ${i}`,
+						Reason.INVALID_ARGUMENT
+					);
+				}
+				if (
+					transaction.type ===
+					TransactionType.TRANSACTION_TYPE_UNSPECIFIED.toString()
+				) {
+					throw new ExpectedError(
+						`Transaction type is not specified for transaction ${i}`,
+						Reason.INVALID_ARGUMENT
+					);
+				}
+				return true;
+			});
+
+			callback(null, await createTransactions(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	getTransaction: async (call, callback) => {
+	GetTransaction: async (call, callback) => {
 		try {
+			if (call.request.transactionId === '') {
+				throw new ExpectedError(
+					'transactionId is empty',
+					Reason.INVALID_ARGUMENT
+				);
+			}
 			callback(null, await getTransaction(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	getTransactionsByBatchId: async (call, callback) => {
+	ListTransactionsByBatchId: async (call, callback) => {
 		try {
-			callback(null, await getTransactionsByBatchId(call.request));
+			if (call.request.batchId === '') {
+				throw new ExpectedError('batchId is empty', Reason.INVALID_ARGUMENT);
+			}
+			callback(null, await listTransactionsByBatchId(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	listTransactionsForAccount: async (call, callback) => {
+	ListTransactionsByAccountId: async (call, callback) => {
 		try {
-			callback(null, await listTransactionsForAccount(call.request));
+			if (call.request.accountId === '') {
+				throw new ExpectedError('accountId is empty', Reason.INVALID_ARGUMENT);
+			}
+			callback(null, await listTransactionsByAccountId(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}

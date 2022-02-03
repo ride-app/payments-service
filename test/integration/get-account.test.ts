@@ -1,10 +1,8 @@
 /**
- * Unit Tests for TripRequest Model
- *
- * @group unit/get-account-by-uid
+ * @group integration/get-account
  */
 
-import { initializeApp } from 'firebase-admin/app';
+import { App, deleteApp, initializeApp } from 'firebase-admin/app';
 import {
 	BulkWriter,
 	FieldValue,
@@ -14,15 +12,16 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { getAccountByUidRequest__Output } from '../../src/proto/app/ride/walletService/getAccountByUidRequest';
+import { GetAccountRequest__Output } from '../../src/generated/ride/wallet/v1/GetAccountRequest';
 
-import { getAccountByUid } from '../../src/wallet-service';
+import { getAccount } from '../../src/wallet-service';
 
+let app: App;
 let firestore: Firestore;
 let bulkWriter: BulkWriter;
 
 beforeAll(async () => {
-	initializeApp();
+	app = initializeApp();
 	firestore = getFirestore();
 	bulkWriter = firestore.bulkWriter();
 });
@@ -30,9 +29,10 @@ beforeAll(async () => {
 afterAll(async () => {
 	await bulkWriter.close();
 	await firestore.terminate();
+	await deleteApp(app);
 });
 
-describe('Get Account By Uid', () => {
+describe('Get Account', () => {
 	afterEach(async () => {
 		await firestore.recursiveDelete(
 			firestore.collection('wallets'),
@@ -42,13 +42,13 @@ describe('Get Account By Uid', () => {
 
 	describe('Given Account Does not Exist', () => {
 		it('returns NOT_FOUND error', async () => {
-			const req: getAccountByUidRequest__Output = {
-				uid: 'test-uid',
+			const req: GetAccountRequest__Output = {
+				accountId: 'test-account-id',
 				_fieldMask: 'fieldMask',
 			};
 
 			await expect(async () => {
-				await getAccountByUid(req, firestore);
+				await getAccount(req);
 			}).rejects.toThrow(
 				new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND)
 			);
@@ -71,19 +71,25 @@ describe('Get Account By Uid', () => {
 		});
 
 		it('returns Account object', async () => {
-			const req: getAccountByUidRequest__Output = {
-				uid: 'test-uid',
+			const req: GetAccountRequest__Output = {
+				accountId: 'test-account-id',
 				_fieldMask: 'fieldMask',
 			};
 
-			const res = await getAccountByUid(req, firestore);
+			const res = await getAccount(req);
 
 			expect(res).toEqual({
-				accountId: 'test-account-id',
+				accountId: req.accountId,
 				balance: existingAccountData.balance,
-				uid: req.uid,
-				createdAt: expect.any(Timestamp),
-				updatedAt: expect.any(Timestamp),
+				uid: existingAccountData.uid,
+				createTime: expect.objectContaining({
+					seconds: expect.any(Number),
+					nanos: expect.any(Number),
+				}),
+				updateTime: expect.objectContaining({
+					seconds: expect.any(Number),
+					nanos: expect.any(Number),
+				}),
 			});
 		});
 	});

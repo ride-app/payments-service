@@ -1,48 +1,60 @@
-#Docker
-.dockerignore
-dockerfile
+// #Docker
+// .dockerignore
+// dockerfile
 
-#Cloud Build
-cloudbuild.yaml
+// #Cloud Build
+// cloudbuild.yaml
 
-#git
-.git
-.gitignore
+// #git
+// .git
+// .gitignore
 
-#github
-.github
+// #github
+// .github
 
-node_modules
+// node_modules
 
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom
-.buildlog
-.history
-.svn
-.hg
-.env
+// # Miscellaneous
+// *.class
+// *.log
+// *.pyc
+// *.swp
+// .DS_Store
+// .atom
+// .buildlog
+// .history
+// .svn
+// .hg
+// .env
 
-# IntelliJ
-*.iml
-*.ipr
-*.iws
-.idea
+// # IntelliJ
+// *.iml
+// *.ipr
+// *.iws
+// .idea
 
-# Visual Studio Code
-.vscode
+// # Visual Studio Code
+// .vscode
 
-#ESLint
-.eslintrc.json
+// #ESLint
+// .eslintrc.json
 
-#Prettier
-.prettierrc
+// #Prettier
+// .prettierrc
 
-#TypeScript
-src
-tsconfig.json
-tslint.json
+// #TypeScript
+// src
+// tsconfig.json
+// tslint.json
+
+// # Test
+// test
+// coverage
+
+**
+!package.json
+!package-lock.json
+!src
+!tsconfig.json
+!*.proto
+!protos/*.proto

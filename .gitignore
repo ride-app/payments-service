@@ -78,7 +78,7 @@ node_modules/
 jspm_packages/
 
 #protobuf generated files
-**/proto
+src/generated
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/

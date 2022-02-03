@@ -1,7 +1,9 @@
 name: Dev
 
 on:
-  push
+  push:
+    branches-ignore:
+      - main
 
 jobs:
   default:
@@ -31,11 +33,13 @@ jobs:
     - name: Build protobuf types
       run: npm run build:proto
 
-    - name: Lint
-      run: npm run lint
-
     - name: Format
       run: npm run format
 
+    - name: Lint
+      run: npm run lint
+
     - name: Test
-      run: npm test
+      run: |
+        npm test:api
+        npm test:unit

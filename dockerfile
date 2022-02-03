@@ -1,17 +1,31 @@
-# Copy package.json and build node_modules 
-FROM node:alpine as build
+# Compile Typescript
+FROM node:17-alpine as build
 
-COPY package*.json ./
+WORKDIR /app
+COPY . .
+
+RUN npm ci
+RUN npm run build
+
+# Copy package.json and build node_modules 
+FROM node:17-alpine as deps
+
+WORKDIR /app
+COPY package-lock.json package.json ./
+
 RUN npm ci --production
 
 # The instructions for second stage
-FROM node:alpine
+FROM node:17-alpine
 
 ENV NODE_ENV production
 
-WORKDIR /usr/src/app
-COPY --from=build node_modules node_modules
+ARG FIREBASE_CONFIG
+ENV FIREBASE_CONFIG ${FIREBASE_CONFIG}
 
-COPY . .
+WORKDIR /app
+COPY --from=deps /app/node_modules node_modules
+COPY --from=build /app/build build
+COPY protos protos
 
-CMD npm start
+CMD node build/main.js

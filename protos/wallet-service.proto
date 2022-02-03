@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+package ride.wallet.v1;
+
+service WalletService {
+  // Account related methods
+  rpc CreateAccount(CreateAccountRequest) returns (Account) {}
+  rpc GetAccount(GetAccountRequest) returns (Account) {}
+  rpc GetAccountByUid(GetAccountByUidRequest) returns (Account) {}
+
+  // Transaction related methods
+  rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {}
+  rpc GetTransaction(GetTransactionRequest) returns (Transaction) {}
+  rpc ListTransactionsByBatchId(ListTransactionsByBatchIdRequest) returns (ListTransactionsByBatchIdResponse) {}
+  rpc ListTransactionsByAccountId(ListTransactionsByAccountIdRequest) returns (ListTransactionsByAccountIdResponse) {}
+}
+
+message CreateAccountRequest {
+  string uid = 1;
+}
+
+message GetAccountRequest {
+  string account_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message GetAccountByUidRequest {
+  string uid = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message Account {
+  string account_id = 1;
+  string uid = 2;
+  int32 balance = 3;
+  google.protobuf.Timestamp create_time = 7;
+  google.protobuf.Timestamp update_time = 8;
+}
+
+message CreateTransactionsRequest {
+  repeated Entry transactions = 2;
+
+  message Entry {
+    string account_id = 2;
+    int32 amount = 3;
+    TransactionType type = 4;
+  }
+}
+
+message CreateTransactionsResponse {
+  string batch_id = 1;
+  repeated string transaction_ids = 2;
+}
+
+message GetTransactionRequest {
+  string transaction_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message ListTransactionsByBatchIdRequest {
+  string batch_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message ListTransactionsByBatchIdResponse {
+  repeated Transaction transactions = 1;
+}
+
+message ListTransactionsByAccountIdRequest {
+  string account_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message ListTransactionsByAccountIdResponse {
+  repeated Transaction transactions = 1;
+}
+
+enum TransactionType {
+  TRANSACTION_TYPE_UNSPECIFIED = 0;
+  DEBIT = 1;
+  CREDIT = 2;
+};
+
+message Transaction {
+  string transaction_id = 1;
+  string account_id = 2;
+  int32 amount = 3;
+  TransactionType type = 4;
+  string batch_id = 5;
+  google.protobuf.Timestamp create_time = 6;
+}

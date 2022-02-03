@@ -7,8 +7,12 @@ module.exports = {
       useESM: true,
     },
   },
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   testEnvironment: 'node',
   runner: 'groups',
   resolver: 'jest-node-exports-resolver',
-  setupFiles: ["dotenv/config"]
+  setupFiles: ["dotenv/config"],
+  collectCoverageFrom: ["src/**/*.ts","!src/generated/**/*","!test", "!src/main.ts"],
 };

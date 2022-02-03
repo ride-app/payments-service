@@ -1,13 +1,11 @@
 /**
- * Unit Tests for TripRequest Model
- *
- * @group unit/api/get-account
+ * @group api/get-account
  */
 
 import { status } from '@grpc/grpc-js';
 import { getAccount } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/proto/app/ride/walletService/WalletService';
-import { Account } from '../../src/proto/app/ride/walletService/Account';
+import { WalletServiceClient } from '../../src/generated/ride/wallet/v1/WalletService';
+import { Account } from '../../src/generated/ride/wallet/v1/Account';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 import { closeTestClient, startTestClient } from '../utils/test-client';
 
@@ -19,6 +17,8 @@ let client: WalletServiceClient;
 beforeAll(async () => {
 	client = await startTestClient();
 });
+
+afterAll(closeTestClient);
 
 describe('Get Account', () => {
 	mockedGetAccount.mockImplementation(async () => {
@@ -92,8 +92,8 @@ describe('Get Account', () => {
 			accountId: 'test-account-id',
 			uid: 'test-uid',
 			balance: 0,
-			createdAt: Date.now().toString(),
-			updatedAt: Date.now().toString(),
+			createTime: { seconds: new Date().getSeconds(), nanos: 0 },
+			updateTime: { seconds: new Date().getSeconds(), nanos: 0 },
 		};
 
 		mockedGetAccount.mockImplementationOnce(async () => {
@@ -111,5 +111,3 @@ describe('Get Account', () => {
 		});
 	});
 });
-
-afterAll(closeTestClient);

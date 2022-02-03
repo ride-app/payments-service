@@ -1,10 +1,8 @@
 /**
- * Unit Tests for TripRequest Model
- *
- * @group unit/create-account
+ * @group integration/create-account
  */
 
-import { initializeApp } from 'firebase-admin/app';
+import { App, deleteApp, initializeApp } from 'firebase-admin/app';
 import {
 	BulkWriter,
 	Firestore,
@@ -13,15 +11,16 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { createAccountRequest__Output } from '../../src/proto/app/ride/walletService/createAccountRequest';
+import { CreateAccountRequest__Output } from '../../src/generated/ride/wallet/v1/CreateAccountRequest';
 
 import { createAccount } from '../../src/wallet-service';
 
+let app: App;
 let firestore: Firestore;
 let bulkWriter: BulkWriter;
 
 beforeAll(async () => {
-	initializeApp();
+	app = initializeApp();
 	firestore = getFirestore();
 	bulkWriter = firestore.bulkWriter();
 });
@@ -29,6 +28,7 @@ beforeAll(async () => {
 afterAll(async () => {
 	await bulkWriter.close();
 	await firestore.terminate();
+	await deleteApp(app);
 });
 
 describe('Create Account', () => {
@@ -40,31 +40,12 @@ describe('Create Account', () => {
 	});
 
 	describe('Given Account Does not Exist', () => {
-		it('When uid is empty string returns INVALID_ARGUMENT error', async () => {
-			const req: createAccountRequest__Output = {
-				uid: '',
-			};
-
-			await expect(async () => {
-				await createAccount(req, firestore);
-			}).rejects.toThrow(
-				new ExpectedError('uid is empty', Reason.INVALID_ARGUMENT)
-			);
-
-			const snap = await firestore
-				.collection('wallets')
-				.where('uid', '==', req.uid)
-				.get();
-
-			expect(snap.empty).toBe(true);
-		});
-
 		it('When uid is valid returns Account object', async () => {
-			const request: createAccountRequest__Output = {
+			const request: CreateAccountRequest__Output = {
 				uid: 'test-uid',
 			};
 
-			const res = await createAccount(request, firestore);
+			const res = await createAccount(request);
 
 			expect(res.accountId).toBeTruthy();
 			expect(res.balance).toBe(0);
@@ -87,16 +68,15 @@ describe('Create Account', () => {
 
 	describe('Given Account Already Exists', () => {
 		beforeAll(async () => {
-			await firestore.collection('wallets').add({ uid: 'test-uid' });
+			await firestore
+				.collection('wallets')
+				.doc('test-wallet-id')
+				.set({ uid: 'test-uid' });
 		});
 
 		it('When uid is valid returns ALREADY_EXISTS error', async () => {
-			const request: createAccountRequest__Output = {
-				uid: 'test-uid',
-			};
-
 			await expect(async () => {
-				await createAccount(request, firestore);
+				await createAccount({ uid: 'test-uid' });
 			}).rejects.toThrowError(
 				new ExpectedError('Account Already Exists', Reason.ALREADY_EXISTS)
 			);

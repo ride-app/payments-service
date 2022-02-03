@@ -1,13 +1,11 @@
 /**
- * Unit Tests for TripRequest Model
- *
- * @group unit/api/get-account-by-uid
+ * @group api/get-account-by-uid
  */
 
 import { status } from '@grpc/grpc-js';
 import { getAccountByUid } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/proto/app/ride/walletService/WalletService';
-import { Account } from '../../src/proto/app/ride/walletService/Account';
+import { WalletServiceClient } from '../../src/generated/ride/wallet/v1/WalletService';
+import { Account } from '../../src/generated/ride/wallet/v1/Account';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 import { closeTestClient, startTestClient } from '../utils/test-client';
 
@@ -20,7 +18,9 @@ beforeAll(async () => {
 	client = await startTestClient();
 });
 
-describe('Get Account', () => {
+afterAll(closeTestClient);
+
+describe('Get Account By uid', () => {
 	mockedGetAccountByUid.mockImplementation(async () => {
 		return {};
 	});
@@ -92,8 +92,8 @@ describe('Get Account', () => {
 			accountId: 'test-account-id',
 			uid: 'test-uid',
 			balance: 0,
-			createdAt: Date.now().toString(),
-			updatedAt: Date.now().toString(),
+			createTime: { seconds: new Date().getSeconds(), nanos: 0 },
+			updateTime: { seconds: new Date().getSeconds(), nanos: 0 },
 		};
 
 		mockedGetAccountByUid.mockImplementationOnce(async () => {
@@ -105,11 +105,21 @@ describe('Get Account', () => {
 				expect(mockedGetAccountByUid).toHaveBeenCalledTimes(1);
 				expect(err).toBeFalsy();
 				expect(res).toBeDefined();
-				expect(res).toStrictEqual(account);
+				expect(res).toStrictEqual({
+					accountId: 'test-account-id',
+					uid: 'test-uid',
+					balance: 0,
+					createTime: expect.objectContaining({
+						seconds: expect.any(Number),
+						nanos: expect.any(Number),
+					}),
+					updateTime: expect.objectContaining({
+						seconds: expect.any(Number),
+						nanos: expect.any(Number),
+					}),
+				});
 				resolve();
 			});
 		});
 	});
 });
-
-afterAll(closeTestClient);

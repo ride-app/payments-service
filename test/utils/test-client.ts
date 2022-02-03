@@ -4,9 +4,9 @@ import {
 	ServerCredentials,
 } from '@grpc/grpc-js';
 import { loadSync } from '@grpc/proto-loader';
-import { WalletServiceClient } from '../../src/proto/app/ride/walletService/WalletService';
+import { WalletServiceClient } from '../../src/generated/ride/wallet/v1/WalletService';
 
-import { ProtoGrpcType } from '../../src/proto/wallet-service';
+import { ProtoGrpcType } from '../../src/generated/wallet-service';
 import server from '../../src/server';
 
 let client: WalletServiceClient;
@@ -22,9 +22,9 @@ function startTestClient(): Promise<WalletServiceClient> {
 				}
 
 				const packageDefinition = loadSync(
-					`${__dirname}/../../wallet-service.proto`,
+					`${__dirname}/../../protos/wallet-service.proto`,
 					{
-						keepCase: true,
+						// keepCase: true,
 						longs: Number,
 						enums: String,
 						defaults: true,
@@ -36,10 +36,10 @@ function startTestClient(): Promise<WalletServiceClient> {
 				) as unknown as ProtoGrpcType;
 
 				// The protoDescriptor object has the full package hierarchy
-				const { walletService } = protoDescriptor.app.ride;
+				const { ride } = protoDescriptor;
 
 				server.start();
-				client = new walletService.WalletService(
+				client = new ride.wallet.v1.WalletService(
 					'localhost:50051',
 					credentials.createInsecure()
 				);
