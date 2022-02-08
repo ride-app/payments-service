@@ -1,9 +1,4 @@
-import {
-	Firestore,
-	FieldValue,
-	getFirestore,
-	Timestamp as FireTimestamp,
-} from 'firebase-admin/firestore';
+import { Timestamp as FireTimestamp } from 'firebase-admin/firestore';
 import { randomUUID } from 'crypto';
 import { ExpectedError, Reason } from './errors/expected-error';
 
@@ -22,42 +17,33 @@ import { ListTransactionsByAccountIdRequest__Output } from './generated/ride/wal
 import { ListTransactionsByAccountIdResponse } from './generated/ride/wallet/v1/ListTransactionsByAccountIdResponse';
 import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
 
+import {
+	getAccountByUidQuery,
+	getAccountQuery,
+	createAccountTransaction,
+} from './repositories/account-repository';
+import {
+	createTransactionsMutation,
+	CreateTransactionMutationData,
+	getTransactionQuery,
+	listTransactionsByBatchIdQuery,
+	listTransactionsByAccountIdTransaction,
+} from './repositories/transaction-repository';
+
 async function createAccount(
-	request: CreateAccountRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: CreateAccountRequest__Output
 ): Promise<Account> {
-	const Id = await firestore.runTransaction(async (transaction) => {
-		const walletRef = firestore.collection('wallets');
-		const snap = await transaction.get(
-			walletRef.where('uid', '==', request.uid).limit(1)
-		);
+	const accountId = randomUUID();
+	await createAccountTransaction(request.uid, accountId);
 
-		if (!snap.empty) {
-			throw new ExpectedError('Account Already Exists', Reason.ALREADY_EXISTS);
-		}
+	const accountDetails = await getAccountQuery(accountId);
 
-		const accountId = randomUUID();
-
-		const payload = {
-			balance: 0,
-			uid: request.uid,
-			createdAt: FieldValue.serverTimestamp(),
-			updatedAt: FieldValue.serverTimestamp(),
-		};
-
-		transaction.create(walletRef.doc(accountId), payload);
-
-		return accountId;
-	});
-
-	const accountDetails = await firestore.collection('wallets').doc(Id).get();
-
-	if (accountDetails.exists === false) {
+	if (accountDetails?.exists === false) {
 		throw new ExpectedError('Account Creation Failed', Reason.NOT_FOUND);
 	}
 
 	return {
-		accountId: Id,
+		accountId,
 		balance: accountDetails.get('balance') as number,
 		uid: accountDetails.get('uid') as string,
 		createTime: {
@@ -72,13 +58,9 @@ async function createAccount(
 }
 
 async function getAccount(
-	request: GetAccountRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: GetAccountRequest__Output
 ): Promise<Account> {
-	const wallet = await firestore
-		.collection('wallets')
-		.doc(request.accountId)
-		.get();
+	const wallet = await getAccountQuery(request.accountId);
 
 	if (wallet.exists === false) {
 		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
@@ -100,14 +82,9 @@ async function getAccount(
 }
 
 async function getAccountByUid(
-	request: GetAccountByUidRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: GetAccountByUidRequest__Output
 ): Promise<Account> {
-	const wallet = await firestore
-		.collection('wallets')
-		.where('uid', '==', request.uid)
-		.limit(1)
-		.get();
+	const wallet = await getAccountByUidQuery(request.uid);
 
 	if (wallet.empty) {
 		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
@@ -129,20 +106,15 @@ async function getAccountByUid(
 }
 
 async function createTransactions(
-	request: CreateTransactionsRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: CreateTransactionsRequest__Output
 ): Promise<CreateTransactionsResponse> {
 	const accountBalances: Record<string, number> = Object.fromEntries(
 		request.transactions.map((t) => [t.accountId, 0])
 	);
 
-	// check if all the accounts exist in firestore wallets collection
 	await Promise.all(
 		Object.keys(accountBalances).map(async (accountId) => {
-			const account = await firestore
-				.collection('wallets')
-				.doc(accountId)
-				.get();
+			const account = await getAccountQuery(accountId);
 
 			if (!account.exists) {
 				throw new ExpectedError('Account Does Not Exist', Reason.BAD_STATE);
@@ -162,26 +134,21 @@ async function createTransactions(
 
 	const batchId = randomUUID();
 	const transactionIds: string[] = [];
-
-	const transactionRef = firestore.collection('transactions');
-	const batch = firestore.batch();
+	const transactionData: Record<string, CreateTransactionMutationData> = {};
 
 	Object.entries(accountBalances).forEach(([accountId, amount]) => {
 		if (amount !== 0) {
 			const transactionId = randomUUID();
 			transactionIds.push(transactionId);
-			const transaction = {
+			transactionData[transactionId] = {
 				accountId,
 				amount: Math.abs(amount),
-				timestamp: FieldValue.serverTimestamp(),
 				type: amount > 0 ? 'CREDIT' : 'DEBIT',
-				batchId,
 			};
-			batch.set(transactionRef.doc(transactionId), transaction);
 		}
 	});
 
-	await batch.commit();
+	await createTransactionsMutation(batchId, transactionData);
 
 	return {
 		batchId,
@@ -190,13 +157,9 @@ async function createTransactions(
 }
 
 async function getTransaction(
-	request: GetTransactionRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: GetTransactionRequest__Output
 ): Promise<Transaction> {
-	const doc = await firestore
-		.collection('transactions')
-		.doc(request.transactionId)
-		.get();
+	const doc = await getTransactionQuery(request.transactionId);
 
 	if (!doc.exists) {
 		throw new ExpectedError('Transaction Not Found', Reason.NOT_FOUND);
@@ -216,13 +179,9 @@ async function getTransaction(
 }
 
 async function listTransactionsByBatchId(
-	request: ListTransactionsByBatchIdRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: ListTransactionsByBatchIdRequest__Output
 ): Promise<ListTransactionsByBatchIdResponse> {
-	const snap = await firestore
-		.collection('transactions')
-		.where('batchId', '==', request.batchId)
-		.get();
+	const snap = await listTransactionsByBatchIdQuery(request.batchId);
 
 	if (snap.empty) {
 		throw new ExpectedError('Transactions Not Found', Reason.NOT_FOUND);
@@ -246,28 +205,14 @@ async function listTransactionsByBatchId(
 }
 
 async function listTransactionsByAccountId(
-	request: ListTransactionsByAccountIdRequest__Output,
-	firestore: Firestore = getFirestore()
+	request: ListTransactionsByAccountIdRequest__Output
 ): Promise<ListTransactionsByAccountIdResponse> {
-	const transactions = await firestore.runTransaction(async (transaction) => {
-		const wallet = await transaction.get(
-			firestore.collection('wallets').doc(request.accountId)
-		);
+	const transactionSnaps = await listTransactionsByAccountIdTransaction(
+		request.accountId
+	);
 
-		if (wallet.exists === false) {
-			throw new ExpectedError('Account Does Not Exist', Reason.BAD_STATE);
-		}
-		const snap = await transaction.get(
-			firestore
-				.collection('transactions')
-				.where('accountId', '==', request.accountId)
-		);
-
-		if (snap.empty) {
-			throw new ExpectedError('No Transactions Found', Reason.NOT_FOUND);
-		}
-
-		return snap.docs.map((doc) => {
+	return {
+		transactions: transactionSnaps.map((doc) => {
 			return {
 				transactionId: doc.id,
 				accountId: doc.get('accountId') as string,
@@ -279,11 +224,7 @@ async function listTransactionsByAccountId(
 				type: doc.get('type') as TransactionType,
 				batchId: doc.get('batchId') as string,
 			};
-		});
-	});
-
-	return {
-		transactions,
+		}),
 	};
 }
 
