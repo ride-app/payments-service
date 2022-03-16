@@ -6,7 +6,7 @@ import {
 import { loadSync } from '@grpc/proto-loader';
 import { WalletServiceClient } from '../../src/generated/ride/wallet/v1/WalletService';
 
-import { ProtoGrpcType } from '../../src/generated/wallet-service';
+import { ProtoGrpcType } from '../../src/generated/wallet_service';
 import server from '../../src/server';
 
 let client: WalletServiceClient;
@@ -22,7 +22,7 @@ function startTestClient(): Promise<WalletServiceClient> {
 				}
 
 				const packageDefinition = loadSync(
-					`${__dirname}/../../protos/wallet-service.proto`,
+					`${__dirname}/../../protos/ride/wallet/v1/wallet_service.proto`,
 					{
 						// keepCase: true,
 						longs: Number,

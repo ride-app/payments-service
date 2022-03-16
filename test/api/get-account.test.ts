@@ -97,7 +97,7 @@ describe('Get Account', () => {
 		};
 
 		mockedGetAccount.mockImplementationOnce(async () => {
-			return account;
+			return { account };
 		});
 
 		return new Promise<void>((resolve) => {

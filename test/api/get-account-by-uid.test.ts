@@ -97,7 +97,7 @@ describe('Get Account By uid', () => {
 		};
 
 		mockedGetAccountByUid.mockImplementationOnce(async () => {
-			return account;
+			return { account };
 		});
 
 		return new Promise<void>((resolve) => {

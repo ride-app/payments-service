@@ -9,8 +9,6 @@ import { Account } from '../../src/generated/ride/wallet/v1/Account';
 import { ExpectedError } from '../../src/errors/expected-error';
 import { closeTestClient, startTestClient } from '../utils/test-client';
 
-import { Timestamp__Output } from '../../src/generated/google/protobuf/Timestamp';
-
 jest.mock('../../src/wallet-service');
 const mockedCreateAccount = jest.mocked(createAccount);
 
@@ -63,7 +61,7 @@ describe('Create Account', () => {
 		};
 
 		mockedCreateAccount.mockImplementationOnce(async () => {
-			return account;
+			return { account };
 		});
 
 		return new Promise<void>((resolve) => {

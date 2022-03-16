@@ -45,15 +45,15 @@ describe('Create Account', () => {
 				uid: 'test-uid',
 			};
 
-			const res = await createAccount(request);
+			const { account } = await createAccount(request);
 
-			expect(res.accountId).toBeTruthy();
-			expect(res.balance).toBe(0);
-			expect(res.uid).toBe(request.uid);
+			expect(account.accountId).toBeTruthy();
+			expect(account.balance).toBe(0);
+			expect(account.uid).toBe(request.uid);
 
 			const snap = await firestore
 				.collection('wallets')
-				.doc(res.accountId!)
+				.doc(account.accountId)
 				.get();
 
 			expect(snap.exists).toBe(true);

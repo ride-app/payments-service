@@ -99,7 +99,7 @@ describe('List Transactions For Account', () => {
 					transactions: [
 						{
 							transactionId: 'test-transaction-id',
-							type: TransactionType.CREDIT,
+							type: TransactionType.TRANSACTION_TYPE_CREDIT,
 							amount: 100,
 							accountId: 'test-account-id',
 							timestamp: {

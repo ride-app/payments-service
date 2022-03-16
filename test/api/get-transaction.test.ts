@@ -97,7 +97,7 @@ describe('Get Transaction', () => {
 			transactionId: 'test-transaction-id',
 			accountId: 'test-transaction-id',
 			amount: 10,
-			type: TransactionType.CREDIT,
+			type: TransactionType.TRANSACTION_TYPE_CREDIT,
 			createTime: {
 				seconds: new Date().getSeconds(),
 				nanos: 0,
@@ -106,7 +106,7 @@ describe('Get Transaction', () => {
 		};
 
 		mockedGetTransaction.mockImplementationOnce(async () => {
-			return transaction;
+			return { transaction };
 		});
 
 		return new Promise<void>((resolve) => {

@@ -46,7 +46,7 @@ describe('Create Transactions', () => {
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 				],
 			};
@@ -64,7 +64,7 @@ describe('Create Transactions', () => {
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 				],
 			};
@@ -84,7 +84,7 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'CREDIT',
+				type: 'TRANSACTION_TYPE_CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
@@ -116,17 +116,17 @@ describe('Create Transactions', () => {
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id-1',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id-2',
 						amount: 10,
-						type: 'DEBIT',
+						type: 'TRANSACTION_TYPE_DEBIT',
 					},
 				],
 			};
@@ -150,17 +150,17 @@ describe('Create Transactions', () => {
 					{
 						accountId: 'test-account-id',
 						amount: 100,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'DEBIT',
+						type: 'TRANSACTION_TYPE_DEBIT',
 					},
 				],
 			};
@@ -177,7 +177,7 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 100,
-				type: 'CREDIT',
+				type: 'TRANSACTION_TYPE_CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
@@ -189,12 +189,12 @@ describe('Create Transactions', () => {
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'DEBIT',
+						type: 'TRANSACTION_TYPE_DEBIT',
 					},
 				],
 			};
@@ -207,18 +207,18 @@ describe('Create Transactions', () => {
 			expect(snap.empty).toBe(true);
 		});
 
-		it('When sum of all transactions to an account is positive then adds transaction with type CREDIT', async () => {
+		it('When sum of all transactions to an account is positive then adds transaction with type TRANSACTION_TYPE_CREDIT', async () => {
 			const req: CreateTransactionsRequest__Output = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 20,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'DEBIT',
+						type: 'TRANSACTION_TYPE_DEBIT',
 					},
 				],
 			};
@@ -235,24 +235,24 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'CREDIT',
+				type: 'TRANSACTION_TYPE_CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
 		});
 
-		it('When sum of all transactions to an account is negative then adds transaction with type DEBIT', async () => {
+		it('When sum of all transactions to an account is negative then adds transaction with type TRANSACTION_TYPE_DEBIT', async () => {
 			const req: CreateTransactionsRequest__Output = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 20,
-						type: 'DEBIT',
+						type: 'TRANSACTION_TYPE_DEBIT',
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'CREDIT',
+						type: 'TRANSACTION_TYPE_CREDIT',
 					},
 				],
 			};
@@ -269,7 +269,7 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'DEBIT',
+				type: 'TRANSACTION_TYPE_DEBIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});

@@ -63,12 +63,12 @@ describe('Create Transaction', () => {
 					transactions: [
 						{
 							accountId: 'test-account-id',
-							type: TransactionType.CREDIT,
+							type: TransactionType.TRANSACTION_TYPE_CREDIT,
 							amount: 1,
 						},
 						{
 							accountId: '',
-							type: TransactionType.DEBIT,
+							type: TransactionType.TRANSACTION_TYPE_DEBIT,
 							amount: 1,
 						},
 					],
@@ -123,12 +123,12 @@ describe('Create Transaction', () => {
 					transactions: [
 						{
 							accountId: 'test-account-id',
-							type: TransactionType.CREDIT,
+							type: TransactionType.TRANSACTION_TYPE_CREDIT,
 							amount: 1,
 						},
 						{
 							accountId: 'test-account-id',
-							type: TransactionType.DEBIT,
+							type: TransactionType.TRANSACTION_TYPE_DEBIT,
 							amount: -1,
 						},
 					],
@@ -159,7 +159,7 @@ describe('Create Transaction', () => {
 						{
 							accountId: 'test-account-id',
 							amount: 0,
-							type: TransactionType.CREDIT,
+							type: TransactionType.TRANSACTION_TYPE_CREDIT,
 						},
 					],
 				},
@@ -190,12 +190,12 @@ describe('Create Transaction', () => {
 						{
 							accountId: 'test-account-id-1',
 							amount: 10,
-							type: TransactionType.CREDIT,
+							type: TransactionType.TRANSACTION_TYPE_CREDIT,
 						},
 						{
 							accountId: 'test-account-id-2',
 							amount: 20,
-							type: TransactionType.DEBIT,
+							type: TransactionType.TRANSACTION_TYPE_DEBIT,
 						},
 					],
 				},

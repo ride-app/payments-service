@@ -2,14 +2,12 @@ import { Timestamp as FireTimestamp } from 'firebase-admin/firestore';
 import { randomUUID } from 'crypto';
 import { ExpectedError, Reason } from './errors/expected-error';
 
-import { Account } from './generated/ride/wallet/v1/Account';
 import { CreateAccountRequest__Output } from './generated/ride/wallet/v1/CreateAccountRequest';
 import { GetAccountRequest__Output } from './generated/ride/wallet/v1/GetAccountRequest';
 import { GetAccountByUidRequest__Output } from './generated/ride/wallet/v1/GetAccountByUidRequest';
 import { CreateTransactionsRequest__Output } from './generated/ride/wallet/v1/CreateTransactionsRequest';
 import { CreateTransactionsResponse } from './generated/ride/wallet/v1/CreateTransactionsResponse';
 
-import { Transaction } from './generated/ride/wallet/v1/Transaction';
 import { GetTransactionRequest__Output } from './generated/ride/wallet/v1/GetTransactionRequest';
 import { ListTransactionsByBatchIdRequest__Output } from './generated/ride/wallet/v1/ListTransactionsByBatchIdRequest';
 import { ListTransactionsByBatchIdResponse } from './generated/ride/wallet/v1/ListTransactionsByBatchIdResponse';
@@ -29,10 +27,14 @@ import {
 	listTransactionsByBatchIdQuery,
 	listTransactionsByAccountIdTransaction,
 } from './repositories/transaction-repository';
+import { CreateAccountResponse } from './generated/ride/wallet/v1/CreateAccountResponse';
+import { GetAccountResponse } from './generated/ride/wallet/v1/GetAccountResponse';
+import { GetAccountByUidResponse } from './generated/ride/wallet/v1/GetAccountByUidResponse';
+import { GetTransactionResponse } from './generated/ride/wallet/v1/GetTransactionResponse';
 
 async function createAccount(
 	request: CreateAccountRequest__Output
-): Promise<Account> {
+): Promise<CreateAccountResponse> {
 	const accountId = randomUUID();
 	await createAccountTransaction(request.uid, accountId);
 
@@ -43,23 +45,25 @@ async function createAccount(
 	}
 
 	return {
-		accountId,
-		balance: accountDetails.get('balance') as number,
-		uid: accountDetails.get('uid') as string,
-		createTime: {
-			seconds: accountDetails.get('createdAt')?.seconds,
-			nanos: accountDetails.get('createdAt')?.nanoseconds,
-		},
-		updateTime: {
-			seconds: accountDetails.get('updatedAt')?.seconds,
-			nanos: accountDetails.get('updatedAt')?.nanoseconds,
+		account: {
+			accountId,
+			balance: accountDetails.get('balance') as number,
+			uid: accountDetails.get('uid') as string,
+			createTime: {
+				seconds: accountDetails.get('createdAt')?.seconds,
+				nanos: accountDetails.get('createdAt')?.nanoseconds,
+			},
+			updateTime: {
+				seconds: accountDetails.get('updatedAt')?.seconds,
+				nanos: accountDetails.get('updatedAt')?.nanoseconds,
+			},
 		},
 	};
 }
 
 async function getAccount(
 	request: GetAccountRequest__Output
-): Promise<Account> {
+): Promise<GetAccountResponse> {
 	const wallet = await getAccountQuery(request.accountId);
 
 	if (wallet.exists === false) {
@@ -67,23 +71,25 @@ async function getAccount(
 	}
 
 	return {
-		accountId: wallet.id,
-		balance: wallet.get('balance') as number,
-		uid: wallet.get('uid') as string,
-		createTime: {
-			seconds: (wallet.get('createdAt') as FireTimestamp).seconds,
-			nanos: (wallet.get('createdAt') as FireTimestamp).nanoseconds,
-		},
-		updateTime: {
-			seconds: (wallet.get('updatedAt') as FireTimestamp).seconds,
-			nanos: (wallet.get('updatedAt') as FireTimestamp).nanoseconds,
+		account: {
+			accountId: wallet.id,
+			balance: wallet.get('balance') as number,
+			uid: wallet.get('uid') as string,
+			createTime: {
+				seconds: (wallet.get('createdAt') as FireTimestamp).seconds,
+				nanos: (wallet.get('createdAt') as FireTimestamp).nanoseconds,
+			},
+			updateTime: {
+				seconds: (wallet.get('updatedAt') as FireTimestamp).seconds,
+				nanos: (wallet.get('updatedAt') as FireTimestamp).nanoseconds,
+			},
 		},
 	};
 }
 
 async function getAccountByUid(
 	request: GetAccountByUidRequest__Output
-): Promise<Account> {
+): Promise<GetAccountByUidResponse> {
 	const wallet = await getAccountByUidQuery(request.uid);
 
 	if (wallet.empty) {
@@ -91,16 +97,18 @@ async function getAccountByUid(
 	}
 
 	return {
-		accountId: wallet.docs[0].id,
-		uid: wallet.docs[0].get('uid') as string,
-		balance: wallet.docs[0].get('balance') as number,
-		createTime: {
-			seconds: (wallet.docs[0].get('createdAt') as FireTimestamp).seconds,
-			nanos: (wallet.docs[0].get('createdAt') as FireTimestamp).nanoseconds,
-		},
-		updateTime: {
-			seconds: (wallet.docs[0].get('updatedAt') as FireTimestamp).seconds,
-			nanos: (wallet.docs[0].get('updatedAt') as FireTimestamp).nanoseconds,
+		account: {
+			accountId: wallet.docs[0].id,
+			uid: wallet.docs[0].get('uid') as string,
+			balance: wallet.docs[0].get('balance') as number,
+			createTime: {
+				seconds: (wallet.docs[0].get('createdAt') as FireTimestamp).seconds,
+				nanos: (wallet.docs[0].get('createdAt') as FireTimestamp).nanoseconds,
+			},
+			updateTime: {
+				seconds: (wallet.docs[0].get('updatedAt') as FireTimestamp).seconds,
+				nanos: (wallet.docs[0].get('updatedAt') as FireTimestamp).nanoseconds,
+			},
 		},
 	};
 }
@@ -123,9 +131,9 @@ async function createTransactions(
 	);
 
 	request.transactions.forEach((transaction) => {
-		if (transaction.type === 'CREDIT') {
+		if (transaction.type === 'TRANSACTION_TYPE_CREDIT') {
 			accountBalances[transaction.accountId] += transaction.amount;
-		} else if (transaction.type === 'DEBIT') {
+		} else if (transaction.type === 'TRANSACTION_TYPE_DEBIT') {
 			accountBalances[transaction.accountId] -= transaction.amount;
 		} else {
 			throw new ExpectedError('Invalid Transaction Type', Reason.BAD_STATE);
@@ -158,7 +166,7 @@ async function createTransactions(
 
 async function getTransaction(
 	request: GetTransactionRequest__Output
-): Promise<Transaction> {
+): Promise<GetTransactionResponse> {
 	const doc = await getTransactionQuery(request.transactionId);
 
 	if (!doc.exists) {
@@ -166,15 +174,17 @@ async function getTransaction(
 	}
 
 	return {
-		transactionId: doc.id,
-		accountId: doc.get('accountId') as string,
-		amount: doc.get('amount') as number,
-		createTime: {
-			seconds: (doc.get('timestamp') as FireTimestamp).seconds,
-			nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
+		transaction: {
+			transactionId: doc.id,
+			accountId: doc.get('accountId') as string,
+			amount: doc.get('amount') as number,
+			createTime: {
+				seconds: (doc.get('timestamp') as FireTimestamp).seconds,
+				nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
+			},
+			type: doc.get('type') as TransactionType,
+			batchId: doc.get('batchId') as string,
 		},
-		type: doc.get('type') as TransactionType,
-		batchId: doc.get('batchId') as string,
 	};
 }
 

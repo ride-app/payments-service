@@ -1,5 +1,5 @@
 # Compile Typescript
-FROM node:17-alpine as build
+FROM node:16-alpine as build
 
 WORKDIR /app
 COPY . .
@@ -8,7 +8,7 @@ RUN npm ci
 RUN npm run build
 
 # Copy package.json and build node_modules 
-FROM node:17-alpine as deps
+FROM node:16-alpine as deps
 
 WORKDIR /app
 COPY package-lock.json package.json ./
@@ -16,7 +16,7 @@ COPY package-lock.json package.json ./
 RUN npm ci --production
 
 # The instructions for second stage
-FROM node:17-alpine
+FROM node:16-alpine
 
 ENV NODE_ENV production
 

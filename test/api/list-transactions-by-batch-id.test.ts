@@ -98,7 +98,7 @@ describe('Get Transactions by Batch Id', () => {
 						transactionId: 'test-transaction-id-1',
 						accountId: 'test-account-id-1',
 						amount: 10,
-						type: TransactionType.CREDIT,
+						type: TransactionType.TRANSACTION_TYPE_CREDIT,
 						timestamp: {
 							seconds: new Date().getSeconds(),
 							nanos: 0,
@@ -109,7 +109,7 @@ describe('Get Transactions by Batch Id', () => {
 						transactionId: 'test-transaction-id-2',
 						accountId: 'test-account-id-2',
 						amount: 20,
-						type: TransactionType.CREDIT,
+						type: TransactionType.TRANSACTION_TYPE_CREDIT,
 						timestamp: {
 							seconds: new Date().getSeconds(),
 							nanos: 0,

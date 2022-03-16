@@ -67,7 +67,7 @@ describe('Get Transaction', () => {
 				.doc('test-transaction-id')
 				.create(transaction);
 
-			const result = await getTransaction(req);
+			const { transaction: result } = await getTransaction(req);
 
 			expect(result.transactionId).toBe('test-transaction-id');
 			expect(result.accountId).toBe('test-account-id');

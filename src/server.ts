@@ -1,13 +1,12 @@
 import { loadPackageDefinition, Server } from '@grpc/grpc-js';
 import { loadSync } from '@grpc/proto-loader';
-import { ProtoGrpcType } from './generated/wallet-service';
+import { ProtoGrpcType } from './generated/wallet_service';
 import walletServiceHandlers from './handlers';
 
 // Suggested options for similarity to existing grpc.load behavior
 const packageDefinition = loadSync(
-	`${__dirname}/../protos/wallet-service.proto`,
+	`${__dirname}/../protos/ride/wallet/v1/wallet_service.proto`,
 	{
-		// keepCase: true,
 		longs: Number,
 		enums: String,
 		defaults: true,
