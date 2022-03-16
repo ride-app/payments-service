@@ -26,6 +26,6 @@ ENV FIREBASE_CONFIG ${FIREBASE_CONFIG}
 WORKDIR /app
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/build build
-COPY protos protos
+# COPY protos protos
 
 CMD node build/main.js

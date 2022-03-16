@@ -1,5 +1,5 @@
 import { status } from '@grpc/grpc-js';
-import { WalletServiceHandlers } from './generated/ride/wallet/v1/WalletService';
+// import { WalletServiceHandlers } from './generated/ride/wallet/v1/WalletService';
 import {
 	createAccount,
 	getAccount,
@@ -10,7 +10,10 @@ import {
 	listTransactionsByAccountId,
 } from './wallet-service';
 import { ExpectedError, Reason } from './errors/expected-error';
-import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
+// import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
+
+import { IWalletService } from './gen/ride/wallet/v1/wallet_service.grpc-server';
+import { TransactionType } from './gen/ride/wallet/v1/wallet_service';
 
 function handleError(callback: CallableFunction, error: unknown) {
 	let code = status.INTERNAL;
@@ -43,8 +46,8 @@ function handleError(callback: CallableFunction, error: unknown) {
 	});
 }
 
-const handlers: WalletServiceHandlers = {
-	CreateAccount: async (call, callback) => {
+const handlers: IWalletService = {
+	createAccount: async (call, callback) => {
 		try {
 			if (call.request.uid === '') {
 				throw new ExpectedError('uid is empty', Reason.INVALID_ARGUMENT);
@@ -54,7 +57,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	GetAccount: async (call, callback) => {
+	getAccount: async (call, callback) => {
 		try {
 			if (call.request.accountId === '') {
 				throw new ExpectedError('accountId is empty', Reason.INVALID_ARGUMENT);
@@ -64,7 +67,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	GetAccountByUid: async (call, callback) => {
+	getAccountByUid: async (call, callback) => {
 		try {
 			if (call.request.uid === '') {
 				throw new ExpectedError('uid is empty', Reason.INVALID_ARGUMENT);
@@ -74,7 +77,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	CreateTransactions: async (call, callback) => {
+	createTransactions: async (call, callback) => {
 		try {
 			if (call.request.transactions.length === 0) {
 				throw new ExpectedError(
@@ -96,10 +99,7 @@ const handlers: WalletServiceHandlers = {
 						Reason.INVALID_ARGUMENT
 					);
 				}
-				if (
-					transaction.type ===
-					TransactionType.TRANSACTION_TYPE_UNSPECIFIED.toString()
-				) {
+				if (transaction.type === TransactionType.UNSPECIFIED) {
 					throw new ExpectedError(
 						`Transaction type is not specified for transaction ${i}`,
 						Reason.INVALID_ARGUMENT
@@ -113,7 +113,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	GetTransaction: async (call, callback) => {
+	getTransaction: async (call, callback) => {
 		try {
 			if (call.request.transactionId === '') {
 				throw new ExpectedError(
@@ -126,7 +126,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	ListTransactionsByBatchId: async (call, callback) => {
+	listTransactionsByBatchId: async (call, callback) => {
 		try {
 			if (call.request.batchId === '') {
 				throw new ExpectedError('batchId is empty', Reason.INVALID_ARGUMENT);
@@ -136,7 +136,7 @@ const handlers: WalletServiceHandlers = {
 			handleError(callback, error);
 		}
 	},
-	ListTransactionsByAccountId: async (call, callback) => {
+	listTransactionsByAccountId: async (call, callback) => {
 		try {
 			if (call.request.accountId === '') {
 				throw new ExpectedError('accountId is empty', Reason.INVALID_ARGUMENT);

@@ -11,7 +11,7 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { CreateAccountRequest__Output } from '../../src/generated/ride/wallet/v1/CreateAccountRequest';
+import { CreateAccountRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { createAccount } from '../../src/wallet-service';
 
@@ -41,19 +41,20 @@ describe('Create Account', () => {
 
 	describe('Given Account Does not Exist', () => {
 		it('When uid is valid returns Account object', async () => {
-			const request: CreateAccountRequest__Output = {
+			const request: CreateAccountRequest = {
 				uid: 'test-uid',
 			};
 
 			const { account } = await createAccount(request);
 
-			expect(account.accountId).toBeTruthy();
-			expect(account.balance).toBe(0);
-			expect(account.uid).toBe(request.uid);
+			expect(account).toBeDefined();
+			expect(account?.accountId).toBeTruthy();
+			expect(account?.balance).toBe(0);
+			expect(account?.uid).toBe(request.uid);
 
 			const snap = await firestore
 				.collection('wallets')
-				.doc(account.accountId)
+				.doc(account!.accountId)
 				.get();
 
 			expect(snap.exists).toBe(true);

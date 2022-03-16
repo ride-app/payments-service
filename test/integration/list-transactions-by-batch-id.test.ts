@@ -11,7 +11,7 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { ListTransactionsByBatchIdRequest__Output } from '../../src/generated/ride/wallet/v1/ListTransactionsByBatchIdRequest';
+import { ListTransactionsByBatchIdRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { listTransactionsByBatchId } from '../../src/wallet-service';
 
@@ -40,9 +40,8 @@ describe('Get Transactions By BatchId', () => {
 	});
 	describe('Given Transactions Do Not Exist', () => {
 		it('returns NOT_FOUND error', async () => {
-			const req: ListTransactionsByBatchIdRequest__Output = {
+			const req: ListTransactionsByBatchIdRequest = {
 				batchId: 'test-batch-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			await expect(async () => {
@@ -55,9 +54,8 @@ describe('Get Transactions By BatchId', () => {
 
 	describe('Given Transactions Already Exist', () => {
 		it('returns the transactions', async () => {
-			const req: ListTransactionsByBatchIdRequest__Output = {
+			const req: ListTransactionsByBatchIdRequest = {
 				batchId: 'test-batch-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			const transactions = [
@@ -96,7 +94,7 @@ describe('Get Transactions By BatchId', () => {
 					accountId: 'test-account-1',
 					amount: 10,
 					createTime: expect.objectContaining({
-						seconds: expect.any(Number),
+						seconds: expect.any(BigInt),
 						nanos: expect.any(Number),
 					}),
 					type: 'CREDIT',
@@ -107,7 +105,7 @@ describe('Get Transactions By BatchId', () => {
 					accountId: 'test-account-2',
 					amount: 10,
 					createTime: expect.objectContaining({
-						seconds: expect.any(Number),
+						seconds: expect.any(BigInt),
 						nanos: expect.any(Number),
 					}),
 					type: 'CREDIT',

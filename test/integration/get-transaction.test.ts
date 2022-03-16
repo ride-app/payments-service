@@ -11,7 +11,7 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { GetTransactionRequest__Output } from '../../src/generated/ride/wallet/v1/GetTransactionRequest';
+import { GetTransactionRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { getTransaction } from '../../src/wallet-service';
 
@@ -34,9 +34,8 @@ afterAll(async () => {
 describe('Get Transaction', () => {
 	describe('Given Transaction Does not Exist', () => {
 		it('returns NOT_FOUND error', async () => {
-			const req: GetTransactionRequest__Output = {
+			const req: GetTransactionRequest = {
 				transactionId: 'test-transaction-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			await expect(async () => {
@@ -49,9 +48,8 @@ describe('Get Transaction', () => {
 
 	describe('Given Transaction Already Exists', () => {
 		it('returns the transaction', async () => {
-			const req: GetTransactionRequest__Output = {
+			const req: GetTransactionRequest = {
 				transactionId: 'test-transaction-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			const transaction = {
@@ -69,12 +67,13 @@ describe('Get Transaction', () => {
 
 			const { transaction: result } = await getTransaction(req);
 
-			expect(result.transactionId).toBe('test-transaction-id');
-			expect(result.accountId).toBe('test-account-id');
-			expect(result.amount).toBe(transaction.amount);
-			expect(result.createTime).toBeInstanceOf(Object);
-			expect(result.type).toBe(transaction.type);
-			expect(result.batchId).toBe(transaction.batchId);
+			expect(result).toBeDefined();
+			expect(result?.transactionId).toBe('test-transaction-id');
+			expect(result?.accountId).toBe('test-account-id');
+			expect(result?.amount).toBe(transaction.amount);
+			expect(result?.createTime).toBeInstanceOf(Object);
+			expect(result?.type).toBe(transaction.type);
+			expect(result?.batchId).toBe(transaction.batchId);
 		});
 	});
 });

@@ -30,8 +30,8 @@ jobs:
     - name: Install Packages
       run: npm install
 
-    - name: Build protobuf types
-      run: npm run build:proto
+    # - name: Build protobuf types
+    #   run: npm run build:proto
 
     - name: Format
       run: npm run format

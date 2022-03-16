@@ -12,7 +12,7 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { GetAccountRequest__Output } from '../../src/generated/ride/wallet/v1/GetAccountRequest';
+import { GetAccountRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { getAccount } from '../../src/wallet-service';
 
@@ -42,9 +42,8 @@ describe('Get Account', () => {
 
 	describe('Given Account Does not Exist', () => {
 		it('returns NOT_FOUND error', async () => {
-			const req: GetAccountRequest__Output = {
+			const req: GetAccountRequest = {
 				accountId: 'test-account-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			await expect(async () => {
@@ -71,25 +70,26 @@ describe('Get Account', () => {
 		});
 
 		it('returns Account object', async () => {
-			const req: GetAccountRequest__Output = {
+			const req: GetAccountRequest = {
 				accountId: 'test-account-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			const res = await getAccount(req);
 
 			expect(res).toEqual({
-				accountId: req.accountId,
-				balance: existingAccountData.balance,
-				uid: existingAccountData.uid,
-				createTime: expect.objectContaining({
-					seconds: expect.any(Number),
-					nanos: expect.any(Number),
-				}),
-				updateTime: expect.objectContaining({
-					seconds: expect.any(Number),
-					nanos: expect.any(Number),
-				}),
+				account: {
+					accountId: req.accountId,
+					balance: existingAccountData.balance,
+					uid: existingAccountData.uid,
+					createTime: expect.objectContaining({
+						seconds: expect.any(BigInt),
+						nanos: expect.any(Number),
+					}),
+					updateTime: expect.objectContaining({
+						seconds: expect.any(BigInt),
+						nanos: expect.any(Number),
+					}),
+				},
 			});
 		});
 	});

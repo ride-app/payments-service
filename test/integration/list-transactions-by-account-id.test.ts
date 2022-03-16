@@ -11,7 +11,7 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { ListTransactionsByAccountIdRequest__Output } from '../../src/generated/ride/wallet/v1/ListTransactionsByAccountIdRequest';
+import { ListTransactionsByAccountIdRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { listTransactionsByAccountId } from '../../src/wallet-service';
 
@@ -41,9 +41,8 @@ describe('Get Transactions By BatchId', () => {
 	describe('Given Account Does Not Exist', () => {
 		// throws BAD_STATE error
 		it('throws BAD_STATE error', async () => {
-			const req: ListTransactionsByAccountIdRequest__Output = {
+			const req: ListTransactionsByAccountIdRequest = {
 				accountId: 'test-account-id',
-				_fieldMask: 'fieldMask',
 			};
 
 			await expect(async () => {
@@ -67,9 +66,8 @@ describe('Get Transactions By BatchId', () => {
 		});
 		describe('When Transactions Do Not Exist', () => {
 			it('throws NOT_FOUND error', async () => {
-				const req: ListTransactionsByAccountIdRequest__Output = {
+				const req: ListTransactionsByAccountIdRequest = {
 					accountId: 'test-account-id',
-					_fieldMask: 'fieldMask',
 				};
 
 				await expect(async () => {
@@ -82,9 +80,8 @@ describe('Get Transactions By BatchId', () => {
 
 		describe('When Transactions Already Exist', () => {
 			it('returns the transactions', async () => {
-				const req: ListTransactionsByAccountIdRequest__Output = {
+				const req: ListTransactionsByAccountIdRequest = {
 					accountId: 'test-account-id',
-					_fieldMask: 'fieldMask',
 				};
 
 				const transactions = [
@@ -123,7 +120,7 @@ describe('Get Transactions By BatchId', () => {
 						accountId: 'test-account-id',
 						amount: 10,
 						createTime: expect.objectContaining({
-							seconds: expect.any(Number),
+							seconds: expect.any(BigInt),
 							nanos: expect.any(Number),
 						}),
 						type: 'CREDIT',
@@ -134,7 +131,7 @@ describe('Get Transactions By BatchId', () => {
 						accountId: 'test-account-id',
 						amount: 10,
 						createTime: expect.objectContaining({
-							seconds: expect.any(Number),
+							seconds: expect.any(BigInt),
 							nanos: expect.any(Number),
 						}),
 						type: 'CREDIT',

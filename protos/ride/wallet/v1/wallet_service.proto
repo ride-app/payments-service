@@ -73,7 +73,7 @@ message GetTransactionRequest {
 }
 
 message GetTransactionResponse {
-  Transaction transaction = 1;
+  Transaction transacction = 1;
 }
 
 message ListTransactionsByBatchIdRequest {

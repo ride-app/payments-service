@@ -11,7 +11,10 @@ import {
 } from 'firebase-admin/firestore';
 import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-import { CreateTransactionsRequest__Output } from '../../src/generated/ride/wallet/v1/CreateTransactionsRequest';
+import {
+	CreateTransactionsRequest,
+	TransactionType,
+} from '../../src/gen/ride/wallet/v1/wallet_service';
 
 import { createTransactions } from '../../src/wallet-service';
 
@@ -41,12 +44,12 @@ describe('Create Transactions', () => {
 
 	describe('Given Account Does Not Exist', () => {
 		it('When transactions contains that account throws BAD_STATE error', async () => {
-			const req: CreateTransactionsRequest__Output = {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 				],
 			};
@@ -59,12 +62,12 @@ describe('Create Transactions', () => {
 		it('When transactions does not contain that account returns createTransactionsResponse', async () => {
 			await firestore.collection('wallets').doc('test-account-id').set({});
 
-			const req: CreateTransactionsRequest__Output = {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 				],
 			};
@@ -84,7 +87,7 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'TRANSACTION_TYPE_CREDIT',
+				type: 'CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
@@ -111,22 +114,22 @@ describe('Create Transactions', () => {
 		});
 
 		it('When all transactions are valid then adds all transactions to the database', async () => {
-			const req: CreateTransactionsRequest__Output = {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id-1',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id-2',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_DEBIT',
+						type: TransactionType.DEBIT,
 					},
 				],
 			};
@@ -145,22 +148,22 @@ describe('Create Transactions', () => {
 		});
 
 		it('When multiple transaction to the same account is present then aggregates them to 1 transaction', async () => {
-			const req: CreateTransactionsRequest__Output = {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 100,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_DEBIT',
+						type: TransactionType.DEBIT,
 					},
 				],
 			};
@@ -177,24 +180,24 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 100,
-				type: 'TRANSACTION_TYPE_CREDIT',
+				type: 'CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
 		});
 
 		it('When sum of all transactions to an account is 0 then makes no transaction against the account', async () => {
-			const req: CreateTransactionsRequest__Output = {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_DEBIT',
+						type: TransactionType.DEBIT,
 					},
 				],
 			};
@@ -207,18 +210,18 @@ describe('Create Transactions', () => {
 			expect(snap.empty).toBe(true);
 		});
 
-		it('When sum of all transactions to an account is positive then adds transaction with type TRANSACTION_TYPE_CREDIT', async () => {
-			const req: CreateTransactionsRequest__Output = {
+		it('When sum of all transactions to an account is positive then adds transaction with transaction type credit', async () => {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 20,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_DEBIT',
+						type: TransactionType.DEBIT,
 					},
 				],
 			};
@@ -235,24 +238,24 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'TRANSACTION_TYPE_CREDIT',
+				type: 'CREDIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});
 		});
 
-		it('When sum of all transactions to an account is negative then adds transaction with type TRANSACTION_TYPE_DEBIT', async () => {
-			const req: CreateTransactionsRequest__Output = {
+		it('When sum of all transactions to an account is negative then adds transaction with transaction type debit', async () => {
+			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
 						accountId: 'test-account-id',
 						amount: 20,
-						type: 'TRANSACTION_TYPE_DEBIT',
+						type: TransactionType.DEBIT,
 					},
 					{
 						accountId: 'test-account-id',
 						amount: 10,
-						type: 'TRANSACTION_TYPE_CREDIT',
+						type: TransactionType.CREDIT,
 					},
 				],
 			};
@@ -269,7 +272,7 @@ describe('Create Transactions', () => {
 			expect(snap.data()).toEqual({
 				accountId: 'test-account-id',
 				amount: 10,
-				type: 'TRANSACTION_TYPE_DEBIT',
+				type: 'DEBIT',
 				timestamp: expect.any(Timestamp),
 				batchId: res.batchId,
 			});

@@ -2,43 +2,42 @@ import { Timestamp as FireTimestamp } from 'firebase-admin/firestore';
 import { randomUUID } from 'crypto';
 import { ExpectedError, Reason } from './errors/expected-error';
 
-import { CreateAccountRequest__Output } from './generated/ride/wallet/v1/CreateAccountRequest';
-import { GetAccountRequest__Output } from './generated/ride/wallet/v1/GetAccountRequest';
-import { GetAccountByUidRequest__Output } from './generated/ride/wallet/v1/GetAccountByUidRequest';
-import { CreateTransactionsRequest__Output } from './generated/ride/wallet/v1/CreateTransactionsRequest';
-import { CreateTransactionsResponse } from './generated/ride/wallet/v1/CreateTransactionsResponse';
-
-import { GetTransactionRequest__Output } from './generated/ride/wallet/v1/GetTransactionRequest';
-import { ListTransactionsByBatchIdRequest__Output } from './generated/ride/wallet/v1/ListTransactionsByBatchIdRequest';
-import { ListTransactionsByBatchIdResponse } from './generated/ride/wallet/v1/ListTransactionsByBatchIdResponse';
-import { ListTransactionsByAccountIdRequest__Output } from './generated/ride/wallet/v1/ListTransactionsByAccountIdRequest';
-import { ListTransactionsByAccountIdResponse } from './generated/ride/wallet/v1/ListTransactionsByAccountIdResponse';
-import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
-
+import AccountRepository from './repositories/account-repository';
 import {
-	getAccountByUidQuery,
-	getAccountQuery,
-	createAccountTransaction,
-} from './repositories/account-repository';
-import {
-	createTransactionsMutation,
 	CreateTransactionMutationData,
-	getTransactionQuery,
-	listTransactionsByBatchIdQuery,
-	listTransactionsByAccountIdTransaction,
+	TransactionRepository,
 } from './repositories/transaction-repository';
-import { CreateAccountResponse } from './generated/ride/wallet/v1/CreateAccountResponse';
-import { GetAccountResponse } from './generated/ride/wallet/v1/GetAccountResponse';
-import { GetAccountByUidResponse } from './generated/ride/wallet/v1/GetAccountByUidResponse';
-import { GetTransactionResponse } from './generated/ride/wallet/v1/GetTransactionResponse';
+
+import {
+	CreateAccountRequest,
+	CreateAccountResponse,
+	CreateTransactionsRequest,
+	CreateTransactionsResponse,
+	GetAccountByUidRequest,
+	GetAccountByUidResponse,
+	GetAccountRequest,
+	GetAccountResponse,
+	GetTransactionRequest,
+	GetTransactionResponse,
+	ListTransactionsByAccountIdRequest,
+	ListTransactionsByAccountIdResponse,
+	ListTransactionsByBatchIdRequest,
+	ListTransactionsByBatchIdResponse,
+	TransactionType,
+} from './gen/ride/wallet/v1/wallet_service';
 
 async function createAccount(
-	request: CreateAccountRequest__Output
+	request: CreateAccountRequest
 ): Promise<CreateAccountResponse> {
 	const accountId = randomUUID();
-	await createAccountTransaction(request.uid, accountId);
+	await AccountRepository.instance.createAccountTransaction(
+		request.uid,
+		accountId
+	);
 
-	const accountDetails = await getAccountQuery(accountId);
+	const accountDetails = await AccountRepository.instance.getAccountQuery(
+		accountId
+	);
 
 	if (accountDetails?.exists === false) {
 		throw new ExpectedError('Account Creation Failed', Reason.NOT_FOUND);
@@ -62,9 +61,11 @@ async function createAccount(
 }
 
 async function getAccount(
-	request: GetAccountRequest__Output
+	request: GetAccountRequest
 ): Promise<GetAccountResponse> {
-	const wallet = await getAccountQuery(request.accountId);
+	const wallet = await AccountRepository.instance.getAccountQuery(
+		request.accountId
+	);
 
 	if (wallet.exists === false) {
 		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
@@ -76,11 +77,11 @@ async function getAccount(
 			balance: wallet.get('balance') as number,
 			uid: wallet.get('uid') as string,
 			createTime: {
-				seconds: (wallet.get('createdAt') as FireTimestamp).seconds,
+				seconds: BigInt((wallet.get('createdAt') as FireTimestamp).seconds),
 				nanos: (wallet.get('createdAt') as FireTimestamp).nanoseconds,
 			},
 			updateTime: {
-				seconds: (wallet.get('updatedAt') as FireTimestamp).seconds,
+				seconds: BigInt((wallet.get('updatedAt') as FireTimestamp).seconds),
 				nanos: (wallet.get('updatedAt') as FireTimestamp).nanoseconds,
 			},
 		},
@@ -88,9 +89,11 @@ async function getAccount(
 }
 
 async function getAccountByUid(
-	request: GetAccountByUidRequest__Output
+	request: GetAccountByUidRequest
 ): Promise<GetAccountByUidResponse> {
-	const wallet = await getAccountByUidQuery(request.uid);
+	const wallet = await AccountRepository.instance.getAccountByUidQuery(
+		request.uid
+	);
 
 	if (wallet.empty) {
 		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
@@ -102,11 +105,15 @@ async function getAccountByUid(
 			uid: wallet.docs[0].get('uid') as string,
 			balance: wallet.docs[0].get('balance') as number,
 			createTime: {
-				seconds: (wallet.docs[0].get('createdAt') as FireTimestamp).seconds,
+				seconds: BigInt(
+					(wallet.docs[0].get('createdAt') as FireTimestamp).seconds
+				),
 				nanos: (wallet.docs[0].get('createdAt') as FireTimestamp).nanoseconds,
 			},
 			updateTime: {
-				seconds: (wallet.docs[0].get('updatedAt') as FireTimestamp).seconds,
+				seconds: BigInt(
+					(wallet.docs[0].get('updatedAt') as FireTimestamp).seconds
+				),
 				nanos: (wallet.docs[0].get('updatedAt') as FireTimestamp).nanoseconds,
 			},
 		},
@@ -114,7 +121,7 @@ async function getAccountByUid(
 }
 
 async function createTransactions(
-	request: CreateTransactionsRequest__Output
+	request: CreateTransactionsRequest
 ): Promise<CreateTransactionsResponse> {
 	const accountBalances: Record<string, number> = Object.fromEntries(
 		request.transactions.map((t) => [t.accountId, 0])
@@ -122,7 +129,9 @@ async function createTransactions(
 
 	await Promise.all(
 		Object.keys(accountBalances).map(async (accountId) => {
-			const account = await getAccountQuery(accountId);
+			const account = await AccountRepository.instance.getAccountQuery(
+				accountId
+			);
 
 			if (!account.exists) {
 				throw new ExpectedError('Account Does Not Exist', Reason.BAD_STATE);
@@ -131,9 +140,9 @@ async function createTransactions(
 	);
 
 	request.transactions.forEach((transaction) => {
-		if (transaction.type === 'TRANSACTION_TYPE_CREDIT') {
+		if (transaction.type === TransactionType.CREDIT) {
 			accountBalances[transaction.accountId] += transaction.amount;
-		} else if (transaction.type === 'TRANSACTION_TYPE_DEBIT') {
+		} else if (transaction.type === TransactionType.DEBIT) {
 			accountBalances[transaction.accountId] -= transaction.amount;
 		} else {
 			throw new ExpectedError('Invalid Transaction Type', Reason.BAD_STATE);
@@ -156,7 +165,10 @@ async function createTransactions(
 		}
 	});
 
-	await createTransactionsMutation(batchId, transactionData);
+	await TransactionRepository.instance.createTransactionsMutation(
+		batchId,
+		transactionData
+	);
 
 	return {
 		batchId,
@@ -165,9 +177,11 @@ async function createTransactions(
 }
 
 async function getTransaction(
-	request: GetTransactionRequest__Output
+	request: GetTransactionRequest
 ): Promise<GetTransactionResponse> {
-	const doc = await getTransactionQuery(request.transactionId);
+	const doc = await TransactionRepository.instance.getTransactionQuery(
+		request.transactionId
+	);
 
 	if (!doc.exists) {
 		throw new ExpectedError('Transaction Not Found', Reason.NOT_FOUND);
@@ -179,7 +193,7 @@ async function getTransaction(
 			accountId: doc.get('accountId') as string,
 			amount: doc.get('amount') as number,
 			createTime: {
-				seconds: (doc.get('timestamp') as FireTimestamp).seconds,
+				seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
 				nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
 			},
 			type: doc.get('type') as TransactionType,
@@ -189,9 +203,12 @@ async function getTransaction(
 }
 
 async function listTransactionsByBatchId(
-	request: ListTransactionsByBatchIdRequest__Output
+	request: ListTransactionsByBatchIdRequest
 ): Promise<ListTransactionsByBatchIdResponse> {
-	const snap = await listTransactionsByBatchIdQuery(request.batchId);
+	const snap =
+		await TransactionRepository.instance.listTransactionsByBatchIdQuery(
+			request.batchId
+		);
 
 	if (snap.empty) {
 		throw new ExpectedError('Transactions Not Found', Reason.NOT_FOUND);
@@ -204,7 +221,7 @@ async function listTransactionsByBatchId(
 				accountId: doc.get('accountId') as string,
 				amount: doc.get('amount') as number,
 				createTime: {
-					seconds: (doc.get('timestamp') as FireTimestamp).seconds,
+					seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
 					nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
 				},
 				type: doc.get('type') as TransactionType,
@@ -215,11 +232,12 @@ async function listTransactionsByBatchId(
 }
 
 async function listTransactionsByAccountId(
-	request: ListTransactionsByAccountIdRequest__Output
+	request: ListTransactionsByAccountIdRequest
 ): Promise<ListTransactionsByAccountIdResponse> {
-	const transactionSnaps = await listTransactionsByAccountIdTransaction(
-		request.accountId
-	);
+	const transactionSnaps =
+		await TransactionRepository.instance.listTransactionsByAccountIdTransaction(
+			request.accountId
+		);
 
 	return {
 		transactions: transactionSnaps.map((doc) => {
@@ -228,7 +246,7 @@ async function listTransactionsByAccountId(
 				accountId: doc.get('accountId') as string,
 				amount: doc.get('amount') as number,
 				createTime: {
-					seconds: (doc.get('timestamp') as FireTimestamp).seconds,
+					seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
 					nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
 				},
 				type: doc.get('type') as TransactionType,

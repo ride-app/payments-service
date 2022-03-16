@@ -14,5 +14,6 @@ module.exports = {
   runner: 'groups',
   resolver: 'jest-node-exports-resolver',
   setupFiles: ["dotenv/config"],
-  collectCoverageFrom: ["src/**/*.ts","!src/generated/**/*","!test", "!src/main.ts"],
+  collectCoverageFrom: ["src/**/*.ts", "!src/generated/**/*", "!test", "!src/main.ts"],
+  modulePathIgnorePatterns: ["test/unit"]
 };
