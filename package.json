@@ -16,7 +16,7 @@
     "start:docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.6.0",
+    "@grpc/grpc-js": "^1.6.1",
     "@grpc/proto-loader": "^0.6.9",
     "firebase-admin": "^10.0.2"
   },
