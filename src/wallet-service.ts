@@ -24,7 +24,7 @@ import {
 	ListTransactionsByBatchIdRequest,
 	ListTransactionsByBatchIdResponse,
 	TransactionType,
-} from './gen/ride/wallet/v1/wallet_service';
+} from './gen/ride/wallet/v1alpha1/wallet_service';
 
 async function createAccount(
 	request: CreateAccountRequest

@@ -1,5 +1,4 @@
 import { status } from '@grpc/grpc-js';
-// import { WalletServiceHandlers } from './generated/ride/wallet/v1/WalletService';
 import {
 	createAccount,
 	getAccount,
@@ -10,10 +9,9 @@ import {
 	listTransactionsByAccountId,
 } from './wallet-service';
 import { ExpectedError, Reason } from './errors/expected-error';
-// import { TransactionType } from './generated/ride/wallet/v1/TransactionType';
 
-import { IWalletService } from './gen/ride/wallet/v1/wallet_service.grpc-server';
-import { TransactionType } from './gen/ride/wallet/v1/wallet_service';
+import { IWalletService } from './gen/ride/wallet/v1alpha1/wallet_service.grpc-server';
+import { TransactionType } from './gen/ride/wallet/v1alpha1/wallet_service';
 
 function handleError(callback: CallableFunction, error: unknown) {
 	let code = status.INTERNAL;

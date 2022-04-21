@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 
-package ride.wallet.v1;
+package ride.wallet.v1alpha1;
 
 service WalletService {
   // Account related methods
@@ -73,7 +73,7 @@ message GetTransactionRequest {
 }
 
 message GetTransactionResponse {
-  Transaction transacction = 1;
+  Transaction transaction = 1;
 }
 
 message ListTransactionsByBatchIdRequest {
