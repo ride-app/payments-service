@@ -1,7 +1,7 @@
 /* jest ignore file */
 // import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-// import { CreateAccountRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
+// import { CreateAccountRequest } from '../../src/gen/ride/wallet/v1alpha1/wallet_service';
 
 // import { createAccount } from '../../src/wallet-service';
 

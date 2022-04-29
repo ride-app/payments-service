@@ -1,6 +1,6 @@
-import { credentials, ServerCredentials } from '@grpc/grpc-js';
-import { WalletServiceClient } from '../../src/gen/ride/wallet/v1/wallet_service.grpc-client';
-import server from '../../src/server';
+import { credentials, ServerCredentials } from "@grpc/grpc-js";
+import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
+import server from "../../src/server";
 
 let client: WalletServiceClient;
 
@@ -15,7 +15,7 @@ function startTestClient(): Promise<WalletServiceClient> {
 				}
 
 				// const packageDefinition = loadSync(
-				// 	`${__dirname}/../../protos/ride/wallet/v1/wallet_service.proto`,
+				// 	`${__dirname}/../../protos/ride/wallet/v1alpha1/wallet_service.proto`,
 				// 	{
 				// 		// keepCase: true,
 				// 		longs: Number,
@@ -33,7 +33,7 @@ function startTestClient(): Promise<WalletServiceClient> {
 
 				server.start();
 				client = new WalletServiceClient(
-					'localhost:50051',
+					"localhost:50051",
 					credentials.createInsecure()
 				);
 				resolve(client);

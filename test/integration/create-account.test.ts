@@ -2,18 +2,18 @@
  * @group integration/create-account
  */
 
-import { App, deleteApp, initializeApp } from 'firebase-admin/app';
+import { App, deleteApp, initializeApp } from "firebase-admin/app";
 import {
 	BulkWriter,
 	Firestore,
 	getFirestore,
 	Timestamp,
-} from 'firebase-admin/firestore';
-import { ExpectedError, Reason } from '../../src/errors/expected-error';
+} from "firebase-admin/firestore";
+import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
-import { CreateAccountRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
+import { CreateAccountRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { createAccount } from '../../src/wallet-service';
+import { createAccount } from "../../src/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -31,18 +31,18 @@ afterAll(async () => {
 	await deleteApp(app);
 });
 
-describe('Create Account', () => {
+describe("Create Account", () => {
 	afterEach(async () => {
 		await firestore.recursiveDelete(
-			firestore.collection('wallets'),
+			firestore.collection("wallets"),
 			bulkWriter
 		);
 	});
 
-	describe('Given Account Does not Exist', () => {
-		it('When uid is valid returns Account object', async () => {
+	describe("Given Account Does not Exist", () => {
+		it("When uid is valid returns Account object", async () => {
 			const request: CreateAccountRequest = {
-				uid: 'test-uid',
+				uid: "test-uid",
 			};
 
 			const { account } = await createAccount(request);
@@ -53,7 +53,7 @@ describe('Create Account', () => {
 			expect(account?.uid).toBe(request.uid);
 
 			const snap = await firestore
-				.collection('wallets')
+				.collection("wallets")
 				.doc(account!.accountId)
 				.get();
 
@@ -67,19 +67,19 @@ describe('Create Account', () => {
 		});
 	});
 
-	describe('Given Account Already Exists', () => {
+	describe("Given Account Already Exists", () => {
 		beforeAll(async () => {
 			await firestore
-				.collection('wallets')
-				.doc('test-wallet-id')
-				.set({ uid: 'test-uid' });
+				.collection("wallets")
+				.doc("test-wallet-id")
+				.set({ uid: "test-uid" });
 		});
 
-		it('When uid is valid returns ALREADY_EXISTS error', async () => {
+		it("When uid is valid returns ALREADY_EXISTS error", async () => {
 			await expect(async () => {
-				await createAccount({ uid: 'test-uid' });
+				await createAccount({ uid: "test-uid" });
 			}).rejects.toThrowError(
-				new ExpectedError('Account Already Exists', Reason.ALREADY_EXISTS)
+				new ExpectedError("Account Already Exists", Reason.ALREADY_EXISTS)
 			);
 		});
 	});

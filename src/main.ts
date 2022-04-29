@@ -1,6 +1,6 @@
-import { ServerCredentials } from '@grpc/grpc-js';
-import { initializeApp } from 'firebase-admin/app';
-import server from './server';
+import { ServerCredentials } from "@grpc/grpc-js";
+import { initializeApp } from "firebase-admin/app";
+import server from "./server";
 
 const port = process.env.PORT || 50051;
 

@@ -2,18 +2,18 @@
  * @group integration/get-account-by-uid
  */
 
-import { App, deleteApp, initializeApp } from 'firebase-admin/app';
+import { App, deleteApp, initializeApp } from "firebase-admin/app";
 import {
 	BulkWriter,
 	FieldValue,
 	Firestore,
 	getFirestore,
-} from 'firebase-admin/firestore';
-import { ExpectedError, Reason } from '../../src/errors/expected-error';
+} from "firebase-admin/firestore";
+import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
-import { GetAccountByUidRequest } from '../../src/gen/ride/wallet/v1/wallet_service';
+import { GetAccountByUidRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { getAccountByUid } from '../../src/wallet-service';
+import { getAccountByUid } from "../../src/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -31,31 +31,31 @@ afterAll(async () => {
 	await deleteApp(app);
 });
 
-describe('Get Account By Uid', () => {
+describe("Get Account By Uid", () => {
 	afterEach(async () => {
 		await firestore.recursiveDelete(
-			firestore.collection('wallets'),
+			firestore.collection("wallets"),
 			bulkWriter
 		);
 	});
 
-	describe('Given Account Does not Exist', () => {
-		it('returns NOT_FOUND error', async () => {
+	describe("Given Account Does not Exist", () => {
+		it("returns NOT_FOUND error", async () => {
 			const req: GetAccountByUidRequest = {
-				uid: 'test-uid',
+				uid: "test-uid",
 			};
 
 			await expect(async () => {
 				await getAccountByUid(req);
 			}).rejects.toThrow(
-				new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND)
+				new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND)
 			);
 		});
 	});
 
-	describe('Given Account Already Exists', () => {
+	describe("Given Account Already Exists", () => {
 		const existingAccountData = {
-			uid: 'test-uid',
+			uid: "test-uid",
 			balance: 0,
 			createdAt: FieldValue.serverTimestamp(),
 			updatedAt: FieldValue.serverTimestamp(),
@@ -63,21 +63,21 @@ describe('Get Account By Uid', () => {
 
 		beforeAll(async () => {
 			await firestore
-				.collection('wallets')
-				.doc('test-account-id')
+				.collection("wallets")
+				.doc("test-account-id")
 				.set(existingAccountData);
 		});
 
-		it('returns Account object', async () => {
+		it("returns Account object", async () => {
 			const req: GetAccountByUidRequest = {
-				uid: 'test-uid',
+				uid: "test-uid",
 			};
 
 			const res = await getAccountByUid(req);
 
 			expect(res).toEqual({
 				account: {
-					accountId: 'test-account-id',
+					accountId: "test-account-id",
 					balance: existingAccountData.balance,
 					uid: req.uid,
 					createTime: expect.objectContaining({

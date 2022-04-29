@@ -1,15 +1,15 @@
 /**
  * @group api/get-transaction-by-account-id
  */
-import { status } from '@grpc/grpc-js';
-import { listTransactionsByAccountId } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/gen/ride/wallet/v1/wallet_service.grpc-client';
-import { ExpectedError, Reason } from '../../src/errors/expected-error';
-import { closeTestClient, startTestClient } from '../utils/test-client';
-import { TransactionType } from '../../src/gen/ride/wallet/v1/wallet_service';
-import { Timestamp } from '../../src/gen/google/protobuf/timestamp';
+import { status } from "@grpc/grpc-js";
+import { listTransactionsByAccountId } from "../../src/wallet-service";
+import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
+import { ExpectedError, Reason } from "../../src/errors/expected-error";
+import { closeTestClient, startTestClient } from "../utils/test-client";
+import { TransactionType } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { Timestamp } from "../../src/gen/google/protobuf/timestamp";
 
-jest.mock('../../src/wallet-service');
+jest.mock("../../src/wallet-service");
 const mockedListTransactionsByAccountId = jest.mocked(
 	listTransactionsByAccountId
 );
@@ -22,7 +22,7 @@ beforeAll(async () => {
 
 afterAll(closeTestClient);
 
-describe('List Transactions For Account', () => {
+describe("List Transactions For Account", () => {
 	mockedListTransactionsByAccountId.mockResolvedValue({ transactions: [] });
 
 	afterEach(mockedListTransactionsByAccountId.mockClear);
@@ -40,80 +40,80 @@ describe('List Transactions For Account', () => {
 	// 	});
 	// });
 
-	it('When accountId is empty returns INVALID_ARGUMENT error', () => {
+	it("When accountId is empty returns INVALID_ARGUMENT error", () => {
 		return new Promise<void>((resolve) => {
-			client.listTransactionsByAccountId({ accountId: '' }, (err, res) => {
+			client.listTransactionsByAccountId({ accountId: "" }, (err, res) => {
 				expect(mockedListTransactionsByAccountId).toHaveBeenCalledTimes(0);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.INVALID_ARGUMENT);
-				expect(err?.details).toBe('accountId is empty');
+				expect(err?.details).toBe("accountId is empty");
 				resolve();
 			});
 		});
 	});
 
-	it('When throws NOT_FOUND return NOT_FOUND error', () => {
+	it("When throws NOT_FOUND return NOT_FOUND error", () => {
 		return new Promise<void>((resolve) => {
 			mockedListTransactionsByAccountId.mockImplementation(async () => {
-				throw new ExpectedError('account not found', Reason.NOT_FOUND);
+				throw new ExpectedError("account not found", Reason.NOT_FOUND);
 			});
 			client.listTransactionsByAccountId(
-				{ accountId: 'accountId' },
+				{ accountId: "accountId" },
 				(err, res) => {
 					expect(mockedListTransactionsByAccountId).toHaveBeenCalledTimes(1);
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.NOT_FOUND);
-					expect(err?.details).toBe('account not found');
+					expect(err?.details).toBe("account not found");
 					resolve();
 				}
 			);
 		});
 	});
 
-	it('When throws INTERNAL_ERROR return INTERNAL_ERROR error', () => {
+	it("When throws INTERNAL_ERROR return INTERNAL_ERROR error", () => {
 		return new Promise<void>((resolve) => {
 			mockedListTransactionsByAccountId.mockImplementation(async () => {
-				throw new ExpectedError('internal error', Reason.INTERNAL);
+				throw new ExpectedError("internal error", Reason.INTERNAL);
 			});
 			client.listTransactionsByAccountId(
-				{ accountId: 'test-account-id' },
+				{ accountId: "test-account-id" },
 				(err, res) => {
 					expect(mockedListTransactionsByAccountId).toHaveBeenCalledTimes(1);
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INTERNAL);
-					expect(err?.details).toBe('internal error');
+					expect(err?.details).toBe("internal error");
 					resolve();
 				}
 			);
 		});
 	});
 
-	it('When accountId is valid returns list of transactions', () => {
+	it("When accountId is valid returns list of transactions", () => {
 		return new Promise<void>((resolve) => {
 			mockedListTransactionsByAccountId.mockResolvedValueOnce({
 				transactions: [
 					{
-						transactionId: 'test-transaction-id',
+						transactionId: "test-transaction-id",
 						type: TransactionType.CREDIT,
 						amount: 100,
-						accountId: 'test-account-id',
+						accountId: "test-account-id",
 						createTime: Timestamp.fromDate(new Date()),
-						batchId: 'test-batch-id',
+						batchId: "test-batch-id",
 					},
 				],
 			});
 			client.listTransactionsByAccountId(
-				{ accountId: 'test-account-id' },
+				{ accountId: "test-account-id" },
 				(err, res) => {
 					expect(mockedListTransactionsByAccountId).toHaveBeenCalledTimes(1);
 					expect(err).toBeFalsy();
 					expect(res).toBeDefined();
 					expect(res?.transactions).toHaveLength(1);
 					expect(res?.transactions[0].transactionId).toBe(
-						'test-transaction-id'
+						"test-transaction-id"
 					);
 					expect(res?.transactions[0].type).toBe(TransactionType.CREDIT);
 					expect(res?.transactions[0].amount).toBe(100);

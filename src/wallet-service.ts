@@ -1,12 +1,12 @@
-import { Timestamp as FireTimestamp } from 'firebase-admin/firestore';
-import { randomUUID } from 'crypto';
-import { ExpectedError, Reason } from './errors/expected-error';
+import { Timestamp as FireTimestamp } from "firebase-admin/firestore";
+import { randomUUID } from "crypto";
+import { ExpectedError, Reason } from "./errors/expected-error";
 
-import AccountRepository from './repositories/account-repository';
+import AccountRepository from "./repositories/account-repository";
 import {
 	CreateTransactionMutationData,
 	TransactionRepository,
-} from './repositories/transaction-repository';
+} from "./repositories/transaction-repository";
 
 import {
 	CreateAccountRequest,
@@ -24,7 +24,7 @@ import {
 	ListTransactionsByBatchIdRequest,
 	ListTransactionsByBatchIdResponse,
 	TransactionType,
-} from './gen/ride/wallet/v1alpha1/wallet_service';
+} from "./gen/ride/wallet/v1alpha1/wallet_service";
 
 async function createAccount(
 	request: CreateAccountRequest
@@ -40,21 +40,21 @@ async function createAccount(
 	);
 
 	if (accountDetails?.exists === false) {
-		throw new ExpectedError('Account Creation Failed', Reason.NOT_FOUND);
+		throw new ExpectedError("Account Creation Failed", Reason.NOT_FOUND);
 	}
 
 	return {
 		account: {
 			accountId,
-			balance: accountDetails.get('balance') as number,
-			uid: accountDetails.get('uid') as string,
+			balance: accountDetails.get("balance") as number,
+			uid: accountDetails.get("uid") as string,
 			createTime: {
-				seconds: accountDetails.get('createdAt')?.seconds,
-				nanos: accountDetails.get('createdAt')?.nanoseconds,
+				seconds: accountDetails.get("createdAt")?.seconds,
+				nanos: accountDetails.get("createdAt")?.nanoseconds,
 			},
 			updateTime: {
-				seconds: accountDetails.get('updatedAt')?.seconds,
-				nanos: accountDetails.get('updatedAt')?.nanoseconds,
+				seconds: accountDetails.get("updatedAt")?.seconds,
+				nanos: accountDetails.get("updatedAt")?.nanoseconds,
 			},
 		},
 	};
@@ -68,21 +68,21 @@ async function getAccount(
 	);
 
 	if (wallet.exists === false) {
-		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
+		throw new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND);
 	}
 
 	return {
 		account: {
 			accountId: wallet.id,
-			balance: wallet.get('balance') as number,
-			uid: wallet.get('uid') as string,
+			balance: wallet.get("balance") as number,
+			uid: wallet.get("uid") as string,
 			createTime: {
-				seconds: BigInt((wallet.get('createdAt') as FireTimestamp).seconds),
-				nanos: (wallet.get('createdAt') as FireTimestamp).nanoseconds,
+				seconds: BigInt((wallet.get("createdAt") as FireTimestamp).seconds),
+				nanos: (wallet.get("createdAt") as FireTimestamp).nanoseconds,
 			},
 			updateTime: {
-				seconds: BigInt((wallet.get('updatedAt') as FireTimestamp).seconds),
-				nanos: (wallet.get('updatedAt') as FireTimestamp).nanoseconds,
+				seconds: BigInt((wallet.get("updatedAt") as FireTimestamp).seconds),
+				nanos: (wallet.get("updatedAt") as FireTimestamp).nanoseconds,
 			},
 		},
 	};
@@ -96,25 +96,25 @@ async function getAccountByUid(
 	);
 
 	if (wallet.empty) {
-		throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
+		throw new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND);
 	}
 
 	return {
 		account: {
 			accountId: wallet.docs[0].id,
-			uid: wallet.docs[0].get('uid') as string,
-			balance: wallet.docs[0].get('balance') as number,
+			uid: wallet.docs[0].get("uid") as string,
+			balance: wallet.docs[0].get("balance") as number,
 			createTime: {
 				seconds: BigInt(
-					(wallet.docs[0].get('createdAt') as FireTimestamp).seconds
+					(wallet.docs[0].get("createdAt") as FireTimestamp).seconds
 				),
-				nanos: (wallet.docs[0].get('createdAt') as FireTimestamp).nanoseconds,
+				nanos: (wallet.docs[0].get("createdAt") as FireTimestamp).nanoseconds,
 			},
 			updateTime: {
 				seconds: BigInt(
-					(wallet.docs[0].get('updatedAt') as FireTimestamp).seconds
+					(wallet.docs[0].get("updatedAt") as FireTimestamp).seconds
 				),
-				nanos: (wallet.docs[0].get('updatedAt') as FireTimestamp).nanoseconds,
+				nanos: (wallet.docs[0].get("updatedAt") as FireTimestamp).nanoseconds,
 			},
 		},
 	};
@@ -134,7 +134,7 @@ async function createTransactions(
 			);
 
 			if (!account.exists) {
-				throw new ExpectedError('Account Does Not Exist', Reason.BAD_STATE);
+				throw new ExpectedError("Account Does Not Exist", Reason.BAD_STATE);
 			}
 		})
 	);
@@ -145,7 +145,7 @@ async function createTransactions(
 		} else if (transaction.type === TransactionType.DEBIT) {
 			accountBalances[transaction.accountId] -= transaction.amount;
 		} else {
-			throw new ExpectedError('Invalid Transaction Type', Reason.BAD_STATE);
+			throw new ExpectedError("Invalid Transaction Type", Reason.BAD_STATE);
 		}
 	});
 
@@ -160,7 +160,7 @@ async function createTransactions(
 			transactionData[transactionId] = {
 				accountId,
 				amount: Math.abs(amount),
-				type: amount > 0 ? 'CREDIT' : 'DEBIT',
+				type: amount > 0 ? "CREDIT" : "DEBIT",
 			};
 		}
 	});
@@ -184,20 +184,20 @@ async function getTransaction(
 	);
 
 	if (!doc.exists) {
-		throw new ExpectedError('Transaction Not Found', Reason.NOT_FOUND);
+		throw new ExpectedError("Transaction Not Found", Reason.NOT_FOUND);
 	}
 
 	return {
 		transaction: {
 			transactionId: doc.id,
-			accountId: doc.get('accountId') as string,
-			amount: doc.get('amount') as number,
+			accountId: doc.get("accountId") as string,
+			amount: doc.get("amount") as number,
 			createTime: {
-				seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
-				nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
+				seconds: BigInt((doc.get("timestamp") as FireTimestamp).seconds),
+				nanos: (doc.get("timestamp") as FireTimestamp).nanoseconds,
 			},
-			type: doc.get('type') as TransactionType,
-			batchId: doc.get('batchId') as string,
+			type: doc.get("type") as TransactionType,
+			batchId: doc.get("batchId") as string,
 		},
 	};
 }
@@ -211,21 +211,21 @@ async function listTransactionsByBatchId(
 		);
 
 	if (snap.empty) {
-		throw new ExpectedError('Transactions Not Found', Reason.NOT_FOUND);
+		throw new ExpectedError("Transactions Not Found", Reason.NOT_FOUND);
 	}
 
 	return {
 		transactions: snap.docs.map((doc) => {
 			return {
 				transactionId: doc.id,
-				accountId: doc.get('accountId') as string,
-				amount: doc.get('amount') as number,
+				accountId: doc.get("accountId") as string,
+				amount: doc.get("amount") as number,
 				createTime: {
-					seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
-					nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
+					seconds: BigInt((doc.get("timestamp") as FireTimestamp).seconds),
+					nanos: (doc.get("timestamp") as FireTimestamp).nanoseconds,
 				},
-				type: doc.get('type') as TransactionType,
-				batchId: doc.get('batchId') as string,
+				type: doc.get("type") as TransactionType,
+				batchId: doc.get("batchId") as string,
 			};
 		}),
 	};
@@ -243,14 +243,14 @@ async function listTransactionsByAccountId(
 		transactions: transactionSnaps.map((doc) => {
 			return {
 				transactionId: doc.id,
-				accountId: doc.get('accountId') as string,
-				amount: doc.get('amount') as number,
+				accountId: doc.get("accountId") as string,
+				amount: doc.get("amount") as number,
 				createTime: {
-					seconds: BigInt((doc.get('timestamp') as FireTimestamp).seconds),
-					nanos: (doc.get('timestamp') as FireTimestamp).nanoseconds,
+					seconds: BigInt((doc.get("timestamp") as FireTimestamp).seconds),
+					nanos: (doc.get("timestamp") as FireTimestamp).nanoseconds,
 				},
-				type: doc.get('type') as TransactionType,
-				batchId: doc.get('batchId') as string,
+				type: doc.get("type") as TransactionType,
+				batchId: doc.get("batchId") as string,
 			};
 		}),
 	};

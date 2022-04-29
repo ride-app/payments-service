@@ -2,14 +2,14 @@
  * @group api/create-transactions
  */
 
-import { status } from '@grpc/grpc-js';
-import { createTransactions } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/gen/ride/wallet/v1/wallet_service.grpc-client';
-import { ExpectedError } from '../../src/errors/expected-error';
-import { closeTestClient, startTestClient } from '../utils/test-client';
-import { TransactionType } from '../../src/gen/ride/wallet/v1/wallet_service';
+import { status } from "@grpc/grpc-js";
+import { createTransactions } from "../../src/wallet-service";
+import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
+import { ExpectedError } from "../../src/errors/expected-error";
+import { closeTestClient, startTestClient } from "../utils/test-client";
+import { TransactionType } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-jest.mock('../../src/wallet-service');
+jest.mock("../../src/wallet-service");
 const mockedCreateTransactions = jest.mocked(createTransactions);
 
 let client: WalletServiceClient;
@@ -18,10 +18,10 @@ beforeAll(async () => {
 	client = await startTestClient();
 });
 
-describe('Create Transaction', () => {
+describe("Create Transaction", () => {
 	mockedCreateTransactions.mockResolvedValue({
-		transactionIds: ['1', '2'],
-		batchId: '3',
+		transactionIds: ["1", "2"],
+		batchId: "3",
 	});
 
 	afterEach(mockedCreateTransactions.mockClear);
@@ -39,7 +39,7 @@ describe('Create Transaction', () => {
 	// 	});
 	// });
 
-	it('When transactions is empty returns INVALID_ARGUMENT error', () => {
+	it("When transactions is empty returns INVALID_ARGUMENT error", () => {
 		return new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
@@ -50,25 +50,25 @@ describe('Create Transaction', () => {
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INVALID_ARGUMENT);
-					expect(err?.details).toBe('transactions is empty');
+					expect(err?.details).toBe("transactions is empty");
 					resolve();
 				}
 			);
 		});
 	});
 
-	it('When accountID is empty for a transaction returns INVALID_ARGUMENT error', () => {
+	it("When accountID is empty for a transaction returns INVALID_ARGUMENT error", () => {
 		return new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [
 						{
-							accountId: 'test-account-id',
+							accountId: "test-account-id",
 							type: TransactionType.CREDIT,
 							amount: 1,
 						},
 						{
-							accountId: '',
+							accountId: "",
 							type: TransactionType.DEBIT,
 							amount: 1,
 						},
@@ -79,7 +79,7 @@ describe('Create Transaction', () => {
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INVALID_ARGUMENT);
-					expect(err?.details).toBe('accountId is empty for transaction 1');
+					expect(err?.details).toBe("accountId is empty for transaction 1");
 					resolve();
 				}
 			);
@@ -117,18 +117,18 @@ describe('Create Transaction', () => {
 	// 	});
 	// });
 
-	it('When amount is negative for a transaction returns INVALID_ARGUMENT error', () => {
+	it("When amount is negative for a transaction returns INVALID_ARGUMENT error", () => {
 		return new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [
 						{
-							accountId: 'test-account-id',
+							accountId: "test-account-id",
 							type: TransactionType.CREDIT,
 							amount: 1,
 						},
 						{
-							accountId: 'test-account-id',
+							accountId: "test-account-id",
 							type: TransactionType.DEBIT,
 							amount: -1,
 						},
@@ -140,7 +140,7 @@ describe('Create Transaction', () => {
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INVALID_ARGUMENT);
 					expect(err?.details).toBe(
-						'Transaction amount must be positive. Got -1 for transaction 1'
+						"Transaction amount must be positive. Got -1 for transaction 1"
 					);
 					resolve();
 				}
@@ -148,9 +148,9 @@ describe('Create Transaction', () => {
 		});
 	});
 
-	it('When throws internal error should return INTERNAL error', () => {
+	it("When throws internal error should return INTERNAL error", () => {
 		mockedCreateTransactions.mockImplementationOnce(async () => {
-			throw new ExpectedError('Internal Error');
+			throw new ExpectedError("Internal Error");
 		});
 
 		return new Promise<void>((resolve) => {
@@ -158,7 +158,7 @@ describe('Create Transaction', () => {
 				{
 					transactions: [
 						{
-							accountId: 'test-account-id',
+							accountId: "test-account-id",
 							amount: 0,
 							type: TransactionType.CREDIT,
 						},
@@ -169,18 +169,18 @@ describe('Create Transaction', () => {
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INTERNAL);
-					expect(err?.details).toBe('Internal Error');
+					expect(err?.details).toBe("Internal Error");
 					resolve();
 				}
 			);
 		});
 	});
 
-	it('When request is valid returns batchId and transaction ids', () => {
+	it("When request is valid returns batchId and transaction ids", () => {
 		mockedCreateTransactions.mockImplementationOnce(async () => {
 			return {
-				batchId: 'test-batchId',
-				transactionIds: ['test-transactionId-1', 'test-transactionId-2'],
+				batchId: "test-batchId",
+				transactionIds: ["test-transactionId-1", "test-transactionId-2"],
 			};
 		});
 
@@ -189,12 +189,12 @@ describe('Create Transaction', () => {
 				{
 					transactions: [
 						{
-							accountId: 'test-account-id-1',
+							accountId: "test-account-id-1",
 							amount: 10,
 							type: TransactionType.CREDIT,
 						},
 						{
-							accountId: 'test-account-id-2',
+							accountId: "test-account-id-2",
 							amount: 20,
 							type: TransactionType.DEBIT,
 						},
@@ -205,8 +205,8 @@ describe('Create Transaction', () => {
 					expect(err).toBeFalsy();
 					expect(res).toBeDefined();
 					expect(res).toStrictEqual({
-						batchId: 'test-batchId',
-						transactionIds: ['test-transactionId-1', 'test-transactionId-2'],
+						batchId: "test-batchId",
+						transactionIds: ["test-transactionId-1", "test-transactionId-2"],
 					});
 					resolve();
 				}

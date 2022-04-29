@@ -11,7 +11,7 @@ class ExpectedError extends Error {
 
 	constructor(message: string, reason: Reason = Reason.INTERNAL) {
 		super(message);
-		this.name = 'ExpectedError';
+		this.name = "ExpectedError";
 		this.reason = reason;
 	}
 }

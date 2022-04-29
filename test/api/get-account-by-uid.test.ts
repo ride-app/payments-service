@@ -2,15 +2,15 @@
  * @group api/get-account-by-uid
  */
 
-import { status } from '@grpc/grpc-js';
-import { getAccountByUid } from '../../src/wallet-service';
-import { WalletServiceClient } from '../../src/gen/ride/wallet/v1/wallet_service.grpc-client';
-import { Account } from '../../src/gen/ride/wallet/v1/wallet_service';
-import { ExpectedError, Reason } from '../../src/errors/expected-error';
-import { closeTestClient, startTestClient } from '../utils/test-client';
-import { Timestamp } from '../../src/gen/google/protobuf/timestamp';
+import { status } from "@grpc/grpc-js";
+import { getAccountByUid } from "../../src/wallet-service";
+import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
+import { Account } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { ExpectedError, Reason } from "../../src/errors/expected-error";
+import { closeTestClient, startTestClient } from "../utils/test-client";
+import { Timestamp } from "../../src/gen/google/protobuf/timestamp";
 
-jest.mock('../../src/wallet-service');
+jest.mock("../../src/wallet-service");
 const mockedGetAccountByUid = jest.mocked(getAccountByUid);
 
 let client: WalletServiceClient;
@@ -21,7 +21,7 @@ beforeAll(async () => {
 
 afterAll(closeTestClient);
 
-describe('Get Account By uid', () => {
+describe("Get Account By uid", () => {
 	mockedGetAccountByUid.mockImplementation(async () => {
 		return {};
 	});
@@ -41,57 +41,57 @@ describe('Get Account By uid', () => {
 	// 	});
 	// });
 
-	it('When uid is empty string returns INVALID_ARGUMENT error', () => {
+	it("When uid is empty string returns INVALID_ARGUMENT error", () => {
 		return new Promise<void>((resolve) => {
-			client.getAccountByUid({ uid: '' }, (err, res) => {
+			client.getAccountByUid({ uid: "" }, (err, res) => {
 				expect(mockedGetAccountByUid).toHaveBeenCalledTimes(0);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.INVALID_ARGUMENT);
-				expect(err?.details).toBe('uid is empty');
+				expect(err?.details).toBe("uid is empty");
 				resolve();
 			});
 		});
 	});
 
-	it('When throws NOT_FOUND return NOT_FOUND error', () => {
+	it("When throws NOT_FOUND return NOT_FOUND error", () => {
 		mockedGetAccountByUid.mockImplementationOnce(async () => {
-			throw new ExpectedError('Account Does Not Exist', Reason.NOT_FOUND);
+			throw new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND);
 		});
 
 		return new Promise<void>((resolve) => {
-			client.getAccountByUid({ uid: 'test-uid' }, (err, res) => {
+			client.getAccountByUid({ uid: "test-uid" }, (err, res) => {
 				expect(mockedGetAccountByUid).toHaveBeenCalledTimes(1);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.NOT_FOUND);
-				expect(err?.details).toBe('Account Does Not Exist');
+				expect(err?.details).toBe("Account Does Not Exist");
 				resolve();
 			});
 		});
 	});
 
-	it('When throws internal error should return INTERNAL error', () => {
+	it("When throws internal error should return INTERNAL error", () => {
 		mockedGetAccountByUid.mockImplementationOnce(async () => {
-			throw new ExpectedError('Internal Error');
+			throw new ExpectedError("Internal Error");
 		});
 
 		return new Promise<void>((resolve) => {
-			client.getAccountByUid({ uid: 'test-uid' }, (err, res) => {
+			client.getAccountByUid({ uid: "test-uid" }, (err, res) => {
 				expect(mockedGetAccountByUid).toHaveBeenCalledTimes(1);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.INTERNAL);
-				expect(err?.details).toBe('Internal Error');
+				expect(err?.details).toBe("Internal Error");
 				resolve();
 			});
 		});
 	});
 
-	it('When uid is valid returns Account', () => {
+	it("When uid is valid returns Account", () => {
 		const account: Account = {
-			accountId: 'test-account-id',
-			uid: 'test-uid',
+			accountId: "test-account-id",
+			uid: "test-uid",
 			balance: 0,
 			createTime: Timestamp.fromDate(new Date()),
 			updateTime: Timestamp.fromDate(new Date()),
@@ -102,7 +102,7 @@ describe('Get Account By uid', () => {
 		});
 
 		return new Promise<void>((resolve) => {
-			client.getAccountByUid({ uid: 'test-uid' }, (err, res) => {
+			client.getAccountByUid({ uid: "test-uid" }, (err, res) => {
 				expect(mockedGetAccountByUid).toHaveBeenCalledTimes(1);
 				expect(err).toBeFalsy();
 				expect(res).toBeDefined();

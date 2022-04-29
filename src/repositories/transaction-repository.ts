@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
-import { FieldValue, Firestore, getFirestore } from 'firebase-admin/firestore';
-import { ExpectedError, Reason } from '../errors/expected-error';
+import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
+import { ExpectedError, Reason } from "../errors/expected-error";
 
 type CreateTransactionMutationData = {
 	accountId: string;
 	amount: number;
-	type: 'CREDIT' | 'DEBIT';
+	type: "CREDIT" | "DEBIT";
 };
 
 class TransactionRepository {
@@ -32,7 +32,7 @@ class TransactionRepository {
 		}
 	) {
 		const transactionRef =
-			TransactionRepository._firestore.collection('transactions');
+			TransactionRepository._firestore.collection("transactions");
 		const batch = TransactionRepository._firestore.batch();
 
 		Object.entries(transactions).forEach(([transactionId, transaction]) => {
@@ -51,15 +51,15 @@ class TransactionRepository {
 
 	getTransactionQuery(transactionId: string) {
 		return TransactionRepository._firestore
-			.collection('transactions')
+			.collection("transactions")
 			.doc(transactionId)
 			.get();
 	}
 
 	listTransactionsByBatchIdQuery(batchId: string) {
 		return TransactionRepository._firestore
-			.collection('transactions')
-			.where('batchId', '==', batchId)
+			.collection("transactions")
+			.where("batchId", "==", batchId)
 			.get();
 	}
 
@@ -67,20 +67,20 @@ class TransactionRepository {
 		return TransactionRepository._firestore.runTransaction(
 			async (transaction) => {
 				const wallet = await transaction.get(
-					TransactionRepository._firestore.collection('wallets').doc(accountId)
+					TransactionRepository._firestore.collection("wallets").doc(accountId)
 				);
 
 				if (wallet.exists === false) {
-					throw new ExpectedError('Account Does Not Exist', Reason.BAD_STATE);
+					throw new ExpectedError("Account Does Not Exist", Reason.BAD_STATE);
 				}
 				const snap = await transaction.get(
 					TransactionRepository._firestore
-						.collection('transactions')
-						.where('accountId', '==', accountId)
+						.collection("transactions")
+						.where("accountId", "==", accountId)
 				);
 
 				if (snap.empty) {
-					throw new ExpectedError('No Transactions Found', Reason.NOT_FOUND);
+					throw new ExpectedError("No Transactions Found", Reason.NOT_FOUND);
 				}
 
 				return snap.docs;
