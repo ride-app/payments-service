@@ -40,7 +40,7 @@
     "jest": "^27.5.1",
     "jest-node-exports-resolver": "^1.1.6",
     "jest-runner-groups": "^2.2.0",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.16",
     "prettier": "^2.6.2",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
