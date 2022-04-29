@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/ride/wallet-service
+name: buf.build/ride/wallet
 breaking:
   use:
     - FILE
