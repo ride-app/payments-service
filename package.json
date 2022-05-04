@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
-    "@grpc/proto-loader": "^0.6.9",
+    "@grpc/proto-loader": "^0.6.11",
     "firebase-admin": "^10.1.0"
   },
   "devDependencies": {
