@@ -1,5 +1,5 @@
 /**
- * @group integration/get-account-by-uid
+ * @group integration/get-wallet-by-uid
  */
 
 import { App, deleteApp, initializeApp } from "firebase-admin/app";
@@ -11,9 +11,9 @@ import {
 } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
-import { GetAccountByUidRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { GetWalletByUidRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { getAccountByUid } from "../../src/wallet-service";
+import { getWalletByUid } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -31,7 +31,7 @@ afterAll(async () => {
 	await deleteApp(app);
 });
 
-describe("Get Account By Uid", () => {
+describe("Get Wallet By Uid", () => {
 	afterEach(async () => {
 		await firestore.recursiveDelete(
 			firestore.collection("wallets"),
@@ -39,22 +39,22 @@ describe("Get Account By Uid", () => {
 		);
 	});
 
-	describe("Given Account Does not Exist", () => {
+	describe("Given Wallet Does not Exist", () => {
 		it("returns NOT_FOUND error", async () => {
-			const req: GetAccountByUidRequest = {
+			const req: GetWalletByUidRequest = {
 				uid: "test-uid",
 			};
 
 			await expect(async () => {
-				await getAccountByUid(req);
+				await getWalletByUid(req);
 			}).rejects.toThrow(
-				new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND)
+				new ExpectedError("Wallet Does Not Exist", Reason.NOT_FOUND)
 			);
 		});
 	});
 
-	describe("Given Account Already Exists", () => {
-		const existingAccountData = {
+	describe("Given Wallet Already Exists", () => {
+		const existingWalletData = {
 			uid: "test-uid",
 			balance: 0,
 			createdAt: FieldValue.serverTimestamp(),
@@ -64,21 +64,21 @@ describe("Get Account By Uid", () => {
 		beforeAll(async () => {
 			await firestore
 				.collection("wallets")
-				.doc("test-account-id")
-				.set(existingAccountData);
+				.doc("test-wallet-id")
+				.set(existingWalletData);
 		});
 
-		it("returns Account object", async () => {
-			const req: GetAccountByUidRequest = {
+		it("returns Wallet object", async () => {
+			const req: GetWalletByUidRequest = {
 				uid: "test-uid",
 			};
 
-			const res = await getAccountByUid(req);
+			const res = await getWalletByUid(req);
 
 			expect(res).toEqual({
-				account: {
-					accountId: "test-account-id",
-					balance: existingAccountData.balance,
+				wallet: {
+					walletId: "test-wallet-id",
+					balance: existingWalletData.balance,
 					uid: req.uid,
 					createTime: expect.objectContaining({
 						seconds: expect.any(BigInt),

@@ -58,5 +58,5 @@ jobs:
       - name: Build and Upload
         uses: docker/build-push-action@v2
         with:
-          tags: ghcr.io/${{SERVICE_NAME}}:${{GITHUB_SHA::8}}
+          tags: ghcr.io/${{env.SERVICE_NAME}}:${{github.sha}}
           push: true

@@ -1,3 +1,5 @@
 version: v1
 directories:
-  - protos
+  - protos/wallet-service
+  - protos/payout-service
+  - protos/recharge-service

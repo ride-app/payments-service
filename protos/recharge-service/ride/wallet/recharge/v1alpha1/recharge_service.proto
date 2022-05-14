@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/money.proto";
+import "google/api/annotations.proto";
+
+package ride.wallet.recharge.v1aplha1;
+
+service RechargeService {
+  rpc CreateRecharge(CreateRechargeRequest) returns (CreateRechargeResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=wallets/*}/recharges/{recharge_id}"
+      body: "*"
+    };
+  }
+
+  rpc GetRecharge(GetRechargeRequest) returns (GetRechargeResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=wallets/*/recharges/*}"
+    };
+  }
+
+  rpc ListRecharges(ListRechargesRequest) returns (ListRechargesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=wallets/*}/recharges"
+    };
+  }
+}
+
+message Recharge {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+
+  string recharge_id = 1;
+  google.type.Money amount = 2;
+  Status status = 3;
+  google.protobuf.Timestamp create_time = 4;
+  // Only available when status is STATUS_SUCCESS
+  optional string transaction_id = 5;
+  // Only available when status is STATUS_FAILED
+  optional string failure_reason = 6;
+}
+
+message CreateRechargeRequest {
+  // The parent wallet name where the Recharge is to be created. example: "wallets/wallet1"
+  string parent = 1;
+
+  // The Recharge amount.
+  google.type.Money amount = 2;
+}
+
+message CreateRechargeResponse {
+  // The created Recharge
+  Recharge recharge = 1;
+}
+
+message GetRechargeRequest {
+  // Relative Resource name of the Recharge, for example, "wallets/wallet1/recharges/recharge1"
+  string name = 1;
+}
+
+message GetRechargeResponse {
+  // The requested recharge.
+  Recharge recharge = 1;
+}
+
+message ListRechargesRequest {
+  // The parent wallet name, for example, "wallets/wallet1"
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListRechargesResponse {
+  // There will be a maximum number of items returned based on the page_size field in the request.
+  repeated Recharge recharges = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}

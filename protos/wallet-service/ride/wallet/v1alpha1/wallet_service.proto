@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/money.proto";
+import "google/api/annotations.proto";
+
+package ride.wallet.v1alpha1;
+
+service WalletService {
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/wallets"
+      body: "*"
+    };
+  }
+  rpc GetWallet(GetWalletRequest) returns (GetWalletResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/wallets/{wallet_id}"
+    };
+  }
+  rpc GetWalletByUid(GetWalletByUidRequest) returns (GetWalletByUidResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/wallets?uid={uid}"
+    };
+  }
+
+  rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/wallets/-/transactions",
+      body: "*"
+    };
+  }
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/wallets/{wallet_id}/transactions/{transaction_id}"
+    };
+  }
+  rpc ListTransactionsByBatchId(ListTransactionsByBatchIdRequest) returns (ListTransactionsByBatchIdResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/wallets/-/transactions?batch_id={batch_id}"
+    };
+  }
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/wallets/{wallet_id}/transactions"
+    };
+  }
+}
+
+message Wallet {
+  string wallet_id = 1;
+  string uid = 2;
+  int32 balance = 3;
+  google.protobuf.Timestamp create_time = 7;
+  google.protobuf.Timestamp update_time = 8;
+}
+
+message CreateWalletRequest {
+  string uid = 1;
+}
+
+message CreateWalletResponse {
+  Wallet wallet = 1;
+}
+
+message GetWalletRequest {
+  string wallet_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message GetWalletResponse {
+  Wallet wallet = 1;
+}
+
+message GetWalletByUidRequest {
+  string uid = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message GetWalletByUidResponse {
+  Wallet wallet = 1;
+}
+
+enum TransactionType {
+  TRANSACTION_TYPE_UNSPECIFIED = 0;
+  TRANSACTION_TYPE_DEBIT = 1;
+  TRANSACTION_TYPE_CREDIT = 2;
+};
+
+message Transaction {
+  string transaction_id = 1;
+  string wallet_id = 2;
+  int32 amount = 3;
+  TransactionType type = 4;
+  string batch_id = 5;
+  google.protobuf.Timestamp create_time = 6;
+}
+
+message CreateTransactionsRequest {
+  repeated Entry transactions = 2;
+
+  message Entry {
+    string wallet_id = 2;
+    int32 amount = 3;
+    TransactionType type = 4;
+  }
+}
+
+message CreateTransactionsResponse {
+  string batch_id = 1;
+  repeated string transaction_ids = 2;
+}
+
+message GetTransactionRequest {
+  string transaction_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message GetTransactionResponse {
+  Transaction transaction = 1;
+}
+
+message ListTransactionsByBatchIdRequest {
+  string batch_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message ListTransactionsByBatchIdResponse {
+  repeated Transaction transactions = 1;
+}
+
+message ListTransactionsRequest {
+  string wallet_id = 1;
+  optional google.protobuf.FieldMask field_mask = 99;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+}

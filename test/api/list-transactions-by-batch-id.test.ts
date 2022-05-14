@@ -3,7 +3,7 @@
  */
 
 import { status } from "@grpc/grpc-js";
-import { listTransactionsByBatchId } from "../../src/wallet-service";
+import { listTransactionsByBatchId } from "../../src/wallet-service/wallet-service";
 import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
 import { ExpectedError, Reason } from "../../src/errors/expected-error";
 import { closeTestClient, startTestClient } from "../utils/test-client";
@@ -39,8 +39,8 @@ describe("Get Transactions by Batch Id", () => {
 	// 	});
 	// });
 
-	it("When batchId is empty string returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
+	it("When batchId is empty string returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
 			client.listTransactionsByBatchId({ batchId: "" }, (err, res) => {
 				expect(mockedListTransactionsByBatchId).toHaveBeenCalledTimes(0);
 				expect(err).toBeDefined();
@@ -49,8 +49,7 @@ describe("Get Transactions by Batch Id", () => {
 				expect(err?.details).toBe("batchId is empty");
 				resolve();
 			});
-		});
-	});
+		}));
 
 	it("When throws NOT_FOUND return NOT_FOUND error", () => {
 		mockedListTransactionsByBatchId.mockImplementation(async () => {
@@ -94,7 +93,7 @@ describe("Get Transactions by Batch Id", () => {
 			transactions: [
 				{
 					transactionId: "test-transaction-id-1",
-					accountId: "test-account-id-1",
+					walletId: "test-wallet-id-1",
 					amount: 10,
 					type: TransactionType.CREDIT,
 					createTime: Timestamp.fromDate(new Date()),
@@ -102,7 +101,7 @@ describe("Get Transactions by Batch Id", () => {
 				},
 				{
 					transactionId: "test-transaction-id-2",
-					accountId: "test-account-id-2",
+					walletId: "test-wallet-id-2",
 					amount: 20,
 					type: TransactionType.CREDIT,
 					createTime: Timestamp.fromDate(new Date()),

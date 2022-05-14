@@ -4,7 +4,7 @@ import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../errors/expected-error";
 
 type CreateTransactionMutationData = {
-	accountId: string;
+	walletId: string;
 	amount: number;
 	type: "CREDIT" | "DEBIT";
 };
@@ -37,7 +37,7 @@ class TransactionRepository {
 
 		Object.entries(transactions).forEach(([transactionId, transaction]) => {
 			const payload = {
-				accountId: transaction.accountId,
+				accountId: transaction.walletId,
 				amount: Math.abs(transaction.amount),
 				timestamp: FieldValue.serverTimestamp(),
 				type: transaction.type,
@@ -63,7 +63,7 @@ class TransactionRepository {
 			.get();
 	}
 
-	listTransactionsByAccountIdTransaction(accountId: string) {
+	listTransactionsByWalletIdTransaction(accountId: string) {
 		return TransactionRepository._firestore.runTransaction(
 			async (transaction) => {
 				const wallet = await transaction.get(
@@ -71,7 +71,7 @@ class TransactionRepository {
 				);
 
 				if (wallet.exists === false) {
-					throw new ExpectedError("Account Does Not Exist", Reason.BAD_STATE);
+					throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
 				}
 				const snap = await transaction.get(
 					TransactionRepository._firestore

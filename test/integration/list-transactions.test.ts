@@ -1,5 +1,5 @@
 /**
- * @group integration/list-transactions-by-account-id
+ * @group integration/list-transactions-by-wallet-id
  */
 
 import { App, deleteApp, initializeApp } from "firebase-admin/app";
@@ -11,9 +11,9 @@ import {
 } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
-import { ListTransactionsByAccountIdRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { ListTransactionsRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { listTransactionsByAccountId } from "../../src/wallet-service";
+import { listTransactions } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -38,24 +38,24 @@ describe("Get Transactions By BatchId", () => {
 			bulkWriter
 		);
 	});
-	describe("Given Account Does Not Exist", () => {
+	describe("Given Wallet Does Not Exist", () => {
 		// throws BAD_STATE error
 		it("throws BAD_STATE error", async () => {
-			const req: ListTransactionsByAccountIdRequest = {
-				accountId: "test-account-id",
+			const req: ListTransactionsRequest = {
+				walletId: "test-wallet-id",
 			};
 
 			await expect(async () => {
-				await listTransactionsByAccountId(req);
+				await listTransactions(req);
 			}).rejects.toThrow(
-				new ExpectedError("Account Does Not Exist", Reason.BAD_STATE)
+				new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE)
 			);
 		});
 	});
 
-	describe("Given Account Exists", () => {
+	describe("Given Wallet Exists", () => {
 		beforeAll(async () => {
-			await firestore.collection("wallets").doc("test-account-id").set({});
+			await firestore.collection("wallets").doc("test-wallet-id").set({});
 		});
 
 		afterAll(async () => {
@@ -66,12 +66,12 @@ describe("Get Transactions By BatchId", () => {
 		});
 		describe("When Transactions Do Not Exist", () => {
 			it("throws NOT_FOUND error", async () => {
-				const req: ListTransactionsByAccountIdRequest = {
-					accountId: "test-account-id",
+				const req: ListTransactionsRequest = {
+					walletId: "test-wallet-id",
 				};
 
 				await expect(async () => {
-					await listTransactionsByAccountId(req);
+					await listTransactions(req);
 				}).rejects.toThrow(
 					new ExpectedError("No Transactions Found", Reason.NOT_FOUND)
 				);
@@ -80,20 +80,20 @@ describe("Get Transactions By BatchId", () => {
 
 		describe("When Transactions Already Exist", () => {
 			it("returns the transactions", async () => {
-				const req: ListTransactionsByAccountIdRequest = {
-					accountId: "test-account-id",
+				const req: ListTransactionsRequest = {
+					walletId: "test-wallet-id",
 				};
 
 				const transactions = [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						timestamp: FieldValue.serverTimestamp(),
 						type: "CREDIT",
 						batchId: "test-batch-id-1",
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						timestamp: FieldValue.serverTimestamp(),
 						type: "CREDIT",
@@ -112,12 +112,12 @@ describe("Get Transactions By BatchId", () => {
 
 				await batch.commit();
 
-				const res = await listTransactionsByAccountId(req);
+				const res = await listTransactions(req);
 
 				expect(res.transactions).toEqual([
 					{
 						transactionId: "test-transaction-0",
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						createTime: expect.objectContaining({
 							seconds: expect.any(BigInt),
@@ -128,7 +128,7 @@ describe("Get Transactions By BatchId", () => {
 					},
 					{
 						transactionId: "test-transaction-1",
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						createTime: expect.objectContaining({
 							seconds: expect.any(BigInt),

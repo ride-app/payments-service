@@ -1,17 +1,17 @@
 import { status } from "@grpc/grpc-js";
 import {
-	createAccount,
-	getAccount,
-	getAccountByUid,
+	createWallet,
+	getWallet,
+	getWalletByUid,
 	createTransactions,
 	getTransaction,
+	listTransactions,
 	listTransactionsByBatchId,
-	listTransactionsByAccountId,
 } from "./wallet-service";
-import { ExpectedError, Reason } from "./errors/expected-error";
+import { ExpectedError, Reason } from "../errors/expected-error";
 
-import { IWalletService } from "./gen/ride/wallet/v1alpha1/wallet_service.grpc-server";
-import { TransactionType } from "./gen/ride/wallet/v1alpha1/wallet_service";
+import { IWalletService } from "../gen/ride/wallet/v1alpha1/wallet_service.grpc-server";
+import { TransactionType } from "../gen/ride/wallet/v1alpha1/wallet_service";
 
 function handleError(callback: CallableFunction, error: unknown) {
 	let code = status.INTERNAL;
@@ -45,32 +45,32 @@ function handleError(callback: CallableFunction, error: unknown) {
 }
 
 const handlers: IWalletService = {
-	createAccount: async (call, callback) => {
+	createWallet: async (call, callback) => {
 		try {
 			if (call.request.uid === "") {
 				throw new ExpectedError("uid is empty", Reason.INVALID_ARGUMENT);
 			}
-			callback(null, await createAccount(call.request));
+			callback(null, await createWallet(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	getAccount: async (call, callback) => {
+	getWallet: async (call, callback) => {
 		try {
-			if (call.request.accountId === "") {
+			if (call.request.walletId === "") {
 				throw new ExpectedError("accountId is empty", Reason.INVALID_ARGUMENT);
 			}
-			callback(null, await getAccount(call.request));
+			callback(null, await getWallet(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	getAccountByUid: async (call, callback) => {
+	getWalletByUid: async (call, callback) => {
 		try {
 			if (call.request.uid === "") {
 				throw new ExpectedError("uid is empty", Reason.INVALID_ARGUMENT);
 			}
-			callback(null, await getAccountByUid(call.request));
+			callback(null, await getWalletByUid(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
@@ -85,7 +85,7 @@ const handlers: IWalletService = {
 			}
 
 			call.request.transactions.every((transaction, i) => {
-				if (transaction.accountId === "") {
+				if (transaction.walletId === "") {
 					throw new ExpectedError(
 						`accountId is empty for transaction ${i}`,
 						Reason.INVALID_ARGUMENT
@@ -134,12 +134,12 @@ const handlers: IWalletService = {
 			handleError(callback, error);
 		}
 	},
-	listTransactionsByAccountId: async (call, callback) => {
+	listTransactions: async (call, callback) => {
 		try {
-			if (call.request.accountId === "") {
+			if (call.request.walletId === "") {
 				throw new ExpectedError("accountId is empty", Reason.INVALID_ARGUMENT);
 			}
-			callback(null, await listTransactionsByAccountId(call.request));
+			callback(null, await listTransactions(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}

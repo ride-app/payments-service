@@ -16,7 +16,7 @@ import {
 	TransactionType,
 } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { createTransactions } from "../../src/wallet-service";
+import { createTransactions } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -42,12 +42,12 @@ describe("Create Transactions", () => {
 		);
 	});
 
-	describe("Given Account Does Not Exist", () => {
-		it("When transactions contains that account throws BAD_STATE error", async () => {
+	describe("Given Wallet Does Not Exist", () => {
+		it("When transactions contains that wallet throws BAD_STATE error", async () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
@@ -55,17 +55,17 @@ describe("Create Transactions", () => {
 			};
 
 			await expect(createTransactions(req)).rejects.toThrow(
-				new ExpectedError("Account Does Not Exist", Reason.BAD_STATE)
+				new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE)
 			);
 		});
 
-		it("When transactions does not contain that account returns createTransactionsResponse", async () => {
-			await firestore.collection("wallets").doc("test-account-id").set({});
+		it("When transactions does not contain that wallet returns createTransactionsResponse", async () => {
+			await firestore.collection("wallets").doc("test-wallet-id").set({});
 
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
@@ -85,7 +85,7 @@ describe("Create Transactions", () => {
 
 			expect(snap.exists).toBe(true);
 			expect(snap.data()).toEqual({
-				accountId: "test-account-id",
+				walletId: "test-wallet-id",
 				amount: 10,
 				type: "CREDIT",
 				timestamp: expect.any(Timestamp),
@@ -99,11 +99,11 @@ describe("Create Transactions", () => {
 		});
 	});
 
-	describe("Given Given All Accounts Exist", () => {
+	describe("Given Given All Wallets Exist", () => {
 		beforeAll(async () => {
-			await firestore.collection("wallets").doc("test-account-id").set({});
-			await firestore.collection("wallets").doc("test-account-id-1").set({});
-			await firestore.collection("wallets").doc("test-account-id-2").set({});
+			await firestore.collection("wallets").doc("test-wallet-id").set({});
+			await firestore.collection("wallets").doc("test-wallet-id-1").set({});
+			await firestore.collection("wallets").doc("test-wallet-id-2").set({});
 		});
 
 		afterAll(async () => {
@@ -117,17 +117,17 @@ describe("Create Transactions", () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id-1",
+						walletId: "test-wallet-id-1",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id-2",
+						walletId: "test-wallet-id-2",
 						amount: 10,
 						type: TransactionType.DEBIT,
 					},
@@ -147,21 +147,21 @@ describe("Create Transactions", () => {
 			expect(snap.docs.length).toBe(3);
 		});
 
-		it("When multiple transaction to the same account is present then aggregates them to 1 transaction", async () => {
+		it("When multiple transaction to the same wallet is present then aggregates them to 1 transaction", async () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 100,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.DEBIT,
 					},
@@ -178,7 +178,7 @@ describe("Create Transactions", () => {
 
 			expect(snap.exists).toBe(true);
 			expect(snap.data()).toEqual({
-				accountId: "test-account-id",
+				walletId: "test-wallet-id",
 				amount: 100,
 				type: "CREDIT",
 				timestamp: expect.any(Timestamp),
@@ -186,16 +186,16 @@ describe("Create Transactions", () => {
 			});
 		});
 
-		it("When sum of all transactions to an account is 0 then makes no transaction against the account", async () => {
+		it("When sum of all transactions to an wallet is 0 then makes no transaction against the wallet", async () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.DEBIT,
 					},
@@ -210,16 +210,16 @@ describe("Create Transactions", () => {
 			expect(snap.empty).toBe(true);
 		});
 
-		it("When sum of all transactions to an account is positive then adds transaction with transaction type credit", async () => {
+		it("When sum of all transactions to an wallet is positive then adds transaction with transaction type credit", async () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 20,
 						type: TransactionType.CREDIT,
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.DEBIT,
 					},
@@ -236,7 +236,7 @@ describe("Create Transactions", () => {
 
 			expect(snap.exists).toBe(true);
 			expect(snap.data()).toEqual({
-				accountId: "test-account-id",
+				walletId: "test-wallet-id",
 				amount: 10,
 				type: "CREDIT",
 				timestamp: expect.any(Timestamp),
@@ -244,16 +244,16 @@ describe("Create Transactions", () => {
 			});
 		});
 
-		it("When sum of all transactions to an account is negative then adds transaction with transaction type debit", async () => {
+		it("When sum of all transactions to an wallet is negative then adds transaction with transaction type debit", async () => {
 			const req: CreateTransactionsRequest = {
 				transactions: [
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 20,
 						type: TransactionType.DEBIT,
 					},
 					{
-						accountId: "test-account-id",
+						walletId: "test-wallet-id",
 						amount: 10,
 						type: TransactionType.CREDIT,
 					},
@@ -270,7 +270,7 @@ describe("Create Transactions", () => {
 
 			expect(snap.exists).toBe(true);
 			expect(snap.data()).toEqual({
-				accountId: "test-account-id",
+				walletId: "test-wallet-id",
 				amount: 10,
 				type: "DEBIT",
 				timestamp: expect.any(Timestamp),

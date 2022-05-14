@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/type/money.proto";
+import "google/api/annotations.proto";
+
+package ride.wallet.payout.v1aplha1;
+
+service PayoutService {
+  rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=wallets/*}/payouts/{payout_id}"
+      body: "*"
+    };
+  }
+
+  rpc GetPayout(GetPayoutRequest) returns (GetPayoutResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=wallets/*/payouts/*}"
+    };
+  }
+
+  rpc ListPayouts(ListPayoutsRequest) returns (ListPayoutsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=wallets/*}/payouts"
+    };
+  }
+}
+
+message Payout {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+
+  string payout_id = 1;
+  google.type.Money amount = 2;
+  Status status = 3;
+  google.protobuf.Timestamp create_time = 4;
+  // Only available when status is STATUS_SUCCESS
+  optional string transaction_id = 5;
+  // Only available when status is STATUS_FAILED
+  optional string failure_reason = 6;
+}
+
+message CreatePayoutRequest {
+  // The parent wallet name where the Payout is to be created. example: "wallets/wallet1"
+  string parent = 1;
+
+  // The Payout amount.
+  google.type.Money amount = 3;
+}
+
+message CreatePayoutResponse {
+  // The created Payout
+  Payout Payout = 1;
+}
+
+message GetPayoutRequest {
+  // Relative Resource name of the Payout, for example, "wallets/wallet1/payouts/payout1"
+  string name = 1;
+}
+
+message GetPayoutResponse {
+  // The requested payout.
+  Payout payout = 1;
+}
+
+message ListPayoutsRequest {
+  // The parent wallet name, for example, "wallets/wallet1"
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListPayoutsResponse {
+  // There will be a maximum number of items returned based on the page_size field in the request.
+  repeated Payout payouts = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}

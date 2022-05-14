@@ -18,7 +18,7 @@
 		"sourceType": "module",
 		"project": ["tsconfig.json", "test/tsconfig.json"]
 	},
-	"plugins": ["@typescript-eslint", "prettier", "jest"],
+	"plugins": ["@typescript-eslint", "jest"],
 	"rules": {
 		"no-console": ["warn", { "allow": ["info", "warn", "error"] }],
 		"@typescript-eslint/no-non-null-assertion": "off",

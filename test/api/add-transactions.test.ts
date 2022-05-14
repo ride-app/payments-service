@@ -3,7 +3,7 @@
  */
 
 import { status } from "@grpc/grpc-js";
-import { createTransactions } from "../../src/wallet-service";
+import { createTransactions } from "../../src/wallet-service/wallet-service";
 import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
 import { ExpectedError } from "../../src/errors/expected-error";
 import { closeTestClient, startTestClient } from "../utils/test-client";
@@ -39,8 +39,8 @@ describe("Create Transaction", () => {
 	// 	});
 	// });
 
-	it("When transactions is empty returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
+	it("When transactions is empty returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [],
@@ -54,21 +54,20 @@ describe("Create Transaction", () => {
 					resolve();
 				}
 			);
-		});
-	});
+		}));
 
-	it("When accountID is empty for a transaction returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
+	it("When walletID is empty for a transaction returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [
 						{
-							accountId: "test-account-id",
+							walletId: "test-wallet-id",
 							type: TransactionType.CREDIT,
 							amount: 1,
 						},
 						{
-							accountId: "",
+							walletId: "",
 							type: TransactionType.DEBIT,
 							amount: 1,
 						},
@@ -79,12 +78,11 @@ describe("Create Transaction", () => {
 					expect(err).toBeDefined();
 					expect(res).toBeUndefined();
 					expect(err?.code).toBe(status.INVALID_ARGUMENT);
-					expect(err?.details).toBe("accountId is empty for transaction 1");
+					expect(err?.details).toBe("walletId is empty for transaction 1");
 					resolve();
 				}
 			);
-		});
-	});
+		}));
 
 	// it('When amount is non integer for a transaction returns INVALID_ARGUMENT error', () => {
 	// 	return new Promise<void>((resolve) => {
@@ -92,12 +90,12 @@ describe("Create Transaction", () => {
 	// 			{
 	// 				transactions: [
 	// 					{
-	// 						accountId: 'test-account-id',
+	// 						walletId: 'test-wallet-id',
 	// 						type: TransactionType.CREDIT,
 	// 						amount: 1,
 	// 					},
 	// 					{
-	// 						accountId: 'test-account-id',
+	// 						walletId: 'test-wallet-id',
 	// 						type: TransactionType.DEBIT,
 	// 						amount: 5.55654,
 	// 					},
@@ -117,18 +115,18 @@ describe("Create Transaction", () => {
 	// 	});
 	// });
 
-	it("When amount is negative for a transaction returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
+	it("When amount is negative for a transaction returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [
 						{
-							accountId: "test-account-id",
+							walletId: "test-wallet-id",
 							type: TransactionType.CREDIT,
 							amount: 1,
 						},
 						{
-							accountId: "test-account-id",
+							walletId: "test-wallet-id",
 							type: TransactionType.DEBIT,
 							amount: -1,
 						},
@@ -145,8 +143,7 @@ describe("Create Transaction", () => {
 					resolve();
 				}
 			);
-		});
-	});
+		}));
 
 	it("When throws internal error should return INTERNAL error", () => {
 		mockedCreateTransactions.mockImplementationOnce(async () => {
@@ -158,7 +155,7 @@ describe("Create Transaction", () => {
 				{
 					transactions: [
 						{
-							accountId: "test-account-id",
+							walletId: "test-wallet-id",
 							amount: 0,
 							type: TransactionType.CREDIT,
 						},
@@ -177,24 +174,22 @@ describe("Create Transaction", () => {
 	});
 
 	it("When request is valid returns batchId and transaction ids", () => {
-		mockedCreateTransactions.mockImplementationOnce(async () => {
-			return {
-				batchId: "test-batchId",
-				transactionIds: ["test-transactionId-1", "test-transactionId-2"],
-			};
-		});
+		mockedCreateTransactions.mockImplementationOnce(async () => ({
+			batchId: "test-batchId",
+			transactionIds: ["test-transactionId-1", "test-transactionId-2"],
+		}));
 
 		return new Promise<void>((resolve) => {
 			client.createTransactions(
 				{
 					transactions: [
 						{
-							accountId: "test-account-id-1",
+							walletId: "test-wallet-id-1",
 							amount: 10,
 							type: TransactionType.CREDIT,
 						},
 						{
-							accountId: "test-account-id-2",
+							walletId: "test-wallet-id-2",
 							amount: 20,
 							type: TransactionType.DEBIT,
 						},

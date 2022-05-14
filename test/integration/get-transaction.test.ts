@@ -13,7 +13,7 @@ import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
 import { GetTransactionRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { getTransaction } from "../../src/wallet-service";
+import { getTransaction } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -53,7 +53,7 @@ describe("Get Transaction", () => {
 			};
 
 			const transaction = {
-				accountId: "test-account-id",
+				walletId: "test-wallet-id",
 				amount: 1234,
 				timestamp: FieldValue.serverTimestamp(),
 				type: "CREDIT",
@@ -69,7 +69,7 @@ describe("Get Transaction", () => {
 
 			expect(result).toBeDefined();
 			expect(result?.transactionId).toBe("test-transaction-id");
-			expect(result?.accountId).toBe("test-account-id");
+			expect(result?.walletId).toBe("test-wallet-id");
 			expect(result?.amount).toBe(transaction.amount);
 			expect(result?.createTime).toBeInstanceOf(Object);
 			expect(result?.type).toBe(transaction.type);

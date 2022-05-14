@@ -1,5 +1,5 @@
 /**
- * @group integration/get-account-by-batch-id
+ * @group integration/get-wallet-by-batch-id
  */
 
 import { App, deleteApp, initializeApp } from "firebase-admin/app";
@@ -13,7 +13,7 @@ import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
 import { ListTransactionsByBatchIdRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { listTransactionsByBatchId } from "../../src/wallet-service";
+import { listTransactionsByBatchId } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -60,14 +60,14 @@ describe("Get Transactions By BatchId", () => {
 
 			const transactions = [
 				{
-					accountId: "test-account-1",
+					walletId: "test-wallet-1",
 					amount: 10,
 					timestamp: FieldValue.serverTimestamp(),
 					type: "CREDIT",
 					batchId: "test-batch-id",
 				},
 				{
-					accountId: "test-account-2",
+					walletId: "test-wallet-2",
 					amount: 10,
 					timestamp: FieldValue.serverTimestamp(),
 					type: "CREDIT",
@@ -91,7 +91,7 @@ describe("Get Transactions By BatchId", () => {
 			expect(res.transactions).toEqual([
 				{
 					transactionId: "test-transaction-0",
-					accountId: "test-account-1",
+					walletId: "test-wallet-1",
 					amount: 10,
 					createTime: expect.objectContaining({
 						seconds: expect.any(BigInt),
@@ -102,7 +102,7 @@ describe("Get Transactions By BatchId", () => {
 				},
 				{
 					transactionId: "test-transaction-1",
-					accountId: "test-account-2",
+					walletId: "test-wallet-2",
 					amount: 10,
 					createTime: expect.objectContaining({
 						seconds: expect.any(BigInt),

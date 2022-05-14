@@ -3,7 +3,7 @@
  */
 
 import { status } from "@grpc/grpc-js";
-import { getTransaction } from "../../src/wallet-service";
+import { getTransaction } from "../../src/wallet-service/wallet-service";
 import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
 import {
 	Transaction,
@@ -40,8 +40,8 @@ describe("Get Transaction", () => {
 	// 	});
 	// });
 
-	it("When transactionId is empty string returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
+	it("When transactionId is empty string returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
 			client.getTransaction({ transactionId: "" }, (err, res) => {
 				expect(mockedGetTransaction).toHaveBeenCalledTimes(0);
 				expect(err).toBeDefined();
@@ -50,8 +50,7 @@ describe("Get Transaction", () => {
 				expect(err?.details).toBe("transactionId is empty");
 				resolve();
 			});
-		});
-	});
+		}));
 
 	it("When throws NOT_FOUND return NOT_FOUND error", () => {
 		mockedGetTransaction.mockImplementationOnce(async () => {
@@ -96,16 +95,14 @@ describe("Get Transaction", () => {
 	it("When transactionId is valid returns Transaction", () => {
 		const transaction: Transaction = {
 			transactionId: "test-transaction-id",
-			accountId: "test-transaction-id",
+			walletId: "test-transaction-id",
 			amount: 10,
 			type: TransactionType.CREDIT,
 			createTime: Timestamp.fromDate(new Date()),
 			batchId: "test-batch-id",
 		};
 
-		mockedGetTransaction.mockImplementationOnce(async () => {
-			return { transaction };
-		});
+		mockedGetTransaction.mockImplementationOnce(async () => ({ transaction }));
 
 		return new Promise<void>((resolve) => {
 			client.getTransaction(

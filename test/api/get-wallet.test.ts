@@ -1,17 +1,17 @@
 /**
- * @group api/get-account
+ * @group api/get-wallet
  */
 
 import { status } from "@grpc/grpc-js";
-import { getAccount } from "../../src/wallet-service";
+import { getWallet } from "../../src/wallet-service/wallet-service";
 import { WalletServiceClient } from "../../src/gen/ride/wallet/v1alpha1/wallet_service.grpc-client";
-import { Account } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { Wallet } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 import { ExpectedError, Reason } from "../../src/errors/expected-error";
 import { closeTestClient, startTestClient } from "../utils/test-client";
 import { Timestamp } from "../../src/gen/google/protobuf/timestamp";
 
 jest.mock("../../src/wallet-service");
-const mockedGetAccount = jest.mocked(getAccount);
+const mockedGetWallet = jest.mocked(getWallet);
 
 let client: WalletServiceClient;
 
@@ -21,64 +21,61 @@ beforeAll(async () => {
 
 afterAll(closeTestClient);
 
-describe("Get Account", () => {
-	mockedGetAccount.mockImplementation(async () => {
-		return {};
-	});
+describe("Get Wallet", () => {
+	mockedGetWallet.mockImplementation(async () => ({}));
 
-	afterEach(mockedGetAccount.mockClear);
+	afterEach(mockedGetWallet.mockClear);
 
-	// it('When accountId is missing returns INVALID_ARGUMENT error', () => {
+	// it('When walletId is missing returns INVALID_ARGUMENT error', () => {
 	// 	return new Promise<void>((resolve) => {
-	// 		client.getAccount({}, (err, res) => {
-	// 			expect(mockedGetAccount).toHaveBeenCalledTimes(0);
+	// 		client.getWallet({}, (err, res) => {
+	// 			expect(mockedGetWallet).toHaveBeenCalledTimes(0);
 	// 			expect(err).toBeDefined();
 	// 			expect(res).toBeUndefined();
 	// 			expect(err?.code).toBe(status.INVALID_ARGUMENT);
-	// 			expect(err?.details).toBe('accountId is empty');
+	// 			expect(err?.details).toBe('walletId is empty');
 	// 			resolve();
 	// 		});
 	// 	});
 	// });
 
-	it("When accountId is empty string returns INVALID_ARGUMENT error", () => {
-		return new Promise<void>((resolve) => {
-			client.getAccount({ accountId: "" }, (err, res) => {
-				expect(mockedGetAccount).toHaveBeenCalledTimes(0);
+	it("When walletId is empty string returns INVALID_ARGUMENT error", () =>
+		new Promise<void>((resolve) => {
+			client.getWallet({ walletId: "" }, (err, res) => {
+				expect(mockedGetWallet).toHaveBeenCalledTimes(0);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.INVALID_ARGUMENT);
-				expect(err?.details).toBe("accountId is empty");
+				expect(err?.details).toBe("walletId is empty");
 				resolve();
 			});
-		});
-	});
+		}));
 
 	it("When throws NOT_FOUND return NOT_FOUND error", () => {
-		mockedGetAccount.mockImplementationOnce(async () => {
-			throw new ExpectedError("Account Does Not Exist", Reason.NOT_FOUND);
+		mockedGetWallet.mockImplementationOnce(async () => {
+			throw new ExpectedError("Wallet Does Not Exist", Reason.NOT_FOUND);
 		});
 
 		return new Promise<void>((resolve) => {
-			client.getAccount({ accountId: "test-account-id" }, (err, res) => {
-				expect(mockedGetAccount).toHaveBeenCalledTimes(1);
+			client.getWallet({ walletId: "test-wallet-id" }, (err, res) => {
+				expect(mockedGetWallet).toHaveBeenCalledTimes(1);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.NOT_FOUND);
-				expect(err?.details).toBe("Account Does Not Exist");
+				expect(err?.details).toBe("Wallet Does Not Exist");
 				resolve();
 			});
 		});
 	});
 
 	it("When throws internal error should return INTERNAL error", () => {
-		mockedGetAccount.mockImplementationOnce(async () => {
+		mockedGetWallet.mockImplementationOnce(async () => {
 			throw new ExpectedError("Internal Error");
 		});
 
 		return new Promise<void>((resolve) => {
-			client.getAccount({ accountId: "test-account-id" }, (err, res) => {
-				expect(mockedGetAccount).toHaveBeenCalledTimes(1);
+			client.getWallet({ walletId: "test-wallet-id" }, (err, res) => {
+				expect(mockedGetWallet).toHaveBeenCalledTimes(1);
 				expect(err).toBeDefined();
 				expect(res).toBeUndefined();
 				expect(err?.code).toBe(status.INTERNAL);
@@ -88,25 +85,23 @@ describe("Get Account", () => {
 		});
 	});
 
-	it("When accountId is valid returns Account", () => {
-		const account: Account = {
-			accountId: "test-account-id",
+	it("When walletId is valid returns Wallet", () => {
+		const wallet: Wallet = {
+			walletId: "test-wallet-id",
 			uid: "test-uid",
 			balance: 0,
 			createTime: Timestamp.fromDate(new Date()),
 			updateTime: Timestamp.fromDate(new Date()),
 		};
 
-		mockedGetAccount.mockImplementationOnce(async () => {
-			return { account };
-		});
+		mockedGetWallet.mockImplementationOnce(async () => ({ wallet }));
 
 		return new Promise<void>((resolve) => {
-			client.getAccount({ accountId: "test-account-id" }, (err, res) => {
-				expect(mockedGetAccount).toHaveBeenCalledTimes(1);
+			client.getWallet({ walletId: "test-wallet-id" }, (err, res) => {
+				expect(mockedGetWallet).toHaveBeenCalledTimes(1);
 				expect(err).toBeFalsy();
 				expect(res).toBeDefined();
-				expect(res).toStrictEqual({ account });
+				expect(res).toStrictEqual({ wallet });
 				resolve();
 			});
 		});

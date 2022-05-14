@@ -1,5 +1,5 @@
 /**
- * @group integration/create-account
+ * @group integration/create-wallet
  */
 
 import { App, deleteApp, initializeApp } from "firebase-admin/app";
@@ -11,9 +11,9 @@ import {
 } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../../src/errors/expected-error";
 
-import { CreateAccountRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
+import { CreateWalletRequest } from "../../src/gen/ride/wallet/v1alpha1/wallet_service";
 
-import { createAccount } from "../../src/wallet-service";
+import { createWallet } from "../../src/wallet-service/wallet-service";
 
 let app: App;
 let firestore: Firestore;
@@ -31,7 +31,7 @@ afterAll(async () => {
 	await deleteApp(app);
 });
 
-describe("Create Account", () => {
+describe("Create Wallet", () => {
 	afterEach(async () => {
 		await firestore.recursiveDelete(
 			firestore.collection("wallets"),
@@ -39,22 +39,22 @@ describe("Create Account", () => {
 		);
 	});
 
-	describe("Given Account Does not Exist", () => {
-		it("When uid is valid returns Account object", async () => {
-			const request: CreateAccountRequest = {
+	describe("Given Wallet Does not Exist", () => {
+		it("When uid is valid returns Wallet object", async () => {
+			const request: CreateWalletRequest = {
 				uid: "test-uid",
 			};
 
-			const { account } = await createAccount(request);
+			const { wallet } = await createWallet(request);
 
-			expect(account).toBeDefined();
-			expect(account?.accountId).toBeTruthy();
-			expect(account?.balance).toBe(0);
-			expect(account?.uid).toBe(request.uid);
+			expect(wallet).toBeDefined();
+			expect(wallet?.walletId).toBeTruthy();
+			expect(wallet?.balance).toBe(0);
+			expect(wallet?.uid).toBe(request.uid);
 
 			const snap = await firestore
 				.collection("wallets")
-				.doc(account!.accountId)
+				.doc(wallet!.walletId)
 				.get();
 
 			expect(snap.exists).toBe(true);
@@ -67,7 +67,7 @@ describe("Create Account", () => {
 		});
 	});
 
-	describe("Given Account Already Exists", () => {
+	describe("Given Wallet Already Exists", () => {
 		beforeAll(async () => {
 			await firestore
 				.collection("wallets")
@@ -77,9 +77,9 @@ describe("Create Account", () => {
 
 		it("When uid is valid returns ALREADY_EXISTS error", async () => {
 			await expect(async () => {
-				await createAccount({ uid: "test-uid" });
+				await createWallet({ uid: "test-uid" });
 			}).rejects.toThrowError(
-				new ExpectedError("Account Already Exists", Reason.ALREADY_EXISTS)
+				new ExpectedError("Wallet Already Exists", Reason.ALREADY_EXISTS)
 			);
 		});
 	});

@@ -1,30 +1,30 @@
 /* jest ignore file */
 // import { ExpectedError, Reason } from '../../src/errors/expected-error';
 
-// import { CreateAccountRequest } from '../../src/gen/ride/wallet/v1alpha1/wallet_service';
+// import { CreateWalletRequest } from '../../src/gen/ride/wallet/v1alpha1/wallet_service';
 
-// import { createAccount } from '../../src/wallet-service';
+// import { createWallet } from '../../src/wallet-service';
 
-// import AccountRepository from '../../src/repositories/account-repository';
+// import WalletRepository from '../../src/repositories/wallet-repository';
 
-// jest.mock('../../src/repositories/account-repository', () => {
+// jest.mock('../../src/repositories/wallet-repository', () => {
 // 	return {
-// 		AccountRepository: jest.fn().mockImplementation(() => {
+// 		WalletRepository: jest.fn().mockImplementation(() => {
 // 			return {
-// 				createAccountTransaction: jest.fn().mockResolvedValue({}),
-// 				getAccountQuery: jest.fn().mockResolvedValue({}),
+// 				createWalletTransaction: jest.fn().mockResolvedValue({}),
+// 				getWalletQuery: jest.fn().mockResolvedValue({}),
 // 			};
 // 		}),
 // 	};
 // });
 
-// const mockedAccountRepository = jest.mocked(AccountRepository, true);
+// const mockedWalletRepository = jest.mocked(WalletRepository, true);
 
-// describe('Create Account', () => {
-// 	describe('Given Account Does not Exist', () => {
-// 		mockedAccountRepository.prototype.getAccountQuery.mockImplementation(
+// describe('Create Wallet', () => {
+// 	describe('Given Wallet Does not Exist', () => {
+// 		mockedWalletRepository.prototype.getWalletQuery.mockImplementation(
 // 			(id) => {
-// 				if (id === 'test-account-id') {
+// 				if (id === 'test-wallet-id') {
 // 					return Promise.resolve({
 // 						exists: false,
 // 					});
@@ -33,32 +33,32 @@
 // 			}
 // 		);
 
-// 		mockedAccountRepository.prototype.createAccountTransaction.mockImplementation(
+// 		mockedWalletRepository.prototype.createWalletTransaction.mockImplementation(
 // 			(uid, _) => {
 // 				if (uid === 'test-uid') {
 // 					return Promise.resolve();
 // 				}
 
 // 				throw new ExpectedError(
-// 					'Account Already Exists',
+// 					'Wallet Already Exists',
 // 					Reason.ALREADY_EXISTS
 // 				);
 // 			}
 // 		);
-// 		it('When uid is valid returns Account object', async () => {
-// 			const request: CreateAccountRequest = {
+// 		it('When uid is valid returns Wallet object', async () => {
+// 			const request: CreateWalletRequest = {
 // 				uid: 'test-uid',
 // 			};
 
-// 			const { account } = await createAccount(request);
+// 			const { wallet } = await createWallet(request);
 
-// 			expect(account.accountId).toBeTruthy();
-// 			expect(account.balance).toBe(0);
-// 			expect(account.uid).toBe(request.uid);
+// 			expect(wallet.walletId).toBeTruthy();
+// 			expect(wallet.balance).toBe(0);
+// 			expect(wallet.uid).toBe(request.uid);
 
 // 			const snap = await firestore
 // 				.collection('wallets')
-// 				.doc(account.accountId)
+// 				.doc(wallet.walletId)
 // 				.get();
 
 // 			expect(snap.exists).toBe(true);
@@ -71,7 +71,7 @@
 // 		});
 // 	});
 
-// 	describe('Given Account Already Exists', () => {
+// 	describe('Given Wallet Already Exists', () => {
 // 		beforeAll(async () => {
 // 			await firestore
 // 				.collection('wallets')
@@ -81,9 +81,9 @@
 
 // 		it('When uid is valid returns ALREADY_EXISTS error', async () => {
 // 			await expect(async () => {
-// 				await createAccount({ uid: 'test-uid' });
+// 				await createWallet({ uid: 'test-uid' });
 // 			}).rejects.toThrowError(
-// 				new ExpectedError('Account Already Exists', Reason.ALREADY_EXISTS)
+// 				new ExpectedError('Wallet Already Exists', Reason.ALREADY_EXISTS)
 // 			);
 // 		});
 // 	});
