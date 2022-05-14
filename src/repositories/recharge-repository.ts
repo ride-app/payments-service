@@ -5,4 +5,6 @@ async function getRecharge(rechargeId: string) {
 		.collection("recharges")
 		.doc(rechargeId)
 		.get();
+	
+	return doc.data();
 }
