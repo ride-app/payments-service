@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/type/money.proto";
+
+package ride.recharge.v1alpha1;
+
+service RechargeService {
+  rpc CreateRecharge(CreateRechargeRequest) returns (CreateRechargeResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=users/*/wallet}/recharges"
+      body: "*"
+    };
+  }
+
+  rpc GetRecharge(GetRechargeRequest) returns (GetRechargeResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/recharges/*}"
+    };
+  }
+
+  rpc ListRecharges(ListRechargesRequest) returns (ListRechargesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=users/*/wallet}/recharges"
+    };
+  }
+}
+
+message Recharge {
+  // Relative resource name of Recharge, for example: "users/user1/wallet/recharges/recharge1"
+  string name = 1;
+
+  // The amount of money to be charged.
+  google.type.Money amount = 2;
+
+  // The status of the Recharge.
+  Status status = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Timestamp when the Recharge was created.
+  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Relative resource name of the transaction accociated with the Recharge. Only available when Recharge.status is STATUS_SUCCESS
+  optional string transaction_id = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // Only available when status is STATUS_FAILED
+  optional string failure_reason = 6 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+}
+
+message CreateRechargeRequest {
+  // The parent wallet name where the Recharge is to be created. example: "users/user1/wallet/"
+  string parent = 1;
+
+  // The Recharge to be created. Client **must** not set Recharge.name.
+  Recharge recharge = 2;
+}
+
+message CreateRechargeResponse {
+  // The created Recharge
+  Recharge recharge = 1;
+
+  // Information required for the checkout payment gateway.
+  map<string, string> checkout_info = 2;
+}
+
+message GetRechargeRequest {
+  // Relative Resource name of the Recharge, for example, "users/user1/wallet/recharges/recharge1"
+  string name = 1;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetRechargeResponse {
+  // The requested recharge.
+  Recharge recharge = 1;
+}
+
+message ListRechargesRequest {
+  // The parent wallet name, for example, "users/user1/wallet"
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message ListRechargesResponse {
+  // There will be a maximum number of items returned based on the page_size field in the request.
+  repeated Recharge recharges = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}

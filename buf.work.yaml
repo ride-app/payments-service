@@ -1,5 +1,5 @@
 version: v1
 directories:
-  - protos/wallet-service
-  - protos/payout-service
-  - protos/recharge-service
+  - api/wallet-service
+  - api/payout-service
+  - api/recharge-service

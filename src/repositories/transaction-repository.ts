@@ -1,21 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable class-methods-use-this */
 import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../errors/expected-error";
 
-type CreateTransactionMutationData = {
+type TransactionData = {
 	walletId: string;
 	amount: number;
 	type: "CREDIT" | "DEBIT";
 };
 
+interface Transaction extends TransactionData {
+	timestamp: Date;
+	batchId?: string;
+}
+
 class TransactionRepository {
 	private static _instance: TransactionRepository;
 
-	private static _firestore: Firestore;
+	private firestore: Firestore;
 
 	private constructor() {
-		TransactionRepository._firestore = getFirestore();
+		this.firestore = getFirestore();
 	}
 
 	static get instance() {
@@ -25,19 +29,22 @@ class TransactionRepository {
 		return this._instance;
 	}
 
-	async createTransactionsMutation(
-		batchId: string,
+	async createTransactions(
 		transactions: {
-			[transactionIds: string]: CreateTransactionMutationData;
+			[transactionIds: string]: TransactionData;
+		},
+		batchId?: string
+	): Promise<Date[]> {
+		if (Object.keys(transactions).length > 1 && !batchId) {
+			throw new ExpectedError("Batch Id Required", Reason.BAD_STATE);
 		}
-	) {
-		const transactionRef =
-			TransactionRepository._firestore.collection("transactions");
-		const batch = TransactionRepository._firestore.batch();
+
+		const transactionRef = this.firestore.collection("transactions");
+		const batch = this.firestore.batch();
 
 		Object.entries(transactions).forEach(([transactionId, transaction]) => {
 			const payload = {
-				accountId: transaction.walletId,
+				walletId: transaction.walletId,
 				amount: Math.abs(transaction.amount),
 				timestamp: FieldValue.serverTimestamp(),
 				type: transaction.type,
@@ -46,47 +53,42 @@ class TransactionRepository {
 			batch.set(transactionRef.doc(transactionId), payload);
 		});
 
-		await batch.commit();
+		const commitResult = await batch.commit();
+
+		return commitResult.map((result) => result.writeTime.toDate());
 	}
 
-	getTransactionQuery(transactionId: string) {
-		return TransactionRepository._firestore
-			.collection("transactions")
-			.doc(transactionId)
-			.get();
+	getTransaction(transactionId: string) {
+		return this.firestore.collection("transactions").doc(transactionId).get();
 	}
 
-	listTransactionsByBatchIdQuery(batchId: string) {
-		return TransactionRepository._firestore
+	listTransactionsByBatchId(batchId: string) {
+		return this.firestore
 			.collection("transactions")
 			.where("batchId", "==", batchId)
 			.get();
 	}
 
-	listTransactionsByWalletIdTransaction(accountId: string) {
-		return TransactionRepository._firestore.runTransaction(
-			async (transaction) => {
-				const wallet = await transaction.get(
-					TransactionRepository._firestore.collection("wallets").doc(accountId)
-				);
+	listTransactions(uid: string) {
+		return this.firestore.runTransaction(async (transaction) => {
+			const wallet = await transaction.get(
+				this.firestore.collection("wallets").doc(uid)
+			);
 
-				if (wallet.exists === false) {
-					throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
-				}
-				const snap = await transaction.get(
-					TransactionRepository._firestore
-						.collection("transactions")
-						.where("accountId", "==", accountId)
-				);
-
-				if (snap.empty) {
-					throw new ExpectedError("No Transactions Found", Reason.NOT_FOUND);
-				}
-
-				return snap.docs;
+			if (!wallet.exists) {
+				throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
 			}
-		);
+			const snap = await transaction.get(
+				this.firestore.collection("transactions").where("walletId", "==", uid)
+			);
+
+			if (snap.empty) {
+				throw new ExpectedError("No Transactions Found", Reason.NOT_FOUND);
+			}
+
+			return snap.docs;
+		});
 	}
 }
 
-export { CreateTransactionMutationData, TransactionRepository };
+export { TransactionData as CreateTransactionData, TransactionRepository };

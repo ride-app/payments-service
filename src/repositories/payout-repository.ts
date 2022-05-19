@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import { Firestore, getFirestore } from "firebase-admin/firestore";
-import { Recharge } from "../gen/ride/recharge/v1alpha1/recharge_service";
+import { Payout } from "../gen/ride/payout/v1alpha1/payout_service";
 
-export default class RechargeRepository {
-	private static _instance: RechargeRepository;
+export default class PayoutRepository {
+	private static _instance: PayoutRepository;
 
 	private firestore: Firestore;
 
@@ -18,37 +18,32 @@ export default class RechargeRepository {
 		return this._instance;
 	}
 
-	async saveRecharge(
+	async savePayout(
 		walletId: string,
-		recharge: Recharge,
+		payout: Payout,
 		checkoutInfo: Record<string, unknown>
 	): Promise<Date> {
 		const data = {
 			walletId,
 			amount: {
-				currencyCode: recharge.amount!.currencyCode,
-				units: Number(recharge.amount!.units),
-				nanos: recharge.amount!.nanos,
+				currencyCode: payout.amount!.currencyCode,
+				units: Number(payout.amount!.units),
+				nanos: payout.amount!.nanos,
 			},
-			status: recharge.status.toString(),
+			status: payout.status.toString(),
 			...checkoutInfo,
 		};
 
 		const res = await this.firestore
-			.collection("recharges")
-			.doc(recharge.name.split("/").pop()!)
+			.collection("payouts")
+			.doc(payout.name.split("/").pop()!)
 			.set(data);
 
 		return res.writeTime.toDate();
 	}
 
-	async getRecharge(
-		rechargeId: string
-	): Promise<Record<string, any> | undefined> {
-		const doc = await this.firestore
-			.collection("recharges")
-			.doc(rechargeId)
-			.get();
+	async getPayout(payoutId: string): Promise<Record<string, any> | undefined> {
+		const doc = await this.firestore.collection("payouts").doc(payoutId).get();
 
 		if (!doc.exists) {
 			return undefined;
@@ -57,11 +52,11 @@ export default class RechargeRepository {
 		return { createTime: doc.createTime!.toDate(), ...doc.data() };
 	}
 
-	async getRechargesForWalletId(
+	async getPayoutsForWalletId(
 		walletId: string
 	): Promise<Record<string, any>[]> {
 		const query = await this.firestore
-			.collection("recharges")
+			.collection("payouts")
 			.where("walletId", "==", walletId)
 			.get();
 
@@ -69,7 +64,7 @@ export default class RechargeRepository {
 
 		query.docs.forEach((doc) => {
 			results.push({
-				rechargeId: doc.id,
+				payoutId: doc.id,
 				createTime: doc.createTime.toDate(),
 				...doc.data(),
 			});

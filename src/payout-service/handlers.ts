@@ -1,10 +1,10 @@
 import { status } from "@grpc/grpc-js";
 import { ExpectedError, Reason } from "../errors/expected-error";
 
-import { IRechargeService } from "../gen/ride/recharge/v1alpha1/recharge_service.grpc-server";
-import createRecharge from "./create-recharge";
-import getRecharge from "./get-recharge";
-import listRecharges from "./list-recharges";
+import { IPayoutService } from "../gen/ride/wallet/payout/v1alpha1/payout_service.grpc-server";
+import createPayout from "./create-payout";
+import getPayout from "./get-payout";
+import listPayouts from "./list-payouts";
 
 function handleError(callback: CallableFunction, error: unknown) {
 	let code = status.INTERNAL;
@@ -37,24 +37,24 @@ function handleError(callback: CallableFunction, error: unknown) {
 	});
 }
 
-const handlers: IRechargeService = {
-	createRecharge: async (call, callback) => {
+const handlers: IPayoutService = {
+	createPayout: async (call, callback) => {
 		try {
-			callback(null, await createRecharge(call.request));
+			callback(null, await createPayout(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	getRecharge: async (call, callback) => {
+	getPayout: async (call, callback) => {
 		try {
-			callback(null, await getRecharge(call.request));
+			callback(null, await getPayout(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}
 	},
-	listRecharges: async (call, callback) => {
+	listPayouts: async (call, callback) => {
 		try {
-			callback(null, await listRecharges(call.request));
+			callback(null, await listPayouts(call.request));
 		} catch (error) {
 			handleError(callback, error);
 		}

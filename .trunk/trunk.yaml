@@ -20,3 +20,9 @@ lint:
       paths:
         - protos/**
         - package-lock.json
+
+repo:
+  repo:
+    host: github.com
+    owner: ride-app
+    name: wallet-service
