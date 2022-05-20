@@ -33,11 +33,11 @@ jobs:
       # - name: Build protobuf types
       #   run: npm run build:proto
 
-      - name: Format
-        run: trunk fmt
+      # - name: Format
+      #   run: trunk fmt
 
       - name: Lint
-        run: trunk check
+        uses: trunk-io/trunk-action@v1
 
       - name: Test
         run: |
