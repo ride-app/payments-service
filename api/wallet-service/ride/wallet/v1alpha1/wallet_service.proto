@@ -5,6 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
 import "google/type/money.proto";
+import "validate/validate.proto";
 
 package ride.wallet.v1alpha1;
 
@@ -53,7 +54,10 @@ service WalletService {
 // A Wallet is a singleton resource that represents a user's wallet. There can only be one Wallet per user.
 message Wallet {
   // Relative resource name of the Wallet, for example, "users/user1/wallet"
-  string name = 1;
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet$",
+                    ignore_empty: true
+                  }];
 
   // The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
   int32 balance = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
@@ -67,7 +71,7 @@ message Wallet {
 
 message GetWalletRequest {
   // Relative Resource name of the Wallet, for example, "users/user1/wallet"
-  string name = 1;
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
 
   optional google.protobuf.FieldMask fields = 99;
 }
@@ -79,7 +83,10 @@ message GetWalletResponse {
 
 message Transaction {
   // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
-  string name = 1;
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$",
+                    ignore_empty: true
+                  }];
 
   // The transaction amount.
   google.type.Money amount = 2;
@@ -91,7 +98,10 @@ message Transaction {
   google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
 
   // The transaction batch id if the transaction was created with BatchCreate.
-  optional string batch_id = 5;
+  optional string batch_id = 5 [(validate.rules).string = {
+                                pattern: "^[A-Za-z0-9_-]+$",
+                                ignore_empty: true
+                              }];
 
   // The type of the transaction, **must** be either debit or credit.
   enum Type {
@@ -106,7 +116,7 @@ message CreateTransactionRequest {
   string request_id = 1;
 
   // Relative resource name of the Wallet, for example, "users/user1/wallet"
-  string parent = 2;
+  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
   // The Transaction to be created. Client **must** not set the Transaction.name field.
   Transaction transaction = 3;
@@ -126,7 +136,7 @@ message BatchCreateTransactionsRequest {
 
   message Entry {
     // Relative resource name of the Wallet, for example, "users/user1/wallet"
-    string parent = 1;
+    string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
     // The Transaction to be created. Client **must** not set the Transaction.name field.
     Transaction transaction = 2;
@@ -143,7 +153,7 @@ message BatchCreateTransactionsResponse {
 
 message GetTransactionRequest {
   // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
-  string name = 1;
+  string name = 1[(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$"];
 
   optional google.protobuf.FieldMask fields = 99;
 }
@@ -155,7 +165,7 @@ message GetTransactionResponse {
 
 message ListTransactionsRequest {
   // Relative resource name of the Wallet, for example, "users/user1/wallet".
-  string parent = 1;
+  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
 
   // The maximum number of items to return.
   int32 page_size = 2;
