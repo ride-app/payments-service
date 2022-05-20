@@ -3,7 +3,7 @@ import {
 	GetPayoutRequest,
 	GetPayoutResponse,
 	Payout,
-} from "../gen/ride/wallet/payout/v1alpha1/payout_service";
+} from "../gen/ride/payout/v1alpha1/payout_service";
 import PayoutRepository from "../repositories/payout-repository";
 import { payoutRegex } from "../utils";
 import { payoutDataToPayout } from "./utils";
