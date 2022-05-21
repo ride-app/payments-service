@@ -1,3 +1,4 @@
 # This is required somewhere in your script to accept user input from the keyboard.
 exec < /dev/tty
+trunk fmt
 trunk check --trigger=git-push
