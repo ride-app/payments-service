@@ -3,12 +3,10 @@ import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	CreateTransactionRequest,
 	CreateTransactionResponse,
-	Transaction,
-	Transaction_Type,
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
 import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
-import { moneyToInt, walletRegex } from "../utils";
+import { walletRegex } from "../utils";
 
 async function createTransaction(
 	request: CreateTransactionRequest

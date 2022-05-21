@@ -61,14 +61,6 @@ async function batchCreateTransactions(
 
 			const transactionId = nanoid();
 			transactionIds.push(transactionId);
-			// transactionData[transactionId] = {
-			// 	walletId,
-			// 	amount: moneyToInt(entry.transaction.amount),
-			// 	type:
-			// 		entry.transaction.type === Transaction_Type.CREDIT
-			// 			? "CREDIT"
-			// 			: "DEBIT",
-			// };
 
 			const tempTransaction = Transaction.clone(entry.transaction);
 
