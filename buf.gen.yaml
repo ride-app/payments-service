@@ -6,8 +6,3 @@ plugins:
       - server_grpc1
       - client_grpc1
       - generate_dependencies
-  # - remote: buf.build/jirkad/plugins/protoc-gen-validate:v0.6.7
-  #   out: src/gen
-  #   opt:
-  #     - lang=js
-  #     - paths=source_relative

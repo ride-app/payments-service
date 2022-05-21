@@ -1,11 +1,9 @@
-import { Timestamp as FireTimestamp } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	ListTransactionsRequest,
 	ListTransactionsResponse,
-	Transaction_Type,
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
-import { TransactionRepository } from "../repositories/transaction-repository";
+import TransactionRepository from "../repositories/transaction-repository";
 import { walletRegex } from "../utils";
 
 async function listTransactions(
@@ -17,21 +15,12 @@ async function listTransactions(
 
 	const uid = request.parent.split("/")[1];
 
-	const transactionSnaps =
-		await TransactionRepository.instance.listTransactions(uid);
+	const transactions = await TransactionRepository.instance.getTransactions(
+		uid
+	);
 
 	return {
-		transactions: transactionSnaps.map((doc) => ({
-			name: `${request.parent}/transactions/${doc.id}`,
-			walletId: doc.get("walletId") as string,
-			amount: doc.get("amount") as number,
-			createTime: {
-				seconds: BigInt((doc.get("timestamp") as FireTimestamp).seconds),
-				nanos: (doc.get("timestamp") as FireTimestamp).nanoseconds,
-			},
-			type: doc.get("type") as Transaction_Type,
-			batchId: doc.get("batchId") as string,
-		})),
+		transactions,
 		// TODO: pagination
 		nextPageToken: "",
 	};

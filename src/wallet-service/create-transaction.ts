@@ -3,12 +3,10 @@ import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	CreateTransactionRequest,
 	CreateTransactionResponse,
+	Transaction,
 	Transaction_Type,
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
-import {
-	CreateTransactionData,
-	TransactionRepository,
-} from "../repositories/transaction-repository";
+import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
 import { moneyToInt, walletRegex } from "../utils";
 
@@ -31,17 +29,10 @@ async function createTransaction(
 		throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
 	}
 
-	const transactionData: CreateTransactionData = {
-		type:
-			request.transaction.type === Transaction_Type.CREDIT ? "CREDIT" : "DEBIT",
-		amount: moneyToInt(request.transaction.amount),
-		walletId: uid,
-	};
-
 	const transactionId = nanoid();
 
 	await TransactionRepository.instance.createTransactions({
-		transactionId: transactionData,
+		transactionId: request.transaction,
 	});
 
 	return {

@@ -1,16 +1,26 @@
 /* eslint-disable no-underscore-dangle */
-import { FieldValue, Firestore, getFirestore } from "firebase-admin/firestore";
+import { Firestore, getFirestore } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../errors/expected-error";
+import { Timestamp } from "../gen/google/protobuf/timestamp";
+import {
+	Transaction,
+	Transaction_Details,
+	Transaction_Type,
+} from "../gen/ride/wallet/v1alpha1/wallet_service";
+import { moneyToInt, numberToMoney } from "../utils";
 
-type TransactionData = {
-	walletId: string;
-	amount: number;
-	type: "CREDIT" | "DEBIT";
-};
-
-interface Transaction extends TransactionData {
-	timestamp: Date;
-	batchId?: string;
+function TransactionFromJSON(
+	id: string,
+	data: Record<string, any>
+): Transaction {
+	return {
+		name: `users/${data.walletId}/wallet/transactions/${id}`,
+		amount: numberToMoney(data.amount),
+		createTime: Timestamp.fromDate(data.createTime!.toDate()),
+		type: data.type as Transaction_Type,
+		batchId: data.batchId,
+		details: Transaction_Details.fromJson(data.details!),
+	};
 }
 
 class TransactionRepository {
@@ -31,10 +41,20 @@ class TransactionRepository {
 
 	async createTransactions(
 		transactions: {
-			[transactionIds: string]: TransactionData;
+			[transactionIds: string]: Transaction;
 		},
 		batchId?: string
 	): Promise<Date[]> {
+		const TransactionToJSON = (
+			transaction: Transaction
+		): Record<string, unknown> => ({
+			walletId: transaction.name.split("/")[1],
+			amount: moneyToInt(transaction.amount!),
+			type: transaction.type.toString(),
+			batchId: transaction.batchId,
+			details: Transaction_Details.toJson(transaction.details!),
+		});
+
 		if (Object.keys(transactions).length > 1 && !batchId) {
 			throw new ExpectedError("Batch Id Required", Reason.BAD_STATE);
 		}
@@ -43,14 +63,10 @@ class TransactionRepository {
 		const batch = this.firestore.batch();
 
 		Object.entries(transactions).forEach(([transactionId, transaction]) => {
-			const payload = {
-				walletId: transaction.walletId,
-				amount: Math.abs(transaction.amount),
-				timestamp: FieldValue.serverTimestamp(),
-				type: transaction.type,
-				batchId,
-			};
-			batch.set(transactionRef.doc(transactionId), payload);
+			batch.set(
+				transactionRef.doc(transactionId),
+				TransactionToJSON(transaction)
+			);
 		});
 
 		const commitResult = await batch.commit();
@@ -58,37 +74,58 @@ class TransactionRepository {
 		return commitResult.map((result) => result.writeTime.toDate());
 	}
 
-	getTransaction(transactionId: string) {
-		return this.firestore.collection("transactions").doc(transactionId).get();
+	async getTransaction(
+		transactionId: string
+	): Promise<Transaction | undefined> {
+		const snap = await this.firestore
+			.collection("transactions")
+			.doc(transactionId)
+			.get();
+
+		if (!snap.exists || !snap.data()) {
+			return undefined;
+		}
+
+		return TransactionFromJSON(snap.id, snap.data()!);
 	}
 
-	listTransactionsByBatchId(batchId: string) {
-		return this.firestore
+	async getTransactionsByBatchId(batchId: string): Promise<Transaction[]> {
+		const snap = await this.firestore
 			.collection("transactions")
 			.where("batchId", "==", batchId)
 			.get();
+
+		if (!snap.empty) {
+			return [];
+		}
+
+		return snap.docs.map((doc) => {
+			if (!doc.data()) {
+				throw new ExpectedError("Transaction does not exist", Reason.NOT_FOUND);
+			}
+
+			return TransactionFromJSON(doc.id, doc.data()!);
+		});
 	}
 
-	listTransactions(uid: string) {
-		return this.firestore.runTransaction(async (transaction) => {
-			const wallet = await transaction.get(
-				this.firestore.collection("wallets").doc(uid)
-			);
+	async getTransactions(uid: string): Promise<Transaction[]> {
+		const snap = await this.firestore
+			.collection("transactions")
+			.where("walletId", "==", uid)
+			.get();
 
-			if (!wallet.exists) {
-				throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
-			}
-			const snap = await transaction.get(
-				this.firestore.collection("transactions").where("walletId", "==", uid)
-			);
+		if (!snap.empty) {
+			return [];
+		}
 
-			if (snap.empty) {
-				throw new ExpectedError("No Transactions Found", Reason.NOT_FOUND);
+		return snap.docs.map((doc) => {
+			if (!doc.data()) {
+				throw new ExpectedError("Transaction does not exist", Reason.NOT_FOUND);
 			}
 
-			return snap.docs;
+			return TransactionFromJSON(doc.id, doc.data()!);
 		});
 	}
 }
 
-export { TransactionData as CreateTransactionData, TransactionRepository };
+export default TransactionRepository;

@@ -7,10 +7,7 @@ import {
 	Transaction,
 	Transaction_Type,
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
-import {
-	CreateTransactionData,
-	TransactionRepository,
-} from "../repositories/transaction-repository";
+import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
 import { moneyToInt, walletRegex } from "../utils";
 
@@ -23,7 +20,7 @@ async function batchCreateTransactions(
 
 	const batchId = nanoid();
 	const transactionIds: string[] = [];
-	const transactionData: Record<string, CreateTransactionData> = {};
+	const transactionData: Record<string, Transaction> = {};
 
 	await Promise.all(
 		Object.values(request.transactions).map(async (entry, i) => {
@@ -64,14 +61,23 @@ async function batchCreateTransactions(
 
 			const transactionId = nanoid();
 			transactionIds.push(transactionId);
-			transactionData[transactionId] = {
-				walletId,
-				amount: moneyToInt(entry.transaction.amount),
-				type:
-					entry.transaction.type === Transaction_Type.CREDIT
-						? "CREDIT"
-						: "DEBIT",
-			};
+			// transactionData[transactionId] = {
+			// 	walletId,
+			// 	amount: moneyToInt(entry.transaction.amount),
+			// 	type:
+			// 		entry.transaction.type === Transaction_Type.CREDIT
+			// 			? "CREDIT"
+			// 			: "DEBIT",
+			// };
+
+			const tempTransaction = Transaction.clone(entry.transaction);
+
+			Transaction.mergePartial(tempTransaction, {
+				name: `${entry.parent}/transactions/${transactionId}`,
+				batchId,
+			});
+
+			transactionData[transactionId] = tempTransaction;
 		})
 	);
 
