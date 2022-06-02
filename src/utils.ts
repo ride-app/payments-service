@@ -3,8 +3,6 @@ import { Money } from "./gen/google/type/money";
 const walletRegex = /^users\/[A-Za-z0-9_-]+\/wallet$/;
 const transactionRegex =
 	/^users\/[A-Za-z0-9_-]+\/wallet\/transactions\/[A-Za-z0-9_-]+$/;
-const rechargeRegex =
-	/^users\/[A-Za-z0-9_-]+\/wallet\/recharges\/[A-Za-z0-9_-]+$/;
 const payoutRegex = /^users\/[A-Za-z0-9_-]+\/wallet\/payouts\/[A-Za-z0-9_-]+$/;
 
 function moneyToNumber(money: Money) {
@@ -21,7 +19,6 @@ function numberToMoney(amount: number) {
 export {
 	walletRegex,
 	transactionRegex,
-	rechargeRegex,
 	payoutRegex,
 	moneyToNumber as moneyToInt,
 	numberToMoney,
