@@ -38,7 +38,7 @@ async function batchCreateTransactions(
 				);
 			}
 
-			if (moneyToInt(entry.transaction.amount) <= 0) {
+			if (entry.transaction.amount <= 0) {
 				throw new ExpectedError(
 					`Transaction amount must be positive. Got ${entry.transaction.amount} for transaction ${i}`,
 					Reason.INVALID_ARGUMENT

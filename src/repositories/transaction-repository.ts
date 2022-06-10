@@ -15,7 +15,7 @@ function TransactionFromJSON(
 ): Transaction {
 	return {
 		name: `users/${data.walletId}/wallet/transactions/${id}`,
-		amount: numberToMoney(data.amount),
+		amount: data.amount,
 		createTime: Timestamp.fromDate(data.createTime!.toDate()),
 		type: data.type as Transaction_Type,
 		batchId: data.batchId,
@@ -49,7 +49,7 @@ class TransactionRepository {
 			transaction: Transaction
 		): Record<string, unknown> => ({
 			walletId: transaction.name.split("/")[1],
-			amount: moneyToInt(transaction.amount!),
+			amount: transaction.amount,
 			type: transaction.type.toString(),
 			batchId: transaction.batchId,
 			details: Transaction_Details.toJson(transaction.details!),
