@@ -3,8 +3,6 @@ syntax = "proto3";
 import "google/protobuf/field_mask.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
-import "google/api/field_behavior.proto";
-import "google/type/money.proto";
 import "validate/validate.proto";
 
 package ride.wallet.v1alpha1;
@@ -27,7 +25,7 @@ service WalletService {
   // Create multiple transactions at once in a single atomic reuqest.
   rpc BatchCreateTransactions(BatchCreateTransactionsRequest) returns (BatchCreateTransactionsResponse) {
     option (google.api.http) = {
-      post: "/v1alpha1/{parent=users/-/wallet/transactions:batchCreate",
+      post: "/v1alpha1/users/-/wallet/transactions:batchCreate",
       body: "*"
     };
   }
@@ -59,14 +57,14 @@ message Wallet {
                     ignore_empty: true
                   }];
 
-  // The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
-  int32 balance = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
+  int32 balance = 2;
 
-  // Timestamp when the Wallet was created.
-  google.protobuf.Timestamp create_time = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. Timestamp when the Wallet was created.
+  google.protobuf.Timestamp create_time = 3;
 
-  // Timestamp when the Wallet was last updated.
-  google.protobuf.Timestamp update_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. Timestamp when the Wallet was last updated.
+  google.protobuf.Timestamp update_time = 4;
 }
 
 message GetWalletRequest {
@@ -88,14 +86,14 @@ message Transaction {
                     ignore_empty: true
                   }];
 
-  // The transaction amount.
-  google.type.Money amount = 2 [(validate.rules).message.required = true];
+  // The transaction amount in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
+  int32 amount = 2 [(validate.rules).message.required = true];
 
   // The transaction type, **must** be either debit or credit
   Type type = 3 [(validate.rules).message.required = true];
 
-  // The timsesamp when the transaction was created
-  google.protobuf.Timestamp create_time = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. The timestamp when the transaction was created
+  google.protobuf.Timestamp create_time = 4;
 
   // The transaction batch id if the transaction was created with BatchCreate.
   optional string batch_id = 5 [(validate.rules).string = {
@@ -157,8 +155,8 @@ message BatchCreateTransactionsRequest {
 }
 
 message BatchCreateTransactionsResponse {
-  // The batch id of the created transactions.
-  string batch_id = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Output only. The batch id of the created transactions.
+  string batch_id = 1;
 
   // The created transactions.
   repeated Transaction transactions = 2 [(validate.rules).repeated.min_items = 2];
