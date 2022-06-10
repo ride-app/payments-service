@@ -1,25 +1,24 @@
 version: 0.1
 cli:
-  version: 0.12.1-beta
+  version: 0.13.0-beta
 lint:
   enabled:
+    - markdownlint@0.31.1
     - actionlint@1.6.13
-    - eslint@8.16.0
-    - gitleaks@8.8.4
+    - eslint@8.17.0
+    - gitleaks@8.8.7
     - prettier@2.6.2
-    - buf-lint@1.4.0
-    - buf-breaking@1.4.0
+    - buf-lint@1.5.0
+    - buf-breaking@1.5.0
     - hadolint@2.10.0
 
   ignore:
     - linters: [ALL]
       paths:
         - src/gen/**
-        - .vscode
     - linters: [prettier]
       paths:
         - protos/**
-        - package-lock.json
 
 repo:
   repo:
