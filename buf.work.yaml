@@ -1,4 +1,3 @@
 version: v1
 directories:
-  - api/wallet-service
-  - api/payout-service
+  - api
