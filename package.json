@@ -1,49 +1,54 @@
 {
-  "private": true,
-  "main": "build/server.js",
-  "engines": {
-    "node": ">=16"
-  },
-  "scripts": {
-    "lint": "eslint ./src",
-    "format": "eslint ./src --fix",
-    "debug": "nodemon -r dotenv/config src/server.ts",
-    "test": "NODE_ENV=test jest",
-    "integration-test": "NODE_ENV=test jest --group=integration",
-    "build": "tsc",
-    "build:proto": "proto-loader-gen-types --longs=Number --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ *.proto",
-    "start": "node build/server.js",
-    "start:docker": "tsc && docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
-  },
-  "dependencies": {
-    "@grpc/grpc-js": "^1.6.7",
-    "@grpc/proto-loader": "^0.6.13",
-    "firebase-admin": "^11.0.0"
-  },
-  "devDependencies": {
-    "@tsconfig/node16": "^1.0.3",
-    "@types/jest": "^27.5.0",
-    "@types/node": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.28.0",
-    "@typescript-eslint/parser": "^5.28.0",
-    "dotenv": "^16.0.1",
-    "eslint": "^8.17.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^26.5.3",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "jest": "^27.5.1",
-    "jest-node-exports-resolver": "^1.1.6",
-    "jest-runner-groups": "^2.2.0",
-    "nodemon": "^2.0.16",
-    "prettier": "^2.7.1",
-    "ts-jest": "^27.1.4",
-    "ts-node": "^10.8.1",
-    "typescript": "^4.7.4"
-  }
+	"private": true,
+	"main": "build/index.js",
+	"engines": {
+		"node": "16"
+	},
+	"scripts": {
+		"lint": "eslint ./src",
+		"format": "eslint ./src --fix",
+		"debug": "nodemon -r dotenv/config src/index.ts",
+		"test": "firebase emulators:exec \"NODE_ENV=test jest --runInBand\"",
+		"test:api": "NODE_ENV=test jest --runInBand --group=api",
+		"test:unit": "NODE_ENV=test jest --runInBand --group=unit",
+		"test:integration": "firebase emulators:exec \"NODE_ENV=test jest --runInBand --group=integration\"",
+		"build": "tsc",
+		"start": "node build/index.js"
+	},
+	"dependencies": {
+		"@grpc/grpc-js": "^1.6.7",
+		"@protobuf-ts/runtime": "^2.7.0",
+		"@protobuf-ts/runtime-rpc": "^2.7.0",
+		"firebase-admin": "^11.0.0",
+		"nanoid": "^3.3.4",
+		"razorpay": "^2.8.1"
+	},
+	"devDependencies": {
+		"@firebase/rules-unit-testing": "^2.0.2",
+		"@tsconfig/node16": "^1.0.3",
+		"@tsconfig/node16-strictest": "^1.0.2",
+		"@types/jest": "^28.1.2",
+		"@types/node": "^18.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.28.0",
+		"@typescript-eslint/parser": "^5.28.0",
+		"dotenv": "^16.0.1",
+		"eslint": "^8.18.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-config-standard": "^17.0.0",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-jest": "^26.5.3",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-promise": "^6.0.0",
+		"jest": "^28.1.1",
+		"jest-node-exports-resolver": "^1.1.6",
+		"jest-runner-groups": "^2.2.0",
+		"nodemon": "^2.0.16",
+		"prettier": "^2.7.1",
+		"ts-jest": "^28.0.5",
+		"ts-node": "^10.8.1",
+		"typescript": "^4.7.4"
+	}
 }

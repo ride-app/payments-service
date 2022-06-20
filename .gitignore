@@ -77,9 +77,6 @@ build
 node_modules/
 jspm_packages/
 
-#protobuf generated files
-**/proto
-
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
@@ -172,3 +169,5 @@ dist
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,macos
+
+src/gen/

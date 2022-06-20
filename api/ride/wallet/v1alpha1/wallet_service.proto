@@ -1,0 +1,205 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+package ride.wallet.v1alpha1;
+
+service WalletService {
+
+  rpc GetWallet(GetWalletRequest) returns (GetWalletResponse) {
+    option (google.api.http) = {
+    get: "/v1alpha1/{name=users/*/wallet}"
+    };
+  }
+
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=users/*/wallet}/transactions",
+      body: "*"
+    };
+  }
+
+  // Create multiple transactions at once in a single atomic reuqest.
+  rpc BatchCreateTransactions(BatchCreateTransactionsRequest) returns (BatchCreateTransactionsResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/users/-/wallet/transactions:batchCreate",
+      body: "*"
+    };
+  }
+
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/transactions/*}"
+    };
+  }
+
+  // rpc ListTransactionsByBatchId(ListTransactionsByBatchIdRequest) returns (ListTransactionsByBatchIdResponse) {
+  //   option (google.api.http) = {
+  //     get: "/v1alpha1/users/-/wallet/transactions?batch_id={batch_id}"
+  //   };
+  // }
+
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+    get: "/v1alpha1/{parent=users/*/wallet}/transactions"
+    };
+  }
+}
+
+// A Wallet is a singleton resource that represents a user's wallet. There can only be one Wallet per user.
+message Wallet {
+  // Relative resource name of the Wallet, for example, "users/user1/wallet"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet$",
+                    ignore_empty: true
+                  }];
+
+  // Output only. The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
+  int32 balance = 2;
+
+  // Output only. Timestamp when the Wallet was created.
+  google.protobuf.Timestamp create_time = 3;
+
+  // Output only. Timestamp when the Wallet was last updated.
+  google.protobuf.Timestamp update_time = 4;
+}
+
+message GetWalletRequest {
+  // Relative Resource name of the Wallet, for example, "users/user1/wallet"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetWalletResponse {
+  // The requested Wallet
+  Wallet wallet = 1;
+};
+
+message Transaction {
+  // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$",
+                    ignore_empty: true
+                  }];
+
+  // The transaction amount in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
+  int32 amount = 2 [(validate.rules).message.required = true];
+
+  // The transaction type, **must** be either debit or credit
+  Type type = 3 [(validate.rules).message.required = true];
+
+  // Output only. The timestamp when the transaction was created
+  google.protobuf.Timestamp create_time = 4;
+
+  // The transaction batch id if the transaction was created with BatchCreate.
+  optional string batch_id = 5 [(validate.rules).string = {
+                                  pattern: "^[A-Za-z0-9_-]+$",
+                                  ignore_empty: true
+                                }];
+  
+  Details details = 6;
+
+  // The type of the transaction, **must** be either debit or credit.
+  enum Type {
+    TYPE_UNSPECIFIED = 0;
+    TYPE_DEBIT = 1;
+    TYPE_CREDIT = 2;
+  }
+
+  message Details {
+    // The short human understandable description of the transaction.
+    string display_name = 1 [(validate.rules).string = { min_len: 1, max_len: 32 }];
+
+    // Full description of the transaction.
+    optional string description = 2 [(validate.rules).string = { max_bytes: 128, ignore_empty: true }];
+
+    // Any type of identifier that can explain what action caused this transaction.
+    string reference = 3 [(validate.rules).string.max_bytes = 128];
+  }
+}
+
+message CreateTransactionRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // Relative resource name of the Wallet, for example, "users/user1/wallet"
+  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+  // The Transaction to be created. Client **must** not set the Transaction.name field.
+  Transaction transaction = 3 [(validate.rules).message.required = true];
+}
+
+message CreateTransactionResponse {
+  // The created transaction
+  Transaction transaction = 1;
+}
+
+message BatchCreateTransactionsRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
+  repeated Entry transactions = 2 [(validate.rules).repeated.min_items = 2];
+
+  message Entry {
+    // Relative resource name of the Wallet, for example, "users/user1/wallet"
+    string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+    // The Transaction to be created. Client **must** not set the Transaction.name field.
+    Transaction transaction = 2 [(validate.rules).message.required = true];
+  }
+}
+
+message BatchCreateTransactionsResponse {
+  // Output only. The batch id of the created transactions.
+  string batch_id = 1;
+
+  // The created transactions.
+  repeated Transaction transactions = 2 [(validate.rules).repeated.min_items = 2];
+}
+
+message GetTransactionRequest {
+  // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
+  string name = 1[(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$"];
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetTransactionResponse {
+  // The requested Transaction.
+  Transaction transaction = 1;
+}
+
+message ListTransactionsRequest {
+  // Relative resource name of the Wallet, for example, "users/user1/wallet".
+  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message ListTransactionsResponse {
+  // List of Transactions blonging to the parent Wallet.
+  repeated Transaction transactions = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}
+
+// message ListTransactionsByBatchIdRequest {
+//   string batch_id = 1;
+//   optional google.protobuf.FieldMask fields = 99;
+// }
+
+// message ListTransactionsByBatchIdResponse {
+//   repeated Transaction transactions = 1;
+// }
