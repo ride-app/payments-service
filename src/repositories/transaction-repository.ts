@@ -7,7 +7,6 @@ import {
 	Transaction_Details,
 	Transaction_Type,
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
-import { moneyToInt, numberToMoney } from "../utils";
 
 function TransactionFromJSON(
 	id: string,

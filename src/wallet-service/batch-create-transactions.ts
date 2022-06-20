@@ -9,7 +9,7 @@ import {
 } from "../gen/ride/wallet/v1alpha1/wallet_service";
 import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
-import { moneyToInt, walletRegex } from "../utils";
+import { walletRegex } from "../utils";
 
 async function batchCreateTransactions(
 	request: BatchCreateTransactionsRequest

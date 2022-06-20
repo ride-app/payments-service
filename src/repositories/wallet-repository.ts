@@ -42,12 +42,4 @@ export default class WalletRepository {
 	getWallet(id: string) {
 		return this.firestore.collection("wallets").doc(id).get();
 	}
-
-	// getWalletByUid(uid: string) {
-	// 	return this.firestore
-	// 		.collection("wallets")
-	// 		.where("uid", "==", uid)
-	// 		.limit(1)
-	// 		.get();
-	// }
 }
