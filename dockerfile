@@ -1,5 +1,5 @@
 # Copy package.json and build node_modules 
-FROM node:lts-alpine as build
+FROM node:lts-alpine as deps
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN npm ci --production
 FROM gcr.io/distroless/nodejs:16
 
 WORKDIR /app
-COPY --from=build /app/node_modules node_modules
+COPY --from=deps /app/node_modules node_modules
 
 COPY /build .
 
