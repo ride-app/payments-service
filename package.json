@@ -7,14 +7,13 @@
 	"scripts": {
 		"lint": "eslint ./src",
 		"format": "eslint ./src --fix",
-		"debug": "nodemon -r dotenv/config src/main.ts",
+		"debug": "nodemon -r dotenv/config src/index.ts",
 		"test": "firebase emulators:exec \"NODE_ENV=test jest --runInBand\"",
 		"test:api": "NODE_ENV=test jest --runInBand --group=api",
 		"test:unit": "NODE_ENV=test jest --runInBand --group=unit",
 		"test:integration": "firebase emulators:exec \"NODE_ENV=test jest --runInBand --group=integration\"",
 		"build": "tsc",
-		"start": "node build/index.js",
-		"start:docker": "docker build . -t debug-app && docker run --rm -it -p 5000:5000 debug-app:latest"
+		"start": "node build/index.js"
 	},
 	"dependencies": {
 		"@grpc/grpc-js": "^1.6.7",
