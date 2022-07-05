@@ -1,15 +1,15 @@
 version: 0.1
 cli:
-  version: 0.13.1-beta
+  version: 0.14.1-beta
 lint:
   enabled:
     - markdownlint@0.31.1
-    - actionlint@1.6.13
-    - eslint@8.18.0
-    - gitleaks@8.8.7
+    - actionlint@1.6.15
+    - eslint@8.19.0
+    - gitleaks@8.8.11
     - prettier@2.7.1
-    - buf-lint@1.5.0
-    - buf-breaking@1.5.0
+    - buf-lint@1.6.0
+    - buf-breaking@1.6.0
     - hadolint@2.10.0
 
   ignore:
