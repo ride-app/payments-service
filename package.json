@@ -24,7 +24,7 @@
 		"razorpay": "^2.8.2"
 	},
 	"devDependencies": {
-		"@firebase/rules-unit-testing": "^2.0.3",
+		"@firebase/rules-unit-testing": "^2.0.4",
 		"@tsconfig/node16": "^1.0.3",
 		"@tsconfig/node16-strictest": "^1.0.3",
 		"@types/jest": "^28.1.6",
