@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@grpc/grpc-js": "^1.6.10",
-		"@protobuf-ts/runtime": "^2.7.0",
+		"@protobuf-ts/runtime": "^2.8.0",
 		"@protobuf-ts/runtime-rpc": "^2.7.0",
 		"firebase-admin": "^11.0.1",
 		"nanoid": "^3.3.4",
