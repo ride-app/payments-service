@@ -1,3 +1,11 @@
+# Compile typescript
+FROM node:lts-alpine as build
+
+WORKDIR /app
+
+COPY . .
+RUN npm ci && npm run build
+
 # Copy package.json and build node_modules 
 FROM node:lts-alpine as deps
 
@@ -12,7 +20,7 @@ FROM gcr.io/distroless/nodejs:16
 WORKDIR /app
 COPY --from=deps /app/node_modules node_modules
 
-COPY /build .
+COPY --from=build /app/build .
 
 ENV NODE_ENV production
 

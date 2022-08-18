@@ -42,10 +42,8 @@ node_modules
 #Prettier
 .prettierrc
 
-#TypeScript
-src
-tsconfig.json
-tslint.json
+#Trunk
+.trunk
 
 # Test
 test
