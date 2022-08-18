@@ -18,8 +18,8 @@ RUN npm ci --production
 FROM gcr.io/distroless/nodejs:16
 
 WORKDIR /app
-COPY --from=deps /app/node_modules node_modules
 
+COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/build .
 
 ENV NODE_ENV production
