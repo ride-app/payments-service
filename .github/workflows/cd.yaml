@@ -78,11 +78,6 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
-      # just write it for now
-      - name: Setup .env
-        run: |
-          touch .env
-
       - name: Build and Upload
         id: docker
         uses: docker/build-push-action@v3
@@ -92,10 +87,6 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            BUF_USERNAME=${{ env.BUF_USER }}
-          secrets: |
-            BUF_TOKEN=${{ secrets.BUF_TOKEN }}
 
   deploy:
     name: Deploy
