@@ -3,7 +3,7 @@ import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	CreateTransactionRequest,
 	CreateTransactionResponse,
-} from "../gen/ride/wallet/v1alpha1/wallet_service";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
 import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
 import { walletRegex } from "../utils";

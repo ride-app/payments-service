@@ -1,12 +1,12 @@
 import { nanoid } from "nanoid";
 import { ExpectedError, Reason } from "../errors/expected-error";
-import { Timestamp } from "../gen/google/protobuf/timestamp";
+import { Timestamp } from "../gen/google/protobuf/timestamp_pb";
 import {
 	BatchCreateTransactionsRequest,
 	BatchCreateTransactionsResponse,
 	Transaction,
 	Transaction_Type,
-} from "../gen/ride/wallet/v1alpha1/wallet_service";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
 import TransactionRepository from "../repositories/transaction-repository";
 import WalletRepository from "../repositories/wallet-repository";
 import { walletRegex } from "../utils";

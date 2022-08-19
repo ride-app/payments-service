@@ -1,7 +1,7 @@
 import { status } from "@grpc/grpc-js";
 import { ExpectedError, Reason } from "../errors/expected-error";
 
-import { IWalletService } from "../gen/ride/wallet/v1alpha1/wallet_service.grpc-server";
+import { IWalletService } from "../gen/ride/wallet/v1alpha1/wallet_service_pb.grpc-server";
 import getWallet from "./get-wallet";
 import listTransactions from "./list-transactions";
 import getTransaction from "./get-transaction";

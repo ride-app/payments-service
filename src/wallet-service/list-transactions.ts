@@ -2,7 +2,7 @@ import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	ListTransactionsRequest,
 	ListTransactionsResponse,
-} from "../gen/ride/wallet/v1alpha1/wallet_service";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
 import TransactionRepository from "../repositories/transaction-repository";
 import { walletRegex } from "../utils";
 
