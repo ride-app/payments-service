@@ -11,7 +11,7 @@ const server = new Server();
 server.addService(walletServiceDefinition, walletServiceHandlers);
 
 server.bindAsync(
-	`localhost:${port}`,
+	`0.0.0.0:${port}`,
 	ServerCredentials.createInsecure(),
 	(err, p) => {
 		if (err) {
