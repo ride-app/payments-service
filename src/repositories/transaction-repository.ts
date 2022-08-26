@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { Firestore, getFirestore } from "firebase-admin/firestore";
 import { ExpectedError, Reason } from "../errors/expected-error";
-import { Timestamp } from "../gen/google/protobuf/timestamp";
+import { Timestamp } from "../gen/google/protobuf/timestamp_pb";
 import {
 	Transaction,
 	Transaction_Details,
 	Transaction_Type,
-} from "../gen/ride/wallet/v1alpha1/wallet_service";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
 
 function TransactionFromJSON(
 	id: string,
