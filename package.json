@@ -16,7 +16,7 @@
 		"start": "node build/index.js"
 	},
 	"dependencies": {
-		"@grpc/grpc-js": "^1.6.12",
+		"@grpc/grpc-js": "^1.7.0",
 		"@protobuf-ts/runtime": "^2.8.0",
 		"@protobuf-ts/runtime-rpc": "^2.8.0",
 		"firebase-admin": "^11.0.1",
