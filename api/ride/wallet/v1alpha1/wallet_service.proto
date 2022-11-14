@@ -90,7 +90,7 @@ message Transaction {
   int32 amount = 2 [(validate.rules).int32.gt = 0];
 
   // The transaction type, **must** be either debit or credit
-  Type type = 3 [(validate.rules).message.required = true];
+  Type type = 3;
 
   // Output only. The timestamp when the transaction was created
   google.protobuf.Timestamp create_time = 4;
