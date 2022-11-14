@@ -87,7 +87,7 @@ message Transaction {
                   }];
 
   // The transaction amount in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
-  int32 amount = 2 [(validate.rules).message.required = true];
+  int32 amount = 2 [(validate.rules).int32.gt = 0];
 
   // The transaction type, **must** be either debit or credit
   Type type = 3 [(validate.rules).message.required = true];
