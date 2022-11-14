@@ -65,7 +65,7 @@ jobs:
 
       - name: Authenticate To Google Cloud
         id: gcp-auth
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         with:
           token_format: access_token
           workload_identity_provider: projects/486946551871/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
@@ -119,7 +119,7 @@ jobs:
             node-
 
       - name: Authenticate Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: projects/486946551871/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
           service_account: cloud-run-service-manager@ride-app-prod.iam.gserviceaccount.com
