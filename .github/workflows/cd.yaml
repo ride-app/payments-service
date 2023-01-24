@@ -132,7 +132,7 @@ jobs:
           pulumi config set image:tag sha-${{ github.sha }} -s ride/prod
         working-directory: infra
 
-      - uses: pulumi/actions@v3
+      - uses: pulumi/actions@v4
         with:
           work-dir: infra
           command: up
