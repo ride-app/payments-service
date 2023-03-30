@@ -1,21 +1,21 @@
+import { Code, ConnectError } from "@bufbuild/connect";
+import { Timestamp } from "@bufbuild/protobuf";
 import { nanoid } from "nanoid";
-import { ExpectedError, Reason } from "../errors/expected-error";
-import { Timestamp } from "../gen/google/protobuf/timestamp_pb";
 import {
 	BatchCreateTransactionsRequest,
 	BatchCreateTransactionsResponse,
 	Transaction,
 	Transaction_Type,
-} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
-import TransactionRepository from "../repositories/transaction-repository";
-import WalletRepository from "../repositories/wallet-repository";
-import { walletRegex } from "../utils";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb.js";
+import TransactionRepository from "../repositories/transaction-repository.js";
+import WalletRepository from "../repositories/wallet-repository.js";
+import { walletRegex } from "../utils/regex.js";
 
 async function batchCreateTransactions(
 	request: BatchCreateTransactionsRequest
 ): Promise<BatchCreateTransactionsResponse> {
 	if (request.transactions.length === 0) {
-		throw new ExpectedError("transactions is empty", Reason.INVALID_ARGUMENT);
+		throw new ConnectError("transactions is empty", Code.InvalidArgument);
 	}
 
 	const batchId = nanoid();
@@ -25,29 +25,29 @@ async function batchCreateTransactions(
 	await Promise.all(
 		Object.values(request.transactions).map(async (entry, i) => {
 			if (entry.parent.match(walletRegex) === null) {
-				throw new ExpectedError(
+				throw new ConnectError(
 					`userId is empty for transaction ${i}`,
-					Reason.INVALID_ARGUMENT
+					Code.InvalidArgument
 				);
 			}
 
 			if (!entry.transaction || !entry.transaction.amount) {
-				throw new ExpectedError(
+				throw new ConnectError(
 					`transaction is empty for transaction ${i}`,
-					Reason.INVALID_ARGUMENT
+					Code.InvalidArgument
 				);
 			}
 
 			if (entry.transaction.amount <= 0) {
-				throw new ExpectedError(
+				throw new ConnectError(
 					`Transaction amount must be positive. Got ${entry.transaction.amount} for transaction ${i}`,
-					Reason.INVALID_ARGUMENT
+					Code.InvalidArgument
 				);
 			}
 			if (entry.transaction.type === Transaction_Type.UNSPECIFIED) {
-				throw new ExpectedError(
+				throw new ConnectError(
 					`Transaction type is not specified for transaction ${i}`,
-					Reason.INVALID_ARGUMENT
+					Code.InvalidArgument
 				);
 			}
 
@@ -55,19 +55,20 @@ async function batchCreateTransactions(
 
 			const wallet = await WalletRepository.instance.getWallet(walletId);
 
-			if (!wallet.exists) {
-				throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
+			if (!wallet) {
+				throw new ConnectError(
+					"Wallet Does Not Exist",
+					Code.FailedPrecondition
+				);
 			}
 
 			const transactionId = nanoid();
 			transactionIds.push(transactionId);
 
-			const tempTransaction = Transaction.clone(entry.transaction);
+			const tempTransaction = entry.transaction.clone();
 
-			Transaction.mergePartial(tempTransaction, {
-				name: `${entry.parent}/transactions/${transactionId}`,
-				batchId,
-			});
+			tempTransaction.name = `${entry.parent}/transactions/${transactionId}`;
+			tempTransaction.batchId = batchId;
 
 			transactionData[transactionId] = tempTransaction;
 		})
@@ -80,7 +81,7 @@ async function batchCreateTransactions(
 
 	const transactions: Transaction[] = Object.values(request.transactions).map(
 		(t, i) =>
-			Transaction.create({
+			new Transaction({
 				name: `${t.parent}/transactions/${transactionIds[i]}`,
 				amount: t.transaction!.amount,
 				type: t.transaction!.type,
@@ -89,10 +90,10 @@ async function batchCreateTransactions(
 			})
 	);
 
-	return {
+	return new BatchCreateTransactionsResponse({
 		batchId,
 		transactions,
-	};
+	});
 }
 
 export default batchCreateTransactions;

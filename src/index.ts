@@ -1,26 +1,20 @@
-import { Server, ServerCredentials } from "@grpc/grpc-js";
 import { initializeApp } from "firebase-admin/app";
-import walletServiceHandlers from "./wallet-service/handlers.js";
+import server from "./server.js";
 
-import { walletServiceDefinition } from "./gen/ride/wallet/v1alpha1/wallet_service_pb.grpc-server.js";
+const port = process.env["PORT"] ? parseInt(process.env["PORT"], 10) : 50051;
 
-const port = process.env.PORT || 50051;
-
-const server = new Server();
-
-server.addService(walletServiceDefinition, walletServiceHandlers);
-
-server.bindAsync(
-	`0.0.0.0:${port}`,
-	ServerCredentials.createInsecure(),
-	(err, p) => {
-		if (err) {
-			console.error(err);
-			return;
+try {
+	initializeApp();
+	server.listen(
+		{
+			host: "0.0.0.0",
+			port,
+		},
+		(_, address) => {
+			console.info(`[${Date.now()}]: server listening to ${address}`);
 		}
-
-		initializeApp();
-		server.start();
-		console.info(`${Date.now()}: server listening to port ${p}`);
-	}
-);
+	);
+} catch (err) {
+	console.error(err);
+	process.exit(1);
+}

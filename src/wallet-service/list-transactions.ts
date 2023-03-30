@@ -1,16 +1,16 @@
-import { ExpectedError, Reason } from "../errors/expected-error";
+import { Code, ConnectError } from "@bufbuild/connect";
 import {
 	ListTransactionsRequest,
 	ListTransactionsResponse,
-} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
-import TransactionRepository from "../repositories/transaction-repository";
-import { walletRegex } from "../utils";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb.js";
+import TransactionRepository from "../repositories/transaction-repository.js";
+import { walletRegex } from "../utils/regex.js";
 
 async function listTransactions(
 	request: ListTransactionsRequest
 ): Promise<ListTransactionsResponse> {
 	if (request.parent.match(walletRegex) === null) {
-		throw new ExpectedError("Invalid parent", Reason.INVALID_ARGUMENT);
+		throw new ConnectError("Invalid parent", Code.InvalidArgument);
 	}
 
 	const uid = request.parent.split("/")[1];
@@ -19,11 +19,11 @@ async function listTransactions(
 		uid
 	);
 
-	return {
+	return new ListTransactionsResponse({
 		transactions,
 		// TODO: pagination
 		nextPageToken: "",
-	};
+	});
 }
 
 export default listTransactions;

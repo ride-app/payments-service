@@ -1,42 +1,28 @@
-import { Timestamp as FireTimestamp } from "firebase-admin/firestore";
-import { ExpectedError, Reason } from "../errors/expected-error";
+import { Code, ConnectError } from "@bufbuild/connect";
 import {
 	GetWalletRequest,
 	GetWalletResponse,
-} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
-import WalletRepository from "../repositories/wallet-repository";
-import { walletRegex } from "../utils";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb.js";
 
-async function getWallet(
-	request: GetWalletRequest
-): Promise<GetWalletResponse> {
-	if (request.name.match(walletRegex) === null) {
-		throw new ExpectedError("Invalid wallet", Reason.INVALID_ARGUMENT);
+import WalletRepository from "../repositories/wallet-repository.js";
+import { walletRegex } from "../utils/regex.js";
+
+async function getWallet(req: GetWalletRequest): Promise<GetWalletResponse> {
+	if (req.name.match(walletRegex) === null) {
+		throw new ConnectError("Invalid wallet", Code.InvalidArgument);
 	}
 
-	const uid = request.name.split("/")[1];
+	const uid = req.name.split("/")[1];
 
-	// TODO: Check if user is authorized to access this wallet
 	const wallet = await WalletRepository.instance.getWallet(uid);
 
-	if (wallet.exists === false) {
-		throw new ExpectedError("Wallet Does Not Exist", Reason.NOT_FOUND);
+	if (!wallet) {
+		throw new ConnectError("Wallet Does Not Exist", Code.NotFound);
 	}
 
-	return {
-		wallet: {
-			name: request.name,
-			balance: wallet.get("balance") as number,
-			createTime: {
-				seconds: BigInt((wallet.get("createdAt") as FireTimestamp).seconds),
-				nanos: (wallet.get("createdAt") as FireTimestamp).nanoseconds,
-			},
-			updateTime: {
-				seconds: BigInt((wallet.get("updatedAt") as FireTimestamp).seconds),
-				nanos: (wallet.get("updatedAt") as FireTimestamp).nanoseconds,
-			},
-		},
-	};
+	return new GetWalletResponse({
+		wallet,
+	});
 }
 
 export default getWallet;

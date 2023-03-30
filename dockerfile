@@ -15,12 +15,13 @@ COPY package-lock.json package.json ./
 RUN npm ci --production
 
 # Copy node_modules from build and js files from local /build
-FROM gcr.io/distroless/nodejs:16
+FROM gcr.io/distroless/nodejs18-debian11
 
 WORKDIR /app
 
 COPY --from=deps /app/node_modules node_modules
 COPY --from=build /app/build .
+COPY package.json .
 
 ENV NODE_ENV production
 

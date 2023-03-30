@@ -1,30 +1,30 @@
+import { Code, ConnectError } from "@bufbuild/connect";
 import { nanoid } from "nanoid";
-import { ExpectedError, Reason } from "../errors/expected-error";
 import {
 	CreateTransactionRequest,
 	CreateTransactionResponse,
-} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
-import TransactionRepository from "../repositories/transaction-repository";
-import WalletRepository from "../repositories/wallet-repository";
-import { walletRegex } from "../utils";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb.js";
+import TransactionRepository from "../repositories/transaction-repository.js";
+import WalletRepository from "../repositories/wallet-repository.js";
+import { walletRegex } from "../utils/regex.js";
 
 async function createTransaction(
 	request: CreateTransactionRequest
 ): Promise<CreateTransactionResponse> {
 	if (request.parent.match(walletRegex) === null) {
-		throw new ExpectedError("Invalid parent", Reason.INVALID_ARGUMENT);
+		throw new ConnectError("Invalid parent", Code.InvalidArgument);
 	}
 
 	if (!request.transaction || !request.transaction.amount) {
-		throw new ExpectedError("Invalid transaction", Reason.INVALID_ARGUMENT);
+		throw new ConnectError("Invalid transaction", Code.InvalidArgument);
 	}
 
 	const uid = request.parent.split("/")[1];
 
 	const wallet = await WalletRepository.instance.getWallet(uid);
 
-	if (!wallet.exists) {
-		throw new ExpectedError("Wallet Does Not Exist", Reason.BAD_STATE);
+	if (!wallet) {
+		throw new ConnectError("Wallet Does Not Exist", Code.FailedPrecondition);
 	}
 
 	const transactionId = nanoid();
@@ -33,13 +33,13 @@ async function createTransaction(
 		transactionId: request.transaction,
 	});
 
-	return {
+	return new CreateTransactionResponse({
 		transaction: {
 			name: `${request.parent}/transactions/${transactionId}`,
 			amount: request.transaction.amount,
 			type: request.transaction.type,
 		},
-	};
+	});
 }
 
 export default createTransaction;

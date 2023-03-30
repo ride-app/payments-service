@@ -1,9 +1,9 @@
 version: v1
 plugins:
-  - remote: buf.build/timostamm/plugins/protobuf-ts:v2.8.0-1
+  - plugin: buf.build/bufbuild/es
+    opt: target=ts
     out: src/gen
-    opt:
-      - server_grpc1
-      - client_grpc1
-      - generate_dependencies
-      - add_pb_suffix
+
+  - plugin: buf.build/bufbuild/connect-es
+    opt: target=ts
+    out: src/gen

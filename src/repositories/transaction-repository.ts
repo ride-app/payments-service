@@ -1,25 +1,25 @@
 /* eslint-disable no-underscore-dangle */
+import { Code, ConnectError } from "@bufbuild/connect";
+import { Timestamp } from "@bufbuild/protobuf";
 import { Firestore, getFirestore } from "firebase-admin/firestore";
-import { ExpectedError, Reason } from "../errors/expected-error";
-import { Timestamp } from "../gen/google/protobuf/timestamp_pb";
 import {
 	Transaction,
 	Transaction_Details,
 	Transaction_Type,
-} from "../gen/ride/wallet/v1alpha1/wallet_service_pb";
+} from "../gen/ride/wallet/v1alpha1/wallet_service_pb.js";
 
 function TransactionFromJSON(
 	id: string,
 	data: Record<string, any>
 ): Transaction {
-	return {
-		name: `users/${data.walletId}/wallet/transactions/${id}`,
-		amount: data.amount,
-		createTime: Timestamp.fromDate(data.createTime!.toDate()),
-		type: data.type as Transaction_Type,
-		batchId: data.batchId,
-		details: Transaction_Details.fromJson(data.details!),
-	};
+	return new Transaction({
+		name: `users/${data["walletId"]}/wallet/transactions/${id}`,
+		amount: data["amount"],
+		createTime: Timestamp.fromDate(data["createTime"]!.toDate()),
+		type: data["type"] as Transaction_Type,
+		batchId: data["batchId"],
+		details: Transaction_Details.fromJson(data["details"]!),
+	});
 }
 
 class TransactionRepository {
@@ -51,11 +51,15 @@ class TransactionRepository {
 			amount: transaction.amount,
 			type: transaction.type.toString(),
 			batchId: transaction.batchId,
-			details: Transaction_Details.toJson(transaction.details!),
+			details: {
+				displayName: transaction.details?.displayName,
+				description: transaction.details?.description,
+				reference: transaction.details?.reference,
+			},
 		});
 
 		if (Object.keys(transactions).length > 1 && !batchId) {
-			throw new ExpectedError("Batch Id Required", Reason.BAD_STATE);
+			throw new ConnectError("Batch Id Required", Code.FailedPrecondition);
 		}
 
 		const transactionRef = this.firestore.collection("transactions");
@@ -100,7 +104,7 @@ class TransactionRepository {
 
 		return snap.docs.map((doc) => {
 			if (!doc.data()) {
-				throw new ExpectedError("Transaction does not exist", Reason.NOT_FOUND);
+				throw new ConnectError("Transaction does not exist", Code.NotFound);
 			}
 
 			return TransactionFromJSON(doc.id, doc.data()!);
@@ -119,7 +123,7 @@ class TransactionRepository {
 
 		return snap.docs.map((doc) => {
 			if (!doc.data()) {
-				throw new ExpectedError("Transaction does not exist", Reason.NOT_FOUND);
+				throw new ConnectError("Transaction does not exist", Code.NotFound);
 			}
 
 			return TransactionFromJSON(doc.id, doc.data()!);
