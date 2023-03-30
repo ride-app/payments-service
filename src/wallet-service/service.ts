@@ -19,7 +19,10 @@ const routes = (router: ConnectRouter) =>
 			await verifyAuthHeader(context);
 			return getTransaction(req);
 		},
-		listTransactions,
+		listTransactions: async (req, context) => {
+			await verifyAuthHeader(context);
+			return listTransactions(req);
+		},
 	});
 
 export default routes;
