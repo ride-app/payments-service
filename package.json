@@ -18,7 +18,7 @@
 		"@bufbuild/connect-fastify": "^0.8.5",
 		"@bufbuild/protobuf": "^1.1.1",
 		"fastify": "^4.15.0",
-		"firebase-admin": "^11.5.0",
+		"firebase-admin": "^11.7.0",
 		"nanoid": "^4.0.2"
 	},
 	"devDependencies": {
