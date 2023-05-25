@@ -1,23 +1,26 @@
 version: 0.1
 actions:
   enabled:
+    - trunk-announce
     - trunk-upgrade-available
     - trunk-cache-prune
     - trunk-fmt-pre-commit
     - trunk-check-pre-push
 cli:
-  version: 1.6.1
+  version: 1.10.0
 lint:
   enabled:
+    - git-diff-check
+    - yamllint@1.32.0
     - sort-package-json@2.4.1
-    - markdownlint@0.31.1
-    - actionlint@1.6.15
-    - eslint@8.19.0
-    - gitleaks@8.8.11
-    - prettier@2.7.1
-    - buf-lint@1.6.0
-    - buf-breaking@1.6.0
-    - hadolint@2.10.0
+    - markdownlint@0.34.0
+    - actionlint@1.6.24
+    - eslint@8.41.0
+    - gitleaks@8.16.3
+    - prettier@2.8.8
+    - buf-lint@1.19.0
+    - buf-breaking@1.19.0
+    - hadolint@2.12.0
 
   ignore:
     - linters: [ALL]
@@ -35,9 +38,10 @@ repo:
 plugins:
   sources:
     - id: trunk
-      ref: v0.0.13
+      ref: v0.0.14
       uri: https://github.com/trunk-io/plugins
 runtimes:
   enabled:
+    - python@3.10.8
     - go@1.19.5
     - node@18.12.1
