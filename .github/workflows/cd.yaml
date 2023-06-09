@@ -21,7 +21,7 @@ jobs:
           - stack: prod
             project-number: 486946551871
           - stack: staging
-            version: 259504449534
+            project-number: 259504449534
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -112,7 +112,7 @@ jobs:
           - stack: prod
             project-number: 486946551871
           - stack: staging
-            version: 259504449534
+            project-number: 259504449534
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
