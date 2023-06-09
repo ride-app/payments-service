@@ -14,6 +14,14 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    strategy:
+      matrix:
+        stack: [prod, staging]
+        include:
+          - stack: prod
+            project-number: 486946551871
+          - stack: staging
+            version: 259504449534
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -54,7 +62,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            asia-south2-docker.pkg.dev/ride-app-prod/delhi-container-registry/wallet-service
+            asia-south2-docker.pkg.dev/ride-app-${{ matrix.stack }}/docker-registry/wallet-service
           tags: |
             type=semver,pattern={{version}}
             type=sha
@@ -68,7 +76,7 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           token_format: access_token
-          workload_identity_provider: projects/486946551871/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
+          workload_identity_provider: projects/${{ matrix.project-number }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
           service_account: artifact-registry-admin@ride-app-prod.iam.gserviceaccount.com
 
       - name: Login to GAR
@@ -97,6 +105,14 @@ jobs:
       id-token: write
     env:
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+    strategy:
+      matrix:
+        stack: [prod, staging]
+        include:
+          - stack: prod
+            project-number: 486946551871
+          - stack: staging
+            version: 259504449534
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -121,7 +137,7 @@ jobs:
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/486946551871/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
+          workload_identity_provider: projects/${{ matrix.project-number }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions-provider
           service_account: cloud-run-service-manager@ride-app-prod.iam.gserviceaccount.com
 
       - name: Setup gcloud
@@ -129,12 +145,12 @@ jobs:
 
       - name: Set current sha in pulumi config
         run: |
-          pulumi config set image:tag sha-${{ github.sha }} -s ride/prod
+          pulumi config set image:tag sha-${{ github.sha }} -s ride/${{ matrix.stack }}
         working-directory: infra
 
       - uses: pulumi/actions@v4
         with:
           work-dir: infra
           command: up
-          stack-name: ride/prod
+          stack-name: ride/${{ matrix.stack }}
           refresh: true
