@@ -1,5 +1,5 @@
 import { getAuth } from "firebase-admin/auth";
-import { Code, ConnectError, HandlerContext } from "@bufbuild/connect";
+import { Code, ConnectError, type HandlerContext } from "@bufbuild/connect";
 
 const verifyAuthHeader = async (context: HandlerContext): Promise<string> => {
 	try {
