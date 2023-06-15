@@ -20,8 +20,8 @@ jobs:
         include:
           - stack: prod
             project-number: 486946551871
-          - stack: staging
-            project-number: 259504449534
+          - stack: dev
+            project-number: 785768451767
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -111,8 +111,8 @@ jobs:
         include:
           - stack: prod
             project-number: 486946551871
-          - stack: staging
-            project-number: 259504449534
+          - stack: dev
+            project-number: 785768451767
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
