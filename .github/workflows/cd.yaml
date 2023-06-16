@@ -16,11 +16,11 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        stack: [prod, dev]
+        stack: [prod, dev-2]
         include:
           - stack: prod
             project-number: 486946551871
-          - stack: dev
+          - stack: dev-2
             project-number: 785768451767
     steps:
       - name: Checkout Code
@@ -107,11 +107,11 @@ jobs:
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
     strategy:
       matrix:
-        stack: [prod, dev]
+        stack: [prod, dev-2]
         include:
           - stack: prod
             project-number: 486946551871
-          - stack: dev
+          - stack: dev-2
             project-number: 785768451767
     steps:
       - name: Checkout Code
