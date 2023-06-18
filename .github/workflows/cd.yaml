@@ -111,8 +111,10 @@ jobs:
         include:
           - stack: prod
             project-number: 486946551871
+            project-stack: prod
           - stack: dev-2
             project-number: 785768451767
+            project-stack: dev
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -145,7 +147,7 @@ jobs:
 
       - name: Set current sha in pulumi config
         run: |
-          pulumi config set image:tag sha-${{ github.sha }} -s ride/${{ matrix.stack }}
+          pulumi config set image:tag sha-${{ github.sha }} -s ride/${{ matrix.project-stack }}
         working-directory: infra
 
       - uses: pulumi/actions@v4
