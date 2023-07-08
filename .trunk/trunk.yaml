@@ -45,3 +45,6 @@ runtimes:
     - python@3.10.8
     - go@1.19.5
     - node@18.12.1
+merge:
+  required_statuses:
+    - test

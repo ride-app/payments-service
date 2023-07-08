@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - trunk-merge/**
   workflow_dispatch:
 
 env:
