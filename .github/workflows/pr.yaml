@@ -7,14 +7,14 @@ on:
   push:
     branches:
       - trunk-merge/**
-  workflow_dispatch:
 
 env:
   SERVICE_NAME: wallet-service
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
+    name: Lint
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3

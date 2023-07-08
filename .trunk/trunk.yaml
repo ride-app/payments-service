@@ -47,4 +47,4 @@ runtimes:
     - node@18.12.1
 merge:
   required_statuses:
-    - test
+    - Lint
