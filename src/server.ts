@@ -1,11 +1,15 @@
-import { fastify } from "fastify";
-import { fastifyConnectPlugin } from "@bufbuild/connect-fastify";
+import { createServer } from "http";
+import { connectNodeAdapter } from "@bufbuild/connect-node";
 import routes from "./wallet-service/service.js";
 
-const server = fastify({ trustProxy: true });
+// const server = fastify({ trustProxy: true });
 
-await server.register(fastifyConnectPlugin, {
-	routes,
-});
+// await server.register(fastifyConnectPlugin, {
+// 	routes,
+// });
+
+const server = createServer(
+	connectNodeAdapter({ routes }) // responds with 404 for other requests
+).listen(8080);
 
 export default server;
