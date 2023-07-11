@@ -1,17 +1,22 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: npm
+    directory: /
     schedule:
-      interval: "daily"
+      interval: daily
     commit_message:
-      prefix: "chore"
+      prefix: chore
       include_scope: true
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
     commit_message:
-      prefix: "chore"
+      prefix: chore
       include_scope: true
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
