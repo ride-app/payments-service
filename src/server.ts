@@ -3,7 +3,7 @@ import { createServer } from "http";
 // import routes from "./wallet-service/service.js";
 
 const server = createServer(
-	(req, res) => {
+	(_, res) => {
 		res.write("Hello World!"); // write a response to the client
 		res.end(); // end the response
 	}
