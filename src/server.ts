@@ -3,8 +3,8 @@ import { createServer } from "http";
 // import routes from "./wallet-service/service.js";
 
 const server = createServer(
-	(_, res) => {
-		res.write("Hello World!"); // write a response to the client
+	(req, res) => {
+		res.write(req.url); // write a response to the client
 		res.end(); // end the response
 	}
 	// connectNodeAdapter({ routes }) // responds with 404 for other requests
