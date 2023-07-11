@@ -4,17 +4,11 @@ updates:
     directory: /
     schedule:
       interval: daily
-    commit_message:
-      prefix: chore
-      include_scope: true
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-    commit_message:
-      prefix: chore
-      include_scope: true
+      interval: daily
 
   - package-ecosystem: docker
     directory: /
