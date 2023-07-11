@@ -9,7 +9,7 @@ import routes from "./wallet-service/service.js";
 // });
 
 const server = createServer(
-	connectNodeAdapter({ routes }) // responds with 404 for other requests
+	connectNodeAdapter({ routes, fallback: () => console.info("fallback") }) // responds with 404 for other requests
 );
 
 export default server;
