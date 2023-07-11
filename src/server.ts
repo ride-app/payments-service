@@ -10,6 +10,6 @@ import routes from "./wallet-service/service.js";
 
 const server = createServer(
 	connectNodeAdapter({ routes }) // responds with 404 for other requests
-).listen(8080);
+);
 
 export default server;
