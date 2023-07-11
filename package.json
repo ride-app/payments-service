@@ -22,7 +22,7 @@
 		"nanoid": "^4.0.2"
 	},
 	"devDependencies": {
-		"@firebase/rules-unit-testing": "^2.0.7",
+		"@firebase/rules-unit-testing": "^3.0.0",
 		"@tsconfig/esm": "^1.0.4",
 		"@tsconfig/node-lts": "^18.12.3",
 		"@tsconfig/strictest": "^2.0.1",
