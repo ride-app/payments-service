@@ -52,8 +52,6 @@ export default class WalletRepository {
 	async getWallet(uid: string): Promise<Wallet | undefined> {
 		const snap = await this.firestore.collection("wallets").doc(uid).get();
 
-		console.debug(`Snap exists: ${snap.exists}`);
-
 		return snap.exists
 			? new Wallet({
 					name: `users/${uid}/wallet`,
