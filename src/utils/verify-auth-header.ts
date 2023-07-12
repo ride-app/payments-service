@@ -8,8 +8,6 @@ const verifyAuthHeader = async (context: HandlerContext): Promise<string> => {
 		}
 		const token = context.requestHeader.get("authorization").toString();
 
-		console.debug("Token: ", token);
-
 		if (!token.startsWith("Bearer ")) {
 			throw new ConnectError("Invalid Authorization", Code.Unauthenticated);
 		}
