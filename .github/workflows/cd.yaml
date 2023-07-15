@@ -172,6 +172,8 @@ jobs:
             project-suffix: prod
           - stack: dev
             project-suffix: dev-2
+    env:
+      npm_config_yes: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -183,6 +185,6 @@ jobs:
       - run: npm install
         working-directory: functions/functions
 
-      - run: npx firebase deploy --only functions --projects ride-app-${{ matrix.project-suffix }} --token ${{ env.FIREBASE_TOKEN }}
+      - run: npx firebase-tools deploy --only functions --projects ride-app-${{ matrix.project-suffix }} --token ${{ env.FIREBASE_TOKEN }}
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
