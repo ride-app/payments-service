@@ -125,7 +125,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: .nvmrc
 
       - run: npm install
         working-directory: infra
@@ -160,3 +160,29 @@ jobs:
           command: up
           stack-name: ride/${{ matrix.stack }}
           refresh: true
+
+  deploy-cloud-function:
+    name: Deploy Cloud Function
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stack: [prod, dev]
+        include:
+          - stack: prod
+            project-suffix: prod
+          - stack: dev
+            project-suffix: dev-2
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: .nvmrc
+
+      - run: npm install
+        working-directory: functions/functions
+
+      - run: npx firebase deploy --only functions --projects ride-app-${{ matrix.project-suffix }} --token ${{ env.FIREBASE_TOKEN }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
