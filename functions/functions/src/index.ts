@@ -1,5 +1,6 @@
 import * as logger from "firebase-functions/logger";
 import { region } from "firebase-functions";
+import { initializeApp } from "firebase-admin/app";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { setGlobalOptions } from "firebase-functions/v2/options";
@@ -12,6 +13,8 @@ class ExpectedError extends Error {
 		this.name = "ExpectedError";
 	}
 }
+
+initializeApp();
 
 export const createUserWallet = region("asia-south1")
 	.auth.user()
