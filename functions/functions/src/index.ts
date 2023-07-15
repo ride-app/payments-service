@@ -20,11 +20,12 @@ export const createUserWallet = region("asia-south1")
 	.auth.user()
 	.onCreate((user) => {
 		try {
-			getFirestore().collection("wallets").doc(user.uid).set({
+			return getFirestore().collection("wallets").doc(user.uid).set({
 				balance: 0,
 			});
 		} catch (error) {
 			logger.error(error);
+			return null;
 		}
 	});
 
@@ -51,7 +52,7 @@ export const reconcile = onDocumentCreated(
 				throw new ExpectedError("Invalid transaction type");
 			}
 
-			await firestore.runTransaction(async (transaction) => {
+			return await firestore.runTransaction(async (transaction) => {
 				const walletId = snap.get("walletId") as string;
 				const amount = snap.get("amount") as number;
 				const type = snap.get("type") as string;
