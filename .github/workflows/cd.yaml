@@ -185,5 +185,15 @@ jobs:
       - run: npm install
         working-directory: functions/functions
 
+      - name: Cache node_modules
+        uses: actions/cache@v3.3.1
+        with:
+          path: |
+            **/node_modules
+          key: |
+            node-${{ hashfiles('functions/function/package-lock.json') }}
+          restore-keys: |
+            node-
+
       - run: npx firebase-tools deploy --only functions --project ride-app-${{ matrix.project-suffix }} --token ${{ secrets.FIREBASE_TOKEN }}
         working-directory: functions
