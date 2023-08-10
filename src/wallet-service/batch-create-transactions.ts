@@ -14,22 +14,22 @@ import { walletRegex } from "../utils/regex.js";
 async function batchCreateTransactions(
 	request: BatchCreateTransactionsRequest
 ): Promise<BatchCreateTransactionsResponse> {
-	if (request.transactions.length === 0) {
-		throw new ConnectError("transactions is empty", Code.InvalidArgument);
-	}
+    	if (request.transactions.length === 0) {
+    		throw new ConnectError("transactions is empty", Code.InvalidArgument);
+    	}
 
-	const batchId = nanoid();
-	const transactionIds: string[] = [];
-	const transactionData: Record<string, Transaction> = {};
+    	const batchId = nanoid();
+    	const transactionIds: string[] = [];
+    	const transactionData: Record<string, Transaction> = {};
 
- 	await Promise.all(
- 		Object.values(request.transactions).map(async (entry, i) => {
- 			if (entry.parent.match(walletRegex) === null) {
- 				throw new ConnectError(
- 					`user id is empty for transaction ${i}`,
- 					Code.InvalidArgument
- 				);
- 			}
+    	await Promise.all(
+    		Object.values(request.transactions).map(async (entry, i) => {
+    			if (entry.parent.match(walletRegex) === null) {
+    				throw new ConnectError(
+    					`user id is empty for transaction ${i}`,
+    					Code.InvalidArgument
+    				);
+    			}
 
    			if (!entry.transaction || !entry.transaction.amount) {
         throw new ConnectError(
@@ -74,10 +74,10 @@ async function batchCreateTransactions(
 		})
 	);
 
- 	const writeTimes = await TransactionRepository.instance.createTransactions(
- 		transactionData,
- 		batchId
- 	);
+    	const writeTimes = await TransactionRepository.instance.createTransactions(
+    		transactionData,
+    		batchId
+    	);
 
 	const transactions: Transaction[] = Object.values(request.transactions).map(
 		(t, i) =>
@@ -90,10 +90,10 @@ async function batchCreateTransactions(
 			})
 	);
 
-	return new BatchCreateTransactionsResponse({
-		batchId,
-		transactions,
-	});
+    	return new BatchCreateTransactionsResponse({
+    		batchId,
+    		transactions,
+    	});
 }
 
 export default batchCreateTransactions;
