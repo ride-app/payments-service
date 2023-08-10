@@ -9,25 +9,25 @@ import { transactionRegex } from "../utils/regex.js";
 async function getTransaction(
 	req: GetTransactionRequest
 ): Promise<GetTransactionResponse> {
-	if (req.name.match(transactionRegex) === null) {
-  		throw new ConnectError("invalid name", Code.InvalidArgument);
-	}
-
- 	const transactionId = req.name.split("/").pop()!;
- 	if (!transactionId) {
-  		throw new ConnectError("transaction id is null", Code.InvalidArgument);
+ 	if (req.name.match(transactionRegex) === null) {
+ 		throw new ConnectError("invalid name", Code.InvalidArgument);
  	}
 
- 	// Check if user is authorized to access this transaction
- 	const user = req.user;
- 	checkUserAuthorization(user, transactionId);
- 	const transaction = await TransactionRepository.instance.getTransaction(
- 		transactionId
- 	);
+  	const transactionId = req.name.split("/").pop()!;
+  	if (!transactionId) {
+  		throw new ConnectError("transaction id is null", Code.InvalidArgument);
+  	}
 
-	if (!transaction) {
-  		throw new ConnectError("transaction does not exist", Code.NotFound);
-	}
+  	// Check if user is authorized to access this transaction
+  	const user = req.user;
+  	checkUserAuthorization(user, transactionId);
+  	const transaction = await TransactionRepository.instance.getTransaction(
+  		transactionId
+  	);
+
+ 	if (!transaction) {
+ 		throw new ConnectError("transaction does not exist", Code.NotFound);
+ 	}
 
 	return new GetTransactionResponse({
 		transaction,
