@@ -10,12 +10,12 @@ async function getTransaction(
 	req: GetTransactionRequest
 ): Promise<GetTransactionResponse> {
  	if (req.name.match(transactionRegex) === null) {
-    throw new ConnectError("Invalid name", Code.InvalidArgument);
+    throw new ConnectError("invalid name", Code.InvalidArgument);
  	}
 
   	const transactionId = req.name.split("/").pop()!;
   	if (!transactionId) {
-    throw new ConnectError("Transaction id is null", Code.InvalidArgument);
+    throw new ConnectError("transaction id is null", Code.InvalidArgument);
   	}
 
   	// Check if user is authorized to access this transaction
@@ -26,7 +26,7 @@ async function getTransaction(
   	);
 
  	if (!transaction) {
-    throw new ConnectError("Transaction does not exist", Code.NotFound);
+    throw new ConnectError("transaction does not exist", Code.NotFound);
  	}
 
 	return new GetTransactionResponse({
