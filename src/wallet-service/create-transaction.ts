@@ -11,21 +11,21 @@ import { walletRegex } from "../utils/regex.js";
 async function createTransaction(
 	request: CreateTransactionRequest
 ): Promise<CreateTransactionResponse> {
-	if (request.parent.match(walletRegex) === null) {
-  		throw new ConnectError("invalid parent", Code.InvalidArgument);
-	}
+ 	if (request.parent.match(walletRegex) === null) {
+ 		throw new ConnectError("invalid parent", Code.InvalidArgument);
+ 	}
 
-	if (!request.transaction || !request.transaction.amount) {
-  		throw new ConnectError("invalid transaction", Code.InvalidArgument);
-	}
+ 	if (!request.transaction || !request.transaction.amount) {
+ 		throw new ConnectError("invalid transaction", Code.InvalidArgument);
+ 	}
 
 	const uid = request.parent.split("/")[1];
 
 	const wallet = await WalletRepository.instance.getWallet(uid);
 
-	if (!wallet) {
-  		throw new ConnectError("wallet does not exist", Code.FailedPrecondition);
-	}
+ 	if (!wallet) {
+ 		throw new ConnectError("wallet does not exist", Code.FailedPrecondition);
+ 	}
 
 	const transactionId = nanoid();
 
