@@ -11,17 +11,17 @@ async function listTransactions(
 	pageNumber: number,
 	itemsPerPage: number
 ): Promise<ListTransactionsResponse> {
-	if (request.parent.match(walletRegex) === null) {
-  		throw new ConnectError("invalid parent", Code.InvalidArgument);
-	}
+ 	if (request.parent.match(walletRegex) === null) {
+ 		throw new ConnectError("invalid parent", Code.InvalidArgument);
+ 	}
 
 	const uid = request.parent.split("/")[1];
 
- 	const transactions = await TransactionRepository.instance.getTransactions(
- 		uid,
- 		pageNumber,
- 		itemsPerPage
- 	);
+  	const transactions = await TransactionRepository.instance.getTransactions(
+  		uid,
+  		pageNumber,
+  		itemsPerPage
+  	);
 
 	return new ListTransactionsResponse({
 		transactions,
