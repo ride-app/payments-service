@@ -14,53 +14,53 @@ import { walletRegex } from "../utils/regex.js";
 async function batchCreateTransactions(
 	request: BatchCreateTransactionsRequest
 ): Promise<BatchCreateTransactionsResponse> {
-    	if (request.transactions.length === 0) {
-    		throw new ConnectError("transactions is empty", Code.InvalidArgument);
-    	}
+	if (request.transactions.length === 0) {
+		throw new ConnectError("transactions is empty", Code.InvalidArgument);
+	}
 
-    	const batchId = nanoid();
-    	const transactionIds: string[] = [];
-    	const transactionData: Record<string, Transaction> = {};
+	const batchId = nanoid();
+	const transactionIds: string[] = [];
+	const transactionData: Record<string, Transaction> = {};
 
-    	await Promise.all(
-    		Object.values(request.transactions).map(async (entry, i) => {
-    			if (entry.parent.match(walletRegex) === null) {
-    				throw new ConnectError(
-    					`user id is empty for transaction ${i}`,
-    					Code.InvalidArgument
-    				);
-    			}
+	await Promise.all(
+		Object.values(request.transactions).map(async (entry, i) => {
+			if (entry.parent.match(walletRegex) === null) {
+				throw new ConnectError(
+					`user id is empty for transaction ${i}`,
+					Code.InvalidArgument
+				);
+			}
 
-   			if (!entry.transaction || !entry.transaction.amount) {
-        throw new ConnectError(
-            `transaction is empty for transaction ${i}`,
-            Code.InvalidArgument
-        );
-   			}
+			if (!entry.transaction?.amount) {
+				throw new ConnectError(
+					`transaction is empty for transaction ${i}`,
+					Code.InvalidArgument
+				);
+			}
 
-   			if (entry.transaction.amount <= 0) {
-        throw new ConnectError(
-            `transaction amount must be positive. got ${entry.transaction.amount} for transaction ${i}`,
-            Code.InvalidArgument
-        );
-   			}
-   			if (entry.transaction.type === Transaction_Type.UNSPECIFIED) {
-        throw new ConnectError(
-            `transaction type is not specified for transaction ${i}`,
-            Code.InvalidArgument
-        );
-   			}
+			if (entry.transaction.amount <= 0) {
+				throw new ConnectError(
+					`transaction amount must be positive. got ${entry.transaction.amount} for transaction ${i}`,
+					Code.InvalidArgument
+				);
+			}
+			if (entry.transaction.type === Transaction_Type.UNSPECIFIED) {
+				throw new ConnectError(
+					`transaction type is not specified for transaction ${i}`,
+					Code.InvalidArgument
+				);
+			}
 
 			const walletId = entry.parent.split("/")[1];
 
 			const wallet = await WalletRepository.instance.getWallet(walletId);
 
-   			if (!wallet) {
-        throw new ConnectError(
-            "wallet does not exist",
-            Code.FailedPrecondition
-        );
-   			}
+			if (!wallet) {
+				throw new ConnectError(
+					"wallet does not exist",
+					Code.FailedPrecondition
+				);
+			}
 
 			const transactionId = nanoid();
 			transactionIds.push(transactionId);
@@ -74,10 +74,10 @@ async function batchCreateTransactions(
 		})
 	);
 
-    	const writeTimes = await TransactionRepository.instance.createTransactions(
-    		transactionData,
-    		batchId
-    	);
+	const writeTimes = await TransactionRepository.instance.createTransactions(
+		transactionData,
+		batchId
+	);
 
 	const transactions: Transaction[] = Object.values(request.transactions).map(
 		(t, i) =>
@@ -90,10 +90,10 @@ async function batchCreateTransactions(
 			})
 	);
 
-    	return new BatchCreateTransactionsResponse({
-    		batchId,
-    		transactions,
-    	});
+	return new BatchCreateTransactionsResponse({
+		batchId,
+		transactions,
+	});
 }
 
 export default batchCreateTransactions;
