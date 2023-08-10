@@ -33,4 +33,4 @@
 // 	};
 // }
 
-// export default listTransactionsByBatchId;
+export default listTransactionsByBatchId;
