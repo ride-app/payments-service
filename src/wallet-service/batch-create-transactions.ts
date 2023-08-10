@@ -25,30 +25,30 @@ async function batchCreateTransactions(
 	await Promise.all(
 		Object.values(request.transactions).map(async (entry, i) => {
    			if (entry.parent.match(walletRegex) === null) {
-       				throw new ConnectError(
-       					`UserId is empty for transaction ${i}`,
-       					Code.InvalidArgument
-       				);
+        throw new ConnectError(
+            `user id is empty for transaction ${i}`,
+            Code.InvalidArgument
+        );
    			}
 
    			if (!entry.transaction || !entry.transaction.amount) {
-       				throw new ConnectError(
-       					`Transaction is empty for transaction ${i}`,
-       					Code.InvalidArgument
-       				);
+        throw new ConnectError(
+            `transaction is empty for transaction ${i}`,
+            Code.InvalidArgument
+        );
    			}
 
    			if (entry.transaction.amount <= 0) {
-       				throw new ConnectError(
-       					`Transaction amount must be positive. Got ${entry.transaction.amount} for transaction ${i}`,
-       					Code.InvalidArgument
-       				);
+        throw new ConnectError(
+            `transaction amount must be positive. got ${entry.transaction.amount} for transaction ${i}`,
+            Code.InvalidArgument
+        );
    			}
    			if (entry.transaction.type === Transaction_Type.UNSPECIFIED) {
-       				throw new ConnectError(
-       					`Transaction type is not specified for transaction ${i}`,
-       					Code.InvalidArgument
-       				);
+        throw new ConnectError(
+            `transaction type is not specified for transaction ${i}`,
+            Code.InvalidArgument
+        );
    			}
 
 			const walletId = entry.parent.split("/")[1];
@@ -56,10 +56,10 @@ async function batchCreateTransactions(
 			const wallet = await WalletRepository.instance.getWallet(walletId);
 
    			if (!wallet) {
-       				throw new ConnectError(
-       					"Wallet does not exist",
-       					Code.FailedPrecondition
-       				);
+        throw new ConnectError(
+            "wallet does not exist",
+            Code.FailedPrecondition
+        );
    			}
 
 			const transactionId = nanoid();
