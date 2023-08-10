@@ -26,12 +26,12 @@ async function batchCreateTransactions(
 		Object.values(request.transactions).map(async (entry, i) => {
 			if (entry.parent.match(walletRegex) === null) {
 				throw new ConnectError(
-					`userId is empty for transaction ${i}`,
+					`user id is empty for transaction ${i}`,
 					Code.InvalidArgument
 				);
 			}
 
-			if (!entry.transaction || !entry.transaction.amount) {
+			if (!entry.transaction?.amount) {
 				throw new ConnectError(
 					`transaction is empty for transaction ${i}`,
 					Code.InvalidArgument
@@ -40,13 +40,13 @@ async function batchCreateTransactions(
 
 			if (entry.transaction.amount <= 0) {
 				throw new ConnectError(
-					`Transaction amount must be positive. Got ${entry.transaction.amount} for transaction ${i}`,
+					`transaction amount must be positive. got ${entry.transaction.amount} for transaction ${i}`,
 					Code.InvalidArgument
 				);
 			}
 			if (entry.transaction.type === Transaction_Type.UNSPECIFIED) {
 				throw new ConnectError(
-					`Transaction type is not specified for transaction ${i}`,
+					`transaction type is not specified for transaction ${i}`,
 					Code.InvalidArgument
 				);
 			}
@@ -57,7 +57,7 @@ async function batchCreateTransactions(
 
 			if (!wallet) {
 				throw new ConnectError(
-					"Wallet Does Not Exist",
+					"wallet does not exist",
 					Code.FailedPrecondition
 				);
 			}

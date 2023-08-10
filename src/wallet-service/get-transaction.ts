@@ -10,19 +10,20 @@ async function getTransaction(
 	req: GetTransactionRequest
 ): Promise<GetTransactionResponse> {
 	if (req.name.match(transactionRegex) === null) {
-		throw new ConnectError("Invalid name", Code.InvalidArgument);
+		throw new ConnectError("invalid name", Code.InvalidArgument);
 	}
 
-	// TODO: Do something about the null case
-	const transactionId = req.name.split("/").pop()!;
+	const transactionId = req.name.split("/").pop();
+	if (!transactionId) {
+		throw new ConnectError("transaction id is null", Code.InvalidArgument);
+	}
 
-	// TODO: Check if user is authorized to access this transaction
 	const transaction = await TransactionRepository.instance.getTransaction(
 		transactionId
 	);
 
 	if (!transaction) {
-		throw new ConnectError("Transaction does not exist", Code.NotFound);
+		throw new ConnectError("transaction does not exist", Code.NotFound);
 	}
 
 	return new GetTransactionResponse({
