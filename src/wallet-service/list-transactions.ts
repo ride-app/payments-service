@@ -10,7 +10,7 @@ async function listTransactions(
 	request: ListTransactionsRequest
 ): Promise<ListTransactionsResponse> {
 	if (request.parent.match(walletRegex) === null) {
-		throw new ConnectError("Invalid parent", Code.InvalidArgument);
+  		throw new ConnectError("invalid parent", Code.InvalidArgument);
 	}
 
 	const uid = request.parent.split("/")[1];
@@ -21,7 +21,7 @@ async function listTransactions(
 
 	return new ListTransactionsResponse({
 		transactions,
-		// TODO: pagination
+  		// todo: pagination
 		nextPageToken: "",
 	});
 }
