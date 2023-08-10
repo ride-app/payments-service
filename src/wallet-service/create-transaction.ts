@@ -12,11 +12,11 @@ async function createTransaction(
 	request: CreateTransactionRequest
 ): Promise<CreateTransactionResponse> {
  	if (request.parent.match(walletRegex) === null) {
-    throw new ConnectError("Invalid parent", Code.InvalidArgument);
+    throw new ConnectError("invalid parent", Code.InvalidArgument);
  	}
 
  	if (!request.transaction || !request.transaction.amount) {
-    throw new ConnectError("Invalid transaction", Code.InvalidArgument);
+    throw new ConnectError("invalid transaction", Code.InvalidArgument);
  	}
 
 	const uid = request.parent.split("/")[1];
@@ -24,7 +24,7 @@ async function createTransaction(
 	const wallet = await WalletRepository.instance.getWallet(uid);
 
  	if (!wallet) {
-    throw new ConnectError("Wallet does not exist", Code.FailedPrecondition);
+    throw new ConnectError("wallet does not exist", Code.FailedPrecondition);
  	}
 
 	const transactionId = nanoid();
