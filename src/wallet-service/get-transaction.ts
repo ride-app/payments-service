@@ -13,13 +13,17 @@ async function getTransaction(
   		throw new ConnectError("invalid name", Code.InvalidArgument);
 	}
 
- 	// todo: do something about the null case
-	const transactionId = req.name.split("/").pop()!;
+ 	const transactionId = req.name.split("/").pop()!;
+ 	if (!transactionId) {
+  		throw new ConnectError("transaction id is null", Code.InvalidArgument);
+ 	}
 
- 	// todo: check if user is authorized to access this transaction
-	const transaction = await TransactionRepository.instance.getTransaction(
-		transactionId
-	);
+ 	// Check if user is authorized to access this transaction
+ 	const user = req.user;
+ 	checkUserAuthorization(user, transactionId);
+ 	const transaction = await TransactionRepository.instance.getTransaction(
+ 		transactionId
+ 	);
 
 	if (!transaction) {
   		throw new ConnectError("transaction does not exist", Code.NotFound);
