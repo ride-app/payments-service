@@ -25,7 +25,7 @@ async function listTransactions(
 
 	return new ListTransactionsResponse({
 		transactions,
-  		// todo: pagination
+    		// TODO: pagination
 		nextPageToken: "",
 	});
 }
