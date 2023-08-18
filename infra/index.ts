@@ -29,3 +29,16 @@ new gcp.cloudbuild.Trigger("build-trigger", {
 	filename: "cloudbuild.yaml",
 	includeBuildLogs: "INCLUDE_BUILD_LOGS_WITH_STATUS",
 });
+
+new gcp.cloudbuild.Trigger("demo-trigger", {
+	name: "demo",
+	location,
+	repositoryEventConfig: {
+		repository: repository.id,
+		push: {
+			branch: "^main$",
+		},
+	},
+	filename: "cloudbuild.yaml",
+	includeBuildLogs: "INCLUDE_BUILD_LOGS_WITH_STATUS",
+});
