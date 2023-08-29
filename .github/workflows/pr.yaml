@@ -26,6 +26,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       # - name: Get firebase-tools
       #   run: npm install -g firebase-tools
