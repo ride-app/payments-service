@@ -10,11 +10,11 @@ COPY . .
 
 # Install dependencies
 FROM base AS deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --frozen-lockfile
 
 # Compile typescript
 FROM base AS build
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
 # Copy node_modules from build and js files from local /build
