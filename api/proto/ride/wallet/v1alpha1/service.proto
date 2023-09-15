@@ -1,0 +1,367 @@
+syntax = "proto3";
+
+import "google/protobuf/field_mask.proto";
+import "google/type/interval.proto";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+import "ride/wallet/v1alpha1/wallet.proto";
+import "ride/wallet/v1alpha1/transaction.proto";
+import "ride/wallet/v1alpha1/recharge.proto";
+import "ride/wallet/v1alpha1/payout.proto";
+
+package ride.wallet.v1alpha1;
+
+service WalletService {
+  rpc GetWallet(GetWalletRequest) returns (GetWalletResponse) {
+    option (google.api.http) = {
+    get: "/v1alpha1/{name=users/*/wallet}"
+    };
+  }
+
+  // rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse) {
+  //   option (google.api.http) = {
+  //     post: "/v1alpha1/{parent=users/*/wallet}/transactions",
+  //     body: "*"
+  //   };
+  // }
+
+  // Create multiple transactions at once in a single atomic reuqest.
+  rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/users/-/wallet/transactions:batchCreate",
+      body: "*"
+    };
+  }
+
+  rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/transactions/*}"
+    };
+  }
+
+  // rpc ListTransactionsByBatchId(ListTransactionsByBatchIdRequest) returns (ListTransactionsByBatchIdResponse) {
+  //   option (google.api.http) = {
+  //     get: "/v1alpha1/users/-/wallet/transactions?batch_id={batch_id}"
+  //   };
+  // }
+
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+    get: "/v1alpha1/{parent=users/*/wallet}/transactions"
+    };
+  }
+
+  rpc CreateRecharge(CreateRechargeRequest) returns (CreateRechargeResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=users/*/wallet}/recharges"
+      body: "*"
+    };
+  }
+
+  rpc GetRecharge(GetRechargeRequest) returns (GetRechargeResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/recharges/*}"
+    };
+  }
+
+  rpc ListRecharges(ListRechargesRequest) returns (ListRechargesResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=users/*/wallet}/recharges"
+    };
+  }
+
+  rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=users/*/wallet}/payouts"
+      body: "*"
+    };
+  }
+
+  rpc GetPayout(GetPayoutRequest) returns (GetPayoutResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/payouts/*}"
+    };
+  }
+
+  rpc ListPayouts(ListPayoutsRequest) returns (ListPayoutsResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{parent=users/*/wallet}/payouts"
+    };
+  }
+
+  rpc CreatePayoutAccount(CreatePayoutAccountRequest) returns (CreatePayoutAccountResponse) {
+    option (google.api.http) = {
+      post: "/v1alpha1/{parent=users/*/wallet}/payout-account"
+      body: "*"
+    };
+  }
+
+  rpc GetPayoutAccount(GetPayoutAccountRequest) returns (GetPayoutAccountResponse) {
+    option (google.api.http) = {
+      get: "/v1alpha1/{name=users/*/wallet/payout-account}"
+    };
+  }
+
+  // rpc UpdatePayoutAccount(UpdatePayoutAccountRequest) returns (UpdatePayoutAccountResponse) {
+  //   option (google.api.http) = {
+  //     patch: "/v1alpha1/{payout_account.name=users/*/wallet/payout-account}"
+  //     body: "*"
+  //   };
+  // }
+}
+
+message GetWalletRequest {
+  // Relative Resource name of the Wallet, for example, "users/user1/wallet"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetWalletResponse {
+  // The requested Wallet
+  Wallet wallet = 1;
+};
+
+// message CreateTransactionRequest {
+//   // A unique request ID for server to detect duplicated requests for idempotency.
+//   string request_id = 1;
+
+//   // Relative resource name of the Wallet, for example, "users/user1/wallet"
+//   string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+//   // The Transaction to be created. Client **must** not set the Transaction.name field.
+//   Transaction transaction = 3 [(validate.rules).message.required = true];
+// }
+
+// message CreateTransactionResponse {
+//   // The created transaction
+//   Transaction transaction = 1;
+// }
+
+message CreateTransactionsRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
+  repeated Entry transactions = 2 [(validate.rules).repeated.min_items = 2];
+
+  message Entry {
+    // Relative resource name of the Wallet, for example, "users/user1/wallet"
+    string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+    // The Transaction to be created. Client **must** not set the Transaction.name field.
+    Transaction transaction = 2 [(validate.rules).message.required = true];
+  }
+}
+
+message CreateTransactionsResponse {
+  // Output only. The batch id of the created transactions.
+  string batch_id = 1;
+
+  // The created transactions.
+  repeated Transaction transactions = 2 [(validate.rules).repeated.min_items = 2];
+}
+
+message GetTransactionRequest {
+  // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
+  string name = 1[(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$"];
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetTransactionResponse {
+  // The requested Transaction.
+  Transaction transaction = 1;
+}
+
+message ListTransactionsRequest {
+  // Relative resource name of the Wallet, for example, "users/user1/wallet".
+  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message ListTransactionsResponse {
+  // List of Transactions blonging to the parent Wallet.
+  repeated Transaction transactions = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}
+
+// message ListTransactionsByBatchIdRequest {
+//   string batch_id = 1;
+//   optional google.protobuf.FieldMask fields = 99;
+// }
+
+// message ListTransactionsByBatchIdResponse {
+//   repeated Transaction transactions = 1;
+// }
+
+message CreateRechargeRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // The parent wallet name where the Recharge is to be created. example: "users/user1/wallet"
+  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+  // The Recharge to be created. Client **must** not set Recharge.name.
+  Recharge recharge = 3 [(validate.rules).message.required = true];
+}
+
+message CreateRechargeResponse {
+  // The created Recharge
+  Recharge recharge = 1 [(validate.rules).message.required = true];
+
+  // Information required for the checkout payment gateway.
+  map<string, string> checkout_info = 2;
+}
+
+message GetRechargeRequest {
+  // Relative Resource name of the Recharge, for example, "users/user1/wallet/recharges/recharge1"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/recharges/[A-Za-z0-9_-]+$"];
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetRechargeResponse {
+  // The requested recharge.
+  Recharge recharge = 1 [(validate.rules).message.required = true];
+}
+
+message ListRechargesRequest {
+  // The parent wallet name, for example, "users/user1/wallet"
+  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+
+  Filter filter = 4;
+
+  optional google.protobuf.FieldMask fields = 99;
+
+  message Filter {
+    optional Recharge.Status status = 1;
+    optional google.type.Interval create_time = 2;
+    optional string transaction_id = 3;
+  }
+}
+
+message ListRechargesResponse {
+  // There will be a maximum number of items returned based on the page_size field in the request.
+  repeated Recharge recharges = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}
+
+message CreatePayoutRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // The parent wallet name where the Payout is to be created. example: "users/user1/wallet"
+  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+  // The Payout to be created. Client **must** not set Payout.name.
+  Payout payout = 3 [(validate.rules).message.required = true];
+}
+
+message CreatePayoutResponse {
+  // The created Payout
+  Payout payout = 1 [(validate.rules).message.required = true];
+}
+
+message GetPayoutRequest {
+  // Relative Resource name of the Payout, for example, "users/user1/wallet/payouts/payout1"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$"];
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetPayoutResponse {
+  // The requested payout.
+  Payout payout = 1 [(validate.rules).message.required = true];
+}
+
+message ListPayoutsRequest {
+  // The parent wallet name, for example, "users/user1/wallet"
+  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+
+  // Filter to list Payouts.
+  Filter filter = 4;
+
+  // The fields to return. If empty or omitted, all fields are returned.
+  optional google.protobuf.FieldMask fields = 99;
+
+  // Filter to list Payouts.
+  message Filter {
+    optional Payout.Status status = 1;
+    optional google.type.Interval create_time = 2;
+    optional string transaction_id = 3;
+  }
+}
+
+message ListPayoutsResponse {
+  // There will be a maximum number of items returned based on the page_size field in the request.
+  repeated Payout payouts = 1;
+
+  // Token to retrieve the next page of results, or empty if there are no more results in the list.
+  string next_page_token = 2;
+}
+
+message CreatePayoutAccountRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // The PayoutAccount to be created. Client **must** set PayoutAccount.name.
+  PayoutAccount payout_account = 2 [(validate.rules).message.required = true];
+}
+
+message CreatePayoutAccountResponse {
+  // The created PayoutAccount
+  PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+}
+
+message GetPayoutAccountRequest {
+  // Relative Resource name of the PayoutAccount, for example, "users/user1/wallet/payout-account"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
+
+  optional google.protobuf.FieldMask fields = 99;
+}
+
+message GetPayoutAccountResponse {
+  // The requested payout account.
+  PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+}
+
+// message UpdatePayoutAccountRequest {
+//   // A unique request ID for server to detect duplicated requests for idempotency.
+//   string request_id = 1;
+
+//   // The PayoutAccount to be updated. Client **must** set PayoutAccount.name.
+//   PayoutAccount payout_account = 2 [(validate.rules).message.required = true];
+
+//   // The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+//   google.protobuf.FieldMask update_mask = 3;
+// }
+
+// message UpdatePayoutAccountResponse {
+//   // The updated PayoutAccount
+//   PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+// }

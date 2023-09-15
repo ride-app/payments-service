@@ -36,7 +36,8 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
       - --region=asia-south2
       - --allow-unauthenticated
-      - --set-env-vars=PROJECT_ID=$PROJECT_ID
+      - --set-env-vars=PROJECT_ID=$PROJECT_ID,LOG_DEBUG=$_LOG_DEBUG
+      - --update-secrets=RAZORPAY_KEY=razorpay-key:latest,RAZORPAY_SECRET=razorpay-secret:latest,RAZORPAY_ACCOUNT_NUMBER=razorpay-account-number:latest
       - --max-instances=10
       - --port=50051
       - --use-http2

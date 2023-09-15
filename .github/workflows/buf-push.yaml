@@ -3,7 +3,7 @@ name: Buf push
 on:
   push:
     paths:
-      - "api/**"
+      - api/proto/**
     branches:
       - main
 
@@ -21,4 +21,4 @@ jobs:
       - uses: bufbuild/buf-push-action@v1
         with:
           buf_token: ${{ secrets.BUF_TOKEN }}
-          input: api
+          input: api/proto

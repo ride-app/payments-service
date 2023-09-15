@@ -3,7 +3,12 @@ services:
   server:
     build:
       context: .
+      # args:
+      #   BUF_USERNAME: ${BUF_USERNAME}
+      # secrets:
+      #   - BUF_TOKEN
     ports:
       - 50051:50051
-    env_file:
-      - .env
+# secrets:
+#   BUF_TOKEN:
+#     file: buf_token.txt

@@ -1,9 +1,23 @@
 version: v1
+managed:
+  enabled: true
+  go_package_prefix:
+    default: github.com/ride-app/wallet-service/api/gen
+    except:
+      - buf.build/googleapis/googleapis
+      - buf.build/envoyproxy/protoc-gen-validate
 plugins:
-  - plugin: buf.build/bufbuild/es
-    opt: target=ts
-    out: src/gen
+  - plugin: buf.build/protocolbuffers/go
+    out: api/gen
+    opt:
+      - paths=source_relative
 
-  - plugin: buf.build/bufbuild/connect-es
-    opt: target=ts
-    out: src/gen
+  - plugin: buf.build/connectrpc/go
+    out: api/gen
+    opt:
+      - paths=source_relative
+
+  - plugin: buf.build/bufbuild/validate-go
+    out: api/gen
+    opt:
+      - paths=source_relative

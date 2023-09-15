@@ -1,31 +1,34 @@
-# Setup node environment
-FROM node:lts-alpine as base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+# syntax=docker/dockerfile:1
 
-WORKDIR /app
+# Create .netrc file for private go module
+# FROM bufbuild/buf:1.26.1 as buf
+
+# ARG BUF_USERNAME ""
+
+# SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+# RUN --mount=type=secret,id=BUF_TOKEN \
+#   buf registry login --username=$BUF_USERNAME --token-stdin < /run/secrets/BUF_TOKEN
+
+# Build go binary
+FROM golang:1.21-alpine as build
+
+WORKDIR /go/src/app
+
+# COPY --from=buf /root/.netrc /root/.netrc
+# ENV GOPRIVATE=buf.build/gen/go
+
+COPY go.mod go.sum /
+RUN go mod download && go mod verify
 
 COPY . .
+RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=warn"
 
-# Install dependencies
-FROM base AS deps
-RUN pnpm install --prod --frozen-lockfile
+# Run
+FROM gcr.io/distroless/static:nonroot
 
-# Compile typescript
-FROM base AS build
-RUN pnpm install --frozen-lockfile
-RUN pnpm run build
+WORKDIR /
 
-# Copy node_modules from build and js files from local /build
-FROM gcr.io/distroless/nodejs18-debian11
+COPY --from=build /go/bin/app .
 
-WORKDIR /app
-
-COPY --from=deps /app/node_modules node_modules
-COPY --from=build /app/build .
-COPY package.json .
-
-ENV NODE_ENV production
-
-CMD ["index.js"]
+EXPOSE 50051
+CMD ["/app"]

@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+package ride.wallet.v1alpha1;
+
+message Payout {
+  // Relative resource name of Payout, for example: "users/user1/wallet/payouts/payout1"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$",
+                    ignore_empty: true
+                  }];
+
+  // The amount of money to be charged in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
+  int32 amount = 2 [(validate.rules).int32.gt = 0];
+
+  // Output only. Current status of the Payout.
+  Status status = 3;
+
+  // Output only. Timestamp when the Payout was created.
+  google.protobuf.Timestamp create_time = 4;
+
+  // Output only. Timestamp when the Payout was created.
+  google.protobuf.Timestamp update_time = 5;
+
+  // Output only. Timestamp when the Payout was last updated.
+  oneof metadata {
+    // Relative resource name of the transaction accociated with the Payout. Only available when Payout.status is STATUS_SUCCESS
+    string transaction_id = 6;
+
+    // Only available when status is STATUS_FAILED
+    string failure_reason = 7;
+  } 
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+}
+
+message PayoutAccount {
+  // Relative resource name of PayoutAccount, for example: "users/user1/wallet/payout-account"
+  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
+
+  // The currency code of the PayoutAccount. For example, "INR".
+  string currency_code = 2 [(validate.rules).string = {in: ["INR"]}];
+
+  oneof destination {
+    // The bank account information of the PayoutAccount.
+    BankAccount bank_account = 3;
+
+    // The UPI ID of the PayoutAccount.
+    string upi_id = 4;
+  }
+
+  string razorpay_contact_id = 7;
+
+  // Output only. Timestamp when the PayoutAccount was created.
+  google.protobuf.Timestamp create_time = 5;
+
+  // Output only. Timestamp when the PayoutAccount was last updated.
+  google.protobuf.Timestamp update_time = 6;
+
+  message BankAccount {
+    // The bank account holder name of the PayoutAccount.
+    string holder_name = 1;
+
+    // The bank account number of the PayoutAccount.
+    string account_number = 2;
+
+    // The bank account ifsc code of the PayoutAccount.
+    string ifsc_code = 3;
+  }
+}
