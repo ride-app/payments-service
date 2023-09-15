@@ -15,13 +15,13 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
 
-      - uses: bufbuild/buf-setup-action@v1.5.0
+      - uses: bufbuild/buf-setup-action@v1.26.1
         with:
           github_token: ${{ github.token }}
 
