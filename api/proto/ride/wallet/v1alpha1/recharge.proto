@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+package ride.wallet.v1alpha1;
+
+message Recharge {
+  // Relative resource name of Recharge, for example: "users/user1/wallet/recharges/recharge1"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet/recharges/[A-Za-z0-9_-]+$",
+                    ignore_empty: true
+                  }];
+
+  // The amount of money to be charged in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
+  int32 amount = 2 [(validate.rules).int32.gt = 0];
+
+  // Output only. Current status of the Recharge.
+  Status status = 3 [(validate.rules).enum = {not_in: [0]}];
+
+  // Output only. Timestamp when the Recharge was created.
+  google.protobuf.Timestamp create_time = 4;
+
+  // Outputonly. Timestamp when the Recharge was created.
+  google.protobuf.Timestamp update_time = 5;
+
+  // Output only. Timestamp when the Recharge was last updated.
+  oneof metadata {
+    // Relative resource name of the transaction accociated with the Recharge. Only available when Recharge.status is STATUS_SUCCESS
+    string transaction_id = 6;
+
+    // Only available when status is STATUS_FAILED
+    string failure_reason = 7;
+  } 
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+}

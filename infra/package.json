@@ -1,11 +1,11 @@
 {
-	"name": "wallet-service",
-	"main": "index.ts",
-	"dependencies": {
-		"@pulumi/gcp": "^6.65.0",
-		"@pulumi/pulumi": "^3.82.0"
-	},
-	"devDependencies": {
-		"@types/node": "^20.6.0"
-	}
+  "name": "wallet-service",
+  "main": "index.ts",
+  "dependencies": {
+    "@pulumi/gcp": "^6.65.1",
+    "@pulumi/pulumi": "^3.82.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.1"
+  }
 }

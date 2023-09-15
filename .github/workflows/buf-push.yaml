@@ -3,7 +3,7 @@ name: Buf push
 on:
   push:
     paths:
-      - "api/**"
+      - api/proto/**
     branches:
       - main
 
@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - uses: bufbuild/buf-setup-action@v1.26.1
+      - uses: bufbuild/buf-setup-action@v1.5.0
         with:
           github_token: ${{ github.token }}
 
       - uses: bufbuild/buf-push-action@v1
         with:
           buf_token: ${{ secrets.BUF_TOKEN }}
-          input: api
+          input: api/proto

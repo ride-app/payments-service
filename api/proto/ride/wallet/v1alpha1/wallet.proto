@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+package ride.wallet.v1alpha1;
+
+// A Wallet is a singleton resource that represents a user's wallet. There can only be one Wallet per user.
+message Wallet {
+  // Relative resource name of the Wallet, for example, "users/user1/wallet"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^users/[A-Za-z0-9_-]+/wallet$",
+                    ignore_empty: true
+                  }];
+
+  // Output only. The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
+  int32 balance = 2;
+
+  // Output only. Timestamp when the Wallet was created.
+  google.protobuf.Timestamp create_time = 3;
+
+  // Output only. Timestamp when the Wallet was last updated.
+  google.protobuf.Timestamp update_time = 4;
+}
