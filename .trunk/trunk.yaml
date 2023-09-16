@@ -2,6 +2,26 @@ version: 0.1
 cli:
   version: 1.15.0
 
+plugins:
+  sources:
+    - id: trunk
+      ref: v1.2.1
+      uri: https://github.com/trunk-io/plugins
+
+runtimes:
+  enabled:
+    - go@1.19.5
+    - node@18.12.1
+    - python@3.10.8
+actions:
+  enabled:
+    - trunk-announce
+    - buf-gen
+    - go-mod-tidy
+    - trunk-upgrade-available
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
+
 lint:
   enabled:
     - sort-package-json@2.5.1
@@ -35,21 +55,7 @@ lint:
     - linters: [goimports]
       paths:
         - "**/wire_gen.go"
-runtimes:
-  enabled:
-    - go@1.19.5
-    - node@18.12.1
-    - python@3.10.8
-actions:
-  enabled:
-    - trunk-announce
-    - buf-gen
-    - go-mod-tidy
-    - trunk-upgrade-available
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
-plugins:
-  sources:
-    - id: trunk
-      ref: v1.2.1
-      uri: https://github.com/trunk-io/plugins
+
+merge:
+  required_statuses:
+    - Lint
