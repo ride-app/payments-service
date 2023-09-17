@@ -23,7 +23,7 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 	}
 
 	log.Info("Extracting user id from request message")
-	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.Info("Extracting user id from request message")
 	log.Debugf("User id: %s", userId)
 
 	log.Info("Checking if user id in request message matches with user id in request header")
@@ -32,7 +32,7 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 	}
 
 	log.Info("Fetching wallet")
-	wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
+	log.Info("Fetching wallet for user")
 
 	if err != nil {
 		log.WithError(err).Error("Failed to fetch wallet")
@@ -66,7 +66,7 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 	}
 
 	log.Info("Creating recharge")
-	createTime, err := service.rechargeRepository.CreateRecharge(ctx, log, req.Msg.Recharge, &rzp_response)
+	log.Info("Creating recharge")
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create recharge")
@@ -109,5 +109,5 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 
 	defer log.WithField("response", response.Msg).Debug("Returned CreateRecharge response")
 	log.Info("Returning CreateRecharge response")
-	return response, nil
+	log.Info("Returning CreateRecharge response")
 }
