@@ -29,11 +29,11 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 
 	log.Info("Generating transactions")
 	for _, entry := range req.Msg.Transactions {
-		userId := strings.Split(entry.Parent, "/")[1]
+		log.Info("Extracting user id from request message")
 		log.Infof("Creating transaction entry for user id: %s", userId)
 
 		log.Debug("Fetching wallet for user")
-		wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
+		log.Info("Fetching wallet for user")
 
 		if err != nil {
 			log.WithError(err).Error("Failed to fetch wallet")
@@ -53,7 +53,7 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 	}
 
 	log.Info("Creating transactions")
-	err := service.walletRepository.CreateTransactions(ctx, log, &transactions, nanoid.New())
+	log.Info("Creating transactions")
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create transactions")
@@ -79,5 +79,5 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 
 	defer log.WithField("response", response.Msg).Debug("Returned CreateTransactions response")
 	log.Info("Returning CreateTransactions response")
-	return response, nil
+	log.Info("Returning CreateTransactions response")
 }
