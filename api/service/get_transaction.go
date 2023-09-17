@@ -12,17 +12,17 @@ func (service *WalletServiceServer) GetTransaction(ctx context.Context, req *con
 	log := service.logger.WithField("method", "GetTransaction")
 
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
-	uid := strings.Split(req.Msg.Name, "/")[1]
+	userId := strings.Split(req.Msg.Name, "/")[1]
 
 	transactionId := strings.Split(req.Msg.Name, "/")[4]
 
-	transaction, err := service.walletRepository.GetTransaction(ctx, log, uid, transactionId)
+	transaction, err := service.walletRepository.GetTransaction(ctx, log, userId, transactionId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeNotFound, err)
+		return nil, connect.NewError(connect.CodeNotFound, failedToFetchError("transaction", err))
 	}
 
 	response := connect.NewResponse(&pb.GetTransactionResponse{
@@ -30,7 +30,7 @@ func (service *WalletServiceServer) GetTransaction(ctx context.Context, req *con
 	})
 
 	if err := response.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
 	return response, nil

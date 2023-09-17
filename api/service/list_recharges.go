@@ -12,15 +12,15 @@ func (service *WalletServiceServer) ListRecharges(ctx context.Context, req *conn
 	log := service.logger.WithField("method", "ListRecharges")
 
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
-	walletId := strings.Split(req.Msg.Parent, "/")[1]
+	userId := strings.Split(req.Msg.Parent, "/")[1]
 
-	recharges, err := service.rechargeRepository.GetRecharges(ctx, log, walletId)
+	recharges, err := service.rechargeRepository.GetRecharges(ctx, log, userId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("recharges", err))
 	}
 
 	response := connect.NewResponse(&pb.ListRechargesResponse{

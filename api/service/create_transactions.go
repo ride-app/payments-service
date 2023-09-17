@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -14,33 +13,51 @@ import (
 
 func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req *connect.Request[pb.CreateTransactionsRequest]) (*connect.Response[pb.CreateTransactionsResponse], error) {
 	log := service.logger.WithField("method", "CreateTransactions")
+	log.WithField("request", req.Msg).Debug("Received CreateTransactions request")
 
+	log.Info("Validating request")
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		log.WithError(err).Error("Invalid request")
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
+	log.Info("Generating batch id")
 	batchId := nanoid.New()
+	log.Debugf("Batch id: %s", batchId)
 
 	var transactions walletrepository.Transactions = make(map[string]*pb.Transaction)
 
+	log.Info("Generating transactions")
 	for _, entry := range req.Msg.Transactions {
-		uid := strings.Split(entry.Parent, "/")[1]
+		userId := strings.Split(entry.Parent, "/")[1]
+		log.Infof("Creating transaction entry for user id: %s", userId)
 
-		wallet, err := service.walletRepository.GetWallet(ctx, log, uid)
+		log.Debug("Fetching wallet for user")
+		wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
 
-		if err != nil || wallet == nil {
-			return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("parent Wallet not found"))
+		if err != nil {
+			log.WithError(err).Error("Failed to fetch wallet")
+			return nil, connect.NewError(connect.CodeInternal, failedToFetchError("wallet", err))
 		}
 
-		entry.Transaction.Name = fmt.Sprintf("%v/transactions/%v", entry.Parent, batchId)
+		if wallet == nil {
+			log.Error("Wallet not found")
+			return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("wallet"))
+		}
 
-		transactions[uid] = entry.Transaction
+		log.Info("Updating transaction name")
+		entry.Transaction.Name = fmt.Sprintf("%s/transactions/%s", entry.Parent, batchId)
+
+		log.Info("Adding transaction to batch")
+		transactions[userId] = entry.Transaction
 	}
 
+	log.Info("Creating transactions")
 	err := service.walletRepository.CreateTransactions(ctx, log, &transactions, nanoid.New())
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		log.WithError(err).Error("Failed to create transactions")
+		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transactions", err))
 	}
 
 	var transactionsInResponse []*pb.Transaction = make([]*pb.Transaction, 0)
@@ -49,14 +66,18 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 		transactionsInResponse = append(transactionsInResponse, transaction)
 	}
 
+	log.Info("Creating response message")
 	response := connect.NewResponse(&pb.CreateTransactionsResponse{
 		BatchId:      batchId,
 		Transactions: transactionsInResponse,
 	})
 
+	log.Info("Validating response message")
 	if err = response.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
+	defer log.WithField("response", response.Msg).Debug("Returned CreateTransactions response")
+	log.Info("Returning CreateTransactions response")
 	return response, nil
 }

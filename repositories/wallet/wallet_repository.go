@@ -21,13 +21,13 @@ import (
 type Transactions = map[string]*pb.Transaction
 
 type WalletRepository interface {
-	GetWallet(ctx context.Context, log logger.Logger, uid string) (*pb.Wallet, error)
+	GetWallet(ctx context.Context, log logger.Logger, userId string) (*pb.Wallet, error)
 
 	CreateTransactions(ctx context.Context, log logger.Logger, transactions *Transactions, batchId string) error
 
-	GetTransaction(ctx context.Context, log logger.Logger, uid string, transactionId string) (*pb.Transaction, error)
+	GetTransaction(ctx context.Context, log logger.Logger, userId string, transactionId string) (*pb.Transaction, error)
 
-	GetTransactions(ctx context.Context, log logger.Logger, uid string, batchId *string) ([]*pb.Transaction, error)
+	GetTransactions(ctx context.Context, log logger.Logger, userId string, batchId *string) ([]*pb.Transaction, error)
 }
 
 type FirestoreImpl struct {
@@ -45,9 +45,9 @@ func NewFirestoreWalletRepository(config *config.Config, firebaseApp *firebase.A
 	return &FirestoreImpl{config: config, firestore: firestore}, nil
 }
 
-func (r *FirestoreImpl) GetWallet(ctx context.Context, log logger.Logger, uid string) (*pb.Wallet, error) {
+func (r *FirestoreImpl) GetWallet(ctx context.Context, log logger.Logger, userId string) (*pb.Wallet, error) {
 
-	doc, err := r.firestore.Collection("wallets").Doc(uid).Get(ctx)
+	doc, err := r.firestore.Collection("wallets").Doc(userId).Get(ctx)
 
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (r *FirestoreImpl) GetWallet(ctx context.Context, log logger.Logger, uid st
 	}
 
 	wallet := pb.Wallet{
-		Name:       "users/" + uid + "/wallet",
+		Name:       "users/" + userId + "/wallet",
 		Balance:    doc.Data()["balance"].(int32),
 		CreateTime: timestamppb.New(doc.CreateTime),
 		UpdateTime: timestamppb.New(doc.UpdateTime),
@@ -119,7 +119,7 @@ func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logge
 	})
 }
 
-func (r *FirestoreImpl) GetTransaction(ctx context.Context, log logger.Logger, uid string, transactionId string) (*pb.Transaction, error) {
+func (r *FirestoreImpl) GetTransaction(ctx context.Context, log logger.Logger, userId string, transactionId string) (*pb.Transaction, error) {
 	doc, err := r.firestore.Collection("transactions").Doc(transactionId).Get(ctx)
 
 	if err != nil {
@@ -135,8 +135,8 @@ func (r *FirestoreImpl) GetTransaction(ctx context.Context, log logger.Logger, u
 	return transaction, nil
 }
 
-func (r *FirestoreImpl) GetTransactions(ctx context.Context, log logger.Logger, uid string, batchId *string) ([]*pb.Transaction, error) {
-	query := r.firestore.Collection("transactions").Where("walletId", "==", uid)
+func (r *FirestoreImpl) GetTransactions(ctx context.Context, log logger.Logger, userId string, batchId *string) ([]*pb.Transaction, error) {
+	query := r.firestore.Collection("transactions").Where("walletId", "==", userId)
 
 	if batchId != nil {
 		query = query.Where("batchId", "==", *batchId)

@@ -12,15 +12,15 @@ func (service *WalletServiceServer) ListPayouts(ctx context.Context, req *connec
 	log := service.logger.WithField("method", "ListPayouts")
 
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
-	uid := strings.Split(req.Msg.Parent, "/")[1]
+	userId := strings.Split(req.Msg.Parent, "/")[1]
 
-	payouts, err := service.payoutRepository.GetPayouts(ctx, log, uid)
+	payouts, err := service.payoutRepository.GetPayouts(ctx, log, userId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("payouts", err))
 	}
 
 	res := connect.NewResponse(&pb.ListPayoutsResponse{

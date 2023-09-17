@@ -26,9 +26,9 @@ import (
 type PayoutRepository interface {
 	CreatePayout(ctx context.Context, log logger.Logger, payoutAccount *pb.PayoutAccount, payout *pb.Payout) (*pb.Payout, error)
 
-	GetPayout(ctx context.Context, log logger.Logger, uid string, id string) (*pb.Payout, error)
+	GetPayout(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Payout, error)
 
-	GetPayouts(ctx context.Context, log logger.Logger, uid string) ([]*pb.Payout, error)
+	GetPayouts(ctx context.Context, log logger.Logger, userId string) ([]*pb.Payout, error)
 
 	// UpdatePayout(ctx context.Context, log logger.Logger, payout *pb.Payout) (createTime *time.Time, err error)
 
@@ -36,7 +36,7 @@ type PayoutRepository interface {
 
 	CreatePayoutAccount(ctx context.Context, log logger.Logger, name string, payoutAccount *pb.PayoutAccount) (*pb.PayoutAccount, error)
 
-	GetPayoutAccount(ctx context.Context, log logger.Logger, uid string) (*pb.PayoutAccount, error)
+	GetPayoutAccount(ctx context.Context, log logger.Logger, userId string) (*pb.PayoutAccount, error)
 
 	// UpdatePayoutAccount(ctx context.Context, log logger.Logger, payoutAccount *pb.PayoutAccount) (updateTime *time.Time, err error)
 }
@@ -58,10 +58,10 @@ func NewFirestorePayoutRepository(config *config.Config, firebaseApp *firebase.A
 
 func (r *FirestoreImpl) CreatePayout(ctx context.Context, log logger.Logger, payoutAccount *pb.PayoutAccount, payout *pb.Payout) (*pb.Payout, error) {
 	substrings := strings.Split(payout.Name, "/")
-	uid := substrings[1]
+	userId := substrings[1]
 	payoutId := nanoid.New()
 
-	payout.Name = "users/" + uid + "/wallet/payouts/" + payoutId
+	payout.Name = "users/" + userId + "/wallet/payouts/" + payoutId
 
 	doc := map[string]interface{}{
 		"status": pb.Payout_STATUS_PENDING.String(),
@@ -81,7 +81,7 @@ func (r *FirestoreImpl) CreatePayout(ctx context.Context, log logger.Logger, pay
 	// } else if bankAccount := payoutAccount.GetBankAccount(); bankAccount != nil {
 	// }
 
-	writeResult, err := r.firestore.Collection("wallets").Doc(uid).Collection("payouts").Doc(payoutId).Set(ctx, doc)
+	writeResult, err := r.firestore.Collection("wallets").Doc(userId).Collection("payouts").Doc(payoutId).Set(ctx, doc)
 
 	if err != nil {
 		log.Fatalf("Failed to create payout: %v", err)
@@ -136,8 +136,8 @@ func sendPayoutLink(accountNumber string, amount int32, contactId string, payout
 	return response, nil
 }
 
-func (r *FirestoreImpl) GetPayout(ctx context.Context, log logger.Logger, uid string, id string) (*pb.Payout, error) {
-	doc, err := r.firestore.Collection("wallets").Doc(uid).Collection("payouts").Doc(id).Get(ctx)
+func (r *FirestoreImpl) GetPayout(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Payout, error) {
+	doc, err := r.firestore.Collection("wallets").Doc(userId).Collection("payouts").Doc(id).Get(ctx)
 
 	if err != nil {
 		return nil, err
@@ -156,8 +156,8 @@ func (r *FirestoreImpl) GetPayout(ctx context.Context, log logger.Logger, uid st
 	return payout, nil
 }
 
-func (r *FirestoreImpl) GetPayouts(ctx context.Context, log logger.Logger, uid string) ([]*pb.Payout, error) {
-	iter := r.firestore.Collection("wallets").Doc(uid).Collection("payout").Documents(ctx)
+func (r *FirestoreImpl) GetPayouts(ctx context.Context, log logger.Logger, userId string) ([]*pb.Payout, error) {
+	iter := r.firestore.Collection("wallets").Doc(userId).Collection("payout").Documents(ctx)
 
 	payouts := []*pb.Payout{}
 
@@ -308,8 +308,8 @@ func (r *FirestoreImpl) CreatePayoutAccount(ctx context.Context, log logger.Logg
 	return payoutAccount, err
 }
 
-func (r *FirestoreImpl) GetPayoutAccount(ctx context.Context, log logger.Logger, uid string) (*pb.PayoutAccount, error) {
-	doc, err := r.firestore.Collection("payout-accounts").Doc(uid).Get(ctx)
+func (r *FirestoreImpl) GetPayoutAccount(ctx context.Context, log logger.Logger, userId string) (*pb.PayoutAccount, error) {
+	doc, err := r.firestore.Collection("payout-accounts").Doc(userId).Get(ctx)
 
 	if err != nil {
 		return nil, err
@@ -330,7 +330,7 @@ func (r *FirestoreImpl) GetPayoutAccount(ctx context.Context, log logger.Logger,
 
 // TODO: Update the function when implementing the api endpoint
 // func (r *FirestoreImpl) UpdatePayoutAccount(ctx context.Context, log logger.Logger, payoutAccount *pb.PayoutAccount) (updateTime *time.Time, err error) {
-// 	uid := strings.Split(payoutAccount.Name, "/")[1]
+// 	userId := strings.Split(payoutAccount.Name, "/")[1]
 
 // 	doc := map[string]interface{}{
 // 		"currency":   "INR",
@@ -339,7 +339,7 @@ func (r *FirestoreImpl) GetPayoutAccount(ctx context.Context, log logger.Logger,
 // 		"ifsc":       payoutAccount.GetBankAccount().IfscCode,
 // 	}
 
-// 	writeResult, err := r.firestore.Collection("payout-accounts").Doc(uid).Set(ctx, doc, firestore.MergeAll)
+// 	writeResult, err := r.firestore.Collection("payout-accounts").Doc(userId).Set(ctx, doc, firestore.MergeAll)
 
 // 	return &writeResult.UpdateTime, err
 // }

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"math"
 	"strings"
 
 	"connectrpc.com/connect"
@@ -14,63 +13,85 @@ import (
 
 func (service *WalletServiceServer) CreatePayout(ctx context.Context, req *connect.Request[pb.CreatePayoutRequest]) (*connect.Response[pb.CreatePayoutResponse], error) {
 	log := service.logger.WithField("method", "CreatePayout")
+	log.WithField("request", req.Msg).Debug("Received CreatePayout request")
 
+	log.Info("Validating request")
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
-	uid := strings.Split(req.Msg.Parent, "/")[1]
+	log.Info("Extracting user id from request message")
+	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.Debugf("User id: %s", userId)
 
-	wallet, err := service.walletRepository.GetWallet(ctx, log, uid)
+	log.Info("Fetching wallet for user")
+	wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
 
-	if err != nil || wallet == nil {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("parent Wallet not found"))
+	if err != nil {
+		log.WithError(err).Error("Failed to fetch wallet")
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("wallet", err))
 	}
 
-	if wallet.Balance <= 0 || req.Msg.Payout.Amount > int32(math.Abs(float64(wallet.Balance))) {
+	if wallet == nil {
+		log.Error("Wallet not found")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("wallet"))
+	}
+
+	log.Info("Checking if payout amount is greater than wallet balance")
+	if req.Msg.Payout.Amount > wallet.Balance {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("amount must be smaller than wallet balance"))
 	}
 
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
-	}
-
-	payoutAccount, err := service.payoutRepository.GetPayoutAccount(ctx, log, uid)
+	log.Info("Fetching payout account")
+	payoutAccount, err := service.payoutRepository.GetPayoutAccount(ctx, log, userId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		log.WithError(err).Error("Failed to fetch payout account")
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("payout account", err))
 	}
 
 	if payoutAccount == nil {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("payout account not found"))
+		log.Error("Payout account not found")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("payout account"))
 	}
 
+	log.Info("Creating payout")
 	payout, err := service.payoutRepository.CreatePayout(ctx, log, payoutAccount, req.Msg.Payout)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		log.WithError(err).Error("Failed to create payout")
+		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("payout", err))
 	}
 
+	log.Info("Forming transactions")
 	transactions := &walletrepository.Transactions{
-		uid: &pb.Transaction{
+		userId: &pb.Transaction{
 			Type:   pb.Transaction_TYPE_DEBIT,
 			Amount: req.Msg.Payout.Amount,
 		},
 	}
 
-	err = service.walletRepository.CreateTransactions(ctx, log, transactions, nanoid.New())
+	batchId := nanoid.New()
+	log.Debugf("Batch id: %s", batchId)
+
+	log.Info("Creating transactions")
+	err = service.walletRepository.CreateTransactions(ctx, log, transactions, batchId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		log.WithError(err).Error("Failed to create transactions")
+		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transactions", err))
 	}
 
 	response := connect.NewResponse(&pb.CreatePayoutResponse{
 		Payout: payout,
 	})
 
+	log.Info("Validating response message")
 	if err = response.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, err)
+		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
+	defer log.WithField("response", response.Msg).Debug("Returned CreatePayout response")
+	log.Info("Returning CreatePayout response")
 	return response, nil
 }

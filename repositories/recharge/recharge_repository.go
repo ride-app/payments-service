@@ -22,8 +22,8 @@ import (
 // RechargeRepository is an interface that defines the methods to be implemented by the repository
 type RechargeRepository interface {
 	CreateRecharge(ctx context.Context, log logger.Logger, recharge *pb.Recharge, checkout_response *map[string]interface{}) (createTime *time.Time, err error)
-	GetRecharge(ctx context.Context, log logger.Logger, uid string, id string) (*pb.Recharge, error)
-	GetRecharges(ctx context.Context, log logger.Logger, uid string) ([]*pb.Recharge, error)
+	GetRecharge(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Recharge, error)
+	GetRecharges(ctx context.Context, log logger.Logger, userId string) ([]*pb.Recharge, error)
 }
 
 // FirestoreImpl is a struct that implements the RechargeRepository interface
@@ -93,8 +93,8 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 // GetRecharge is a method that retrieves a single recharge from the firestore database
 // It takes in a context and a string ID as parameters
 // It returns a pointer to a pb.Recharge struct and an error
-func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, uid string, id string) (*pb.Recharge, error) {
-	doc, err := r.firestore.Collection("wallets").Doc(uid).Collection("recharges").Doc(id).Get(ctx)
+func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Recharge, error) {
+	doc, err := r.firestore.Collection("wallets").Doc(userId).Collection("recharges").Doc(id).Get(ctx)
 
 	if err != nil {
 		return nil, err
@@ -113,8 +113,8 @@ func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, uid 
 	return recharge, nil
 }
 
-func (r *FirestoreImpl) GetRecharges(ctx context.Context, log logger.Logger, uid string) ([]*pb.Recharge, error) {
-	iter := r.firestore.Collection("wallets").Doc(uid).Collection("recharges").Documents(ctx)
+func (r *FirestoreImpl) GetRecharges(ctx context.Context, log logger.Logger, userId string) ([]*pb.Recharge, error) {
+	iter := r.firestore.Collection("wallets").Doc(userId).Collection("recharges").Documents(ctx)
 
 	recharges := []*pb.Recharge{}
 

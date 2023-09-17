@@ -17,7 +17,7 @@ func NewAuthInterceptor(ctx context.Context, log logger.Logger) (*connect.UnaryI
 	options := keyfunc.Options{
 		Ctx: ctx,
 		RefreshErrorHandler: func(err error) {
-			log.Fatalf("There was an error with the jwt.Keyfunc\nError: %s", err.Error())
+			log.WithError(err).Fatal("There was an error with the jwt.Keyfunc")
 		},
 		RefreshInterval:   time.Hour,
 		RefreshRateLimit:  time.Minute * 5,
@@ -58,7 +58,7 @@ func NewAuthInterceptor(ctx context.Context, log logger.Logger) (*connect.UnaryI
 				)
 			}
 
-			req.Header().Set("uid", token.Claims.(jwt.MapClaims)["user_id"].(string))
+			req.Header().Set("user_id", token.Claims.(jwt.MapClaims)["user_id"].(string))
 
 			if err != nil {
 				return nil, connect.NewError(
