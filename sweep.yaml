@@ -11,5 +11,6 @@ description: ride-app/wallet-service is a go microservice that manages user wall
 # Default Values: https://github.com/sweepai/sweep/blob/main/sweep.yaml
 sandbox:
   install:
+    - trunk --version
   check:
     - trunk fmt {file_path}
