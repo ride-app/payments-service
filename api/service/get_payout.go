@@ -40,11 +40,5 @@ func (service *WalletServiceServer) GetPayout(ctx context.Context, req *pb.GetPa
 	})
 
 	log.Info("Validating response message")
-	if err := response.Msg.Validate(); err != nil {
-		log.WithError(err).Error("Invalid response")
-		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
-	}
-
-	log.WithField("response", response.Msg).Debug("Returned GetPayout response")
-	return response, nil
-}
+	15: 	userId := strings.Split(req.Msg.Name, "/")[1]
+	17: 	paymentId := strings.Split(req.Msg.Name, "/")[4]
