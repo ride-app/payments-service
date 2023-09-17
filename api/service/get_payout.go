@@ -12,7 +12,7 @@ func (service *WalletServiceServer) GetPayout(ctx context.Context, req *connect.
 	log := service.logger.WithField("method", "GetPayout")
 
 	if err := req.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
+		log.WithError(err).Error("Invalid request")
 	}
 
 	userId := strings.Split(req.Msg.Name, "/")[1]
@@ -22,11 +22,11 @@ func (service *WalletServiceServer) GetPayout(ctx context.Context, req *connect.
 	payout, err := service.payoutRepository.GetPayout(ctx, log, userId, paymentId)
 
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("payout", err))
+		log.WithError(err).Error("Failed to fetch payout")
 	}
 
 	if payout == nil {
-		return nil, connect.NewError(connect.CodeNotFound, notFoundError("payout"))
+		log.Error("Payout not found")
 	}
 
 	response := connect.NewResponse(&pb.GetPayoutResponse{
@@ -34,8 +34,8 @@ func (service *WalletServiceServer) GetPayout(ctx context.Context, req *connect.
 	})
 
 	if err := response.Msg.Validate(); err != nil {
-		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
+		log.WithError(err).Error("Invalid response")
 	}
 
-	return response, nil
+	log.WithField("response", response.Msg).Debug("Returning GetPayout response")
 }
