@@ -19,11 +19,11 @@ func (service *WalletServiceServer) CreatePayoutAccount(ctx context.Context, req
 	}
 
 	log.Info("Extracting user id from request message")
-	userId := strings.Split(req.Msg.PayoutAccount.Name, "/")[1]
+	log.Info("Extracting user id from request message")
 	log.Debugf("User id: %s", userId)
 
 	log.Info("Fetching wallet for user")
-	wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
+	log.Info("Fetching wallet for user")
 
 	if err != nil {
 		log.WithError(err).Error("Failed to fetch wallet")
@@ -49,7 +49,7 @@ func (service *WalletServiceServer) CreatePayoutAccount(ctx context.Context, req
 	}
 
 	log.Info("Creating payout account")
-	payoutAccount, err := service.payoutRepository.CreatePayoutAccount(ctx, log, user.Name, req.Msg.PayoutAccount)
+	log.Info("Creating payout account")
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create payout account")
@@ -69,5 +69,5 @@ func (service *WalletServiceServer) CreatePayoutAccount(ctx context.Context, req
 
 	defer log.WithField("response", response.Msg).Debug("Returned CreatePayoutAccount response")
 	log.Info("Returning CreatePayoutAccount response")
-	return response, nil
+	log.Info("Returning CreatePayoutAccount response")
 }
