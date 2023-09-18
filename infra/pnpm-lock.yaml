@@ -9,8 +9,8 @@ dependencies:
     specifier: ^6.65.1
     version: 6.65.1
   '@pulumi/pulumi':
-    specifier: ^3.82.1
-    version: 3.82.1
+    specifier: ^3.83.0
+    version: 3.83.0
 
 devDependencies:
   '@types/node':
@@ -232,15 +232,15 @@ packages:
     resolution: {integrity: sha512-R8TyNwiYE3HImKPGfhQILIw/pB25SYQiw1seszKJBAPfel2qromSpi/qdU2tidXifK8x9z1hKzhokP4KrnTmUg==}
     requiresBuild: true
     dependencies:
-      '@pulumi/pulumi': 3.82.1
+      '@pulumi/pulumi': 3.83.0
       '@types/express': 4.17.17
       read-package-json: 2.1.2
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@pulumi/pulumi@3.82.1:
-    resolution: {integrity: sha512-wIQHSVFnlX5TeUliSQNTfn8wZZMq9z1y6JOi7KcVM1rkfHFx3kxVBwK+5ri308cl8QMEzFprXTgH56lHQ2855w==}
+  /@pulumi/pulumi@3.83.0:
+    resolution: {integrity: sha512-0LrSovjff6dpfcH9ZRmktLYbCETltT2fWW8YwjYjboTIsB3m12TMYzs2oZ6yCiuG+3T3L+hr5mZsH9j01HnNbA==}
     engines: {node: '>=8.13.0 || >=10.10.0'}
     dependencies:
       '@grpc/grpc-js': 1.9.3
