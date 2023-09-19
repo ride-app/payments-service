@@ -14,3 +14,4 @@ sandbox:
     - trunk --version
   check:
     - trunk fmt {file_path}
+    - trunk check --fix {file_path}
