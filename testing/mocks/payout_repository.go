@@ -39,10 +39,16 @@ func (m *MockPayoutRepository) EXPECT() *MockPayoutRepositoryMockRecorder {
 
 // CancelPayout mocks base method.
 func (m *MockPayoutRepository) CancelPayout(arg0 context.Context, arg1 logger.Logger, arg2 string) (*time.Time, error) {
+	arg1.Info("CancelPayout method called with parameters", "context", arg0, "logger", arg1, "string", arg2)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method CancelPayout")
 	ret := m.ctrl.Call(m, "CancelPayout", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*time.Time)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in CancelPayout", "error", ret1)
+	}
+	arg1.Info("Returning from CancelPayout method", "time", ret0, "error", ret1)
 	return ret0, ret1
 }
 
@@ -54,10 +60,16 @@ func (mr *MockPayoutRepositoryMockRecorder) CancelPayout(arg0, arg1, arg2 interf
 
 // CreatePayout mocks base method.
 func (m *MockPayoutRepository) CreatePayout(arg0 context.Context, arg1 logger.Logger, arg2 *walletv1alpha1.PayoutAccount, arg3 *walletv1alpha1.Payout) (*walletv1alpha1.Payout, error) {
+	arg1.Info("CreatePayout method called with parameters", "context", arg0, "logger", arg1, "PayoutAccount", arg2, "Payout", arg3)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method CreatePayout")
 	ret := m.ctrl.Call(m, "CreatePayout", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(*walletv1alpha1.Payout)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in CreatePayout", "error", ret1)
+	}
+	arg1.Info("Returning from CreatePayout method", "Payout", ret0, "error", ret1)
 	return ret0, ret1
 }
 
@@ -69,10 +81,16 @@ func (mr *MockPayoutRepositoryMockRecorder) CreatePayout(arg0, arg1, arg2, arg3 
 
 // CreatePayoutAccount mocks base method.
 func (m *MockPayoutRepository) CreatePayoutAccount(arg0 context.Context, arg1 logger.Logger, arg2 string, arg3 *walletv1alpha1.PayoutAccount) (*walletv1alpha1.PayoutAccount, error) {
+	arg1.Info("CreatePayoutAccount method called with parameters", "context", arg0, "logger", arg1, "string", arg2, "PayoutAccount", arg3)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method CreatePayoutAccount")
 	ret := m.ctrl.Call(m, "CreatePayoutAccount", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(*walletv1alpha1.PayoutAccount)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in CreatePayoutAccount", "error", ret1)
+	}
+	arg1.Info("Returning from CreatePayoutAccount method", "PayoutAccount", ret0, "error", ret1)
 	return ret0, ret1
 }
 
@@ -84,10 +102,16 @@ func (mr *MockPayoutRepositoryMockRecorder) CreatePayoutAccount(arg0, arg1, arg2
 
 // GetPayout mocks base method.
 func (m *MockPayoutRepository) GetPayout(arg0 context.Context, arg1 logger.Logger, arg2, arg3 string) (*walletv1alpha1.Payout, error) {
+	arg1.Info("GetPayout method called with parameters", "context", arg0, "logger", arg1, "string1", arg2, "string2", arg3)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method GetPayout")
 	ret := m.ctrl.Call(m, "GetPayout", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(*walletv1alpha1.Payout)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in GetPayout", "error", ret1)
+	}
+	arg1.Info("Returning from GetPayout method", "Payout", ret0, "error", ret1)
 	return ret0, ret1
 }
 
@@ -99,10 +123,16 @@ func (mr *MockPayoutRepositoryMockRecorder) GetPayout(arg0, arg1, arg2, arg3 int
 
 // GetPayoutAccount mocks base method.
 func (m *MockPayoutRepository) GetPayoutAccount(arg0 context.Context, arg1 logger.Logger, arg2 string) (*walletv1alpha1.PayoutAccount, error) {
+	arg1.Info("GetPayoutAccount method called with parameters", "context", arg0, "logger", arg1, "string", arg2)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method GetPayoutAccount")
 	ret := m.ctrl.Call(m, "GetPayoutAccount", arg0, arg1, arg2)
 	ret0, _ := ret[0].(*walletv1alpha1.PayoutAccount)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in GetPayoutAccount", "error", ret1)
+	}
+	arg1.Info("Returning from GetPayoutAccount method", "PayoutAccount", ret0, "error", ret1)
 	return ret0, ret1
 }
 
@@ -114,10 +144,16 @@ func (mr *MockPayoutRepositoryMockRecorder) GetPayoutAccount(arg0, arg1, arg2 in
 
 // GetPayouts mocks base method.
 func (m *MockPayoutRepository) GetPayouts(arg0 context.Context, arg1 logger.Logger, arg2 string) ([]*walletv1alpha1.Payout, error) {
+	arg1.Info("GetPayouts method called with parameters", "context", arg0, "logger", arg1, "string", arg2)
 	m.ctrl.T.Helper()
+	arg1.Info("Calling mock method GetPayouts")
 	ret := m.ctrl.Call(m, "GetPayouts", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]*walletv1alpha1.Payout)
 	ret1, _ := ret[1].(error)
+	if ret1 != nil {
+		arg1.Error("Error occurred in GetPayouts", "error", ret1)
+	}
+	arg1.Info("Returning from GetPayouts method", "Payouts", ret0, "error", ret1)
 	return ret0, ret1
 }
 
