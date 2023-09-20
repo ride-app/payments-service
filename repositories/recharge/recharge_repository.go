@@ -55,6 +55,12 @@ func NewFirestoreRechargeRepository(config *config.Config, firebaseApp *firebase
 // It takes in a context, a pointer to a pb.Recharge struct and a pointer to a map[string]interface{} struct as parameters
 // It returns a pointer to a time.Time struct and an error
 func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, recharge *pb.Recharge, checkout_response *map[string]interface{}) (createTime *time.Time, err error) {
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"recharge": recharge,
+		"checkout_response": checkout_response,
+	}).Info("Start of CreateRecharge method")
+
 	// Split the recharge name by "/" and get the last element as the document ID
 	substrings := strings.Split(recharge.Name, "/")
 
@@ -66,12 +72,28 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 		"method":    "razorpay",
 	}
 
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"doc": doc,
+	}).Info("Adding document to firestore")
+
 	// Add the document to the firestore collection with the document ID as the last element of the substrings array
 	writeResult, err := r.firestore.Collection("recharges").Doc(substrings[len(substrings)-1]).Set(ctx, doc)
 
 	if err != nil {
+		log.WithError(err).Error("Failed to add document to firestore")
 		return nil, err
 	}
+
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"writeResult": writeResult,
+	}).Info("Document added to firestore successfully")
+
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"message": recharge.String(),
+	}).Info("Publishing message to pubsub topic")
 
 	// Publish a message to the pubsub topic for recharge creation
 	result := r.createRechargeTopic.Publish(ctx, &pubsub.Message{
@@ -82,11 +104,21 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 	_, err = result.Get(ctx)
 
 	if err != nil {
-		log.WithError(err).Info("pubsub: recharge/created: failed to publish message")
+		log.WithError(err).Error("Failed to publish message to pubsub topic")
 		return nil, err
 	}
 
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"message": recharge.String(),
+	}).Info("Message published to pubsub topic successfully")
+
 	// Return a pointer to the update time of the write result and nil for the error
+	log.WithFields(logger.Fields{
+		"method": "CreateRecharge",
+		"writeResult": writeResult,
+	}).Info("End of CreateRecharge method")
+
 	return &writeResult.UpdateTime, nil
 }
 
@@ -94,27 +126,62 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 // It takes in a context and a string ID as parameters
 // It returns a pointer to a pb.Recharge struct and an error
 func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Recharge, error) {
+	log.WithFields(logger.Fields{
+		"method": "GetRecharge",
+		"userId": userId,
+		"id": id,
+	}).Info("Start of GetRecharge method")
+
 	doc, err := r.firestore.Collection("wallets").Doc(userId).Collection("recharges").Doc(id).Get(ctx)
 
 	if err != nil {
+		log.WithError(err).Error("Failed to get document from firestore")
 		return nil, err
 	}
 
+	log.WithFields(logger.Fields{
+		"method": "GetRecharge",
+		"doc": doc,
+	}).Info("Document retrieved from firestore successfully")
+
 	if !doc.Exists() {
+		log.WithFields(logger.Fields{
+			"method": "GetRecharge",
+			"doc": doc,
+		}).Info("Document does not exist in firestore")
 		return nil, nil
 	}
 
 	recharge := docToRecharge(doc)
 
 	if recharge == nil {
+		log.WithFields(logger.Fields{
+			"method": "GetRecharge",
+			"doc": doc,
+		}).Error("Invalid recharge")
 		return nil, errors.New("invalid recharge")
 	}
+
+	log.WithFields(logger.Fields{
+		"method": "GetRecharge",
+		"recharge": recharge,
+	}).Info("End of GetRecharge method")
 
 	return recharge, nil
 }
 
 func (r *FirestoreImpl) GetRecharges(ctx context.Context, log logger.Logger, userId string) ([]*pb.Recharge, error) {
+	log.WithFields(logger.Fields{
+		"method": "GetRecharges",
+		"userId": userId,
+	}).Info("Start of GetRecharges method")
+
 	iter := r.firestore.Collection("wallets").Doc(userId).Collection("recharges").Documents(ctx)
+
+	log.WithFields(logger.Fields{
+		"method": "GetRecharges",
+		"iter": iter,
+	}).Info("Retrieved documents iterator from firestore")
 
 	recharges := []*pb.Recharge{}
 
@@ -125,17 +192,27 @@ func (r *FirestoreImpl) GetRecharges(ctx context.Context, log logger.Logger, use
 		}
 
 		if err != nil {
+			log.WithError(err).Error("Failed to iterate over documents")
 			return nil, err
 		}
 
 		recharge := docToRecharge(doc)
 
 		if recharge != nil {
+			log.WithFields(logger.Fields{
+				"method": "GetRecharges",
+				"doc": doc,
+			}).Error("Invalid recharge")
 			return nil, errors.New("invalid recharge")
 		}
 
 		recharges = append(recharges, recharge)
 	}
+
+	log.WithFields(logger.Fields{
+		"method": "GetRecharges",
+		"recharges": recharges,
+	}).Info("End of GetRecharges method")
 
 	return recharges, nil
 }
