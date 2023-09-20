@@ -31,6 +31,7 @@ type FirestoreImpl struct {
 	config              *config.Config
 	firestore           *firestore.Client
 	createRechargeTopic *pubsub.Topic
+	log                 logger.Logger
 }
 
 // NewFirestoreRechargeRepository is a function that returns a new instance of FirestoreImpl
@@ -55,6 +56,8 @@ func NewFirestoreRechargeRepository(config *config.Config, firebaseApp *firebase
 // It takes in a context, a pointer to a pb.Recharge struct and a pointer to a map[string]interface{} struct as parameters
 // It returns a pointer to a time.Time struct and an error
 func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, recharge *pb.Recharge, checkout_response *map[string]interface{}) (createTime *time.Time, err error) {
+	r.log.Info("CreateRecharge method called with recharge: ", recharge, " and checkout_response: ", checkout_response)
+
 	// Split the recharge name by "/" and get the last element as the document ID
 	substrings := strings.Split(recharge.Name, "/")
 
@@ -66,12 +69,17 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 		"method":    "razorpay",
 	}
 
+	r.log.Info("Creating document with fields: ", doc)
+
 	// Add the document to the firestore collection with the document ID as the last element of the substrings array
 	writeResult, err := r.firestore.Collection("recharges").Doc(substrings[len(substrings)-1]).Set(ctx, doc)
 
 	if err != nil {
+		r.log.Error("Error adding document to firestore: ", err)
 		return nil, err
 	}
+
+	r.log.Info("Document added to firestore")
 
 	// Publish a message to the pubsub topic for recharge creation
 	result := r.createRechargeTopic.Publish(ctx, &pubsub.Message{
@@ -82,9 +90,11 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 	_, err = result.Get(ctx)
 
 	if err != nil {
-		log.WithError(err).Info("pubsub: recharge/created: failed to publish message")
+		r.log.Error("Error publishing message to pubsub: ", err)
 		return nil, err
 	}
+
+	r.log.Info("Message published to pubsub")
 
 	// Return a pointer to the update time of the write result and nil for the error
 	return &writeResult.UpdateTime, nil
@@ -94,11 +104,16 @@ func (r *FirestoreImpl) CreateRecharge(ctx context.Context, log logger.Logger, r
 // It takes in a context and a string ID as parameters
 // It returns a pointer to a pb.Recharge struct and an error
 func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, userId string, id string) (*pb.Recharge, error) {
+	r.log.Info("GetRecharge method called with userId: ", userId, " and id: ", id)
+
 	doc, err := r.firestore.Collection("wallets").Doc(userId).Collection("recharges").Doc(id).Get(ctx)
 
 	if err != nil {
+		r.log.Error("Error retrieving document from firestore: ", err)
 		return nil, err
 	}
+
+	r.log.Info("Document retrieved from firestore: ", doc)
 
 	if !doc.Exists() {
 		return nil, nil
@@ -107,8 +122,11 @@ func (r *FirestoreImpl) GetRecharge(ctx context.Context, log logger.Logger, user
 	recharge := docToRecharge(doc)
 
 	if recharge == nil {
+		r.log.Error("Error converting document to recharge")
 		return nil, errors.New("invalid recharge")
 	}
+
+	r.log.Info("Document converted to recharge: ", recharge)
 
 	return recharge, nil
 }
