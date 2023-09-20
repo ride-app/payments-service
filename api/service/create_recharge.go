@@ -11,6 +11,14 @@ import (
 	pb "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/ride-app/wallet-service/utils/logger"
+)
+
+	"connectrpc.com/connect"
+	"github.com/aidarkhanov/nanoid"
+	pb "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
+	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *connect.Request[pb.CreateRechargeRequest]) (*connect.Response[pb.CreateRechargeResponse], error) {
@@ -19,10 +27,13 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 
 	log.Info("Validating request")
 	if err := req.Msg.Validate(); err != nil {
+		log.WithError(err).Error("Request validation failed")
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
 	log.Info("Extracting user id from request message")
+	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.WithField("userId", userId).Info("User id extracted from request message")
 	userId := strings.Split(req.Msg.Parent, "/")[1]
 	log.Debugf("User id: %s", userId)
 
@@ -109,5 +120,6 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 
 	defer log.WithField("response", response.Msg).Debug("Returned CreateRecharge response")
 	log.Info("Returning CreateRecharge response")
+	defer log.WithField("response", response.Msg).Debug("Returned CreateRecharge response")
 	return response, nil
 }
