@@ -86,12 +86,14 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 	entries = append(entries, &entry)
 
 	log.Info("Creating transactions for Recharge")
-	_, err = service.walletRepository.CreateTransactions(ctx, log, &entries)
+	batchId, err := service.walletRepository.CreateTransactions(ctx, log, &entries)
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create transactions")
 		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transactions", err))
 	}
+
+	log.Debugf("Batch id: %s", batchId)
 
 	log.Info("Updating Recharge details")
 	req.Msg.Recharge.CreateTime = timestamppb.New(*createTime)
