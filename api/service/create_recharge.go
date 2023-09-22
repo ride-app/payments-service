@@ -74,15 +74,19 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 	}
 
 	log.Info("Creating transactions")
-	transactions := &walletrepository.Transactions{
-		userId: &pb.Transaction{
+	entries := make(walletrepository.Entries, 1)
+	entry := walletrepository.Entry{
+		UserId: userId,
+		Transaction: &pb.Transaction{
 			Type:   pb.Transaction_TYPE_CREDIT,
 			Amount: req.Msg.Recharge.Amount,
 		},
 	}
 
+	entries = append(entries, &entry)
+
 	log.Info("Creating transactions for Recharge")
-	err = service.walletRepository.CreateTransactions(ctx, log, transactions, nanoid.New())
+	_, err = service.walletRepository.CreateTransactions(ctx, log, &entries)
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create transactions")

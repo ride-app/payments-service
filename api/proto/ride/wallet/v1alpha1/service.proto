@@ -29,7 +29,7 @@ service WalletService {
   // Create multiple transactions at once in a single atomic reuqest.
   rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
     option (google.api.http) = {
-      post: "/v1alpha1/users/-/wallet/transactions:batchCreate",
+      post: "/v1alpha1/users/-/wallet/transactions",
       body: "*"
     };
   }
@@ -144,7 +144,7 @@ message CreateTransactionsRequest {
   string request_id = 1;
 
   // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
-  repeated Entry transactions = 2 [(validate.rules).repeated.min_items = 2];
+  repeated Entry entries = 2 [(validate.rules).repeated.min_items = 2];
 
   message Entry {
     // Relative resource name of the Wallet, for example, "users/user1/wallet"
