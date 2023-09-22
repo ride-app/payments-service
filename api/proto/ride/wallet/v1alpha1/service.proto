@@ -29,7 +29,7 @@ service WalletService {
   // Create multiple transactions at once in a single atomic reuqest.
   rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
     option (google.api.http) = {
-      post: "/v1alpha1/users/-/wallet/transactions:batchCreate",
+      post: "/v1alpha1/users/-/wallet/transactions",
       body: "*"
     };
   }
