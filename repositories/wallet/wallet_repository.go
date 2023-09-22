@@ -17,13 +17,18 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-// Transactions is a map where the key is the wallet ID against which the transaction is made.
-type Transactions = map[string]*pb.Transaction
+// Entries is a map where the key is the wallet ID against which the transaction is made.
+type Entries = []*Entry
+
+type Entry struct {
+	UserId      string
+	Transaction *pb.Transaction
+}
 
 type WalletRepository interface {
 	GetWallet(ctx context.Context, log logger.Logger, userId string) (*pb.Wallet, error)
 
-	CreateTransactions(ctx context.Context, log logger.Logger, transactions *Transactions, batchId string) error
+	CreateTransactions(ctx context.Context, log logger.Logger, entries *Entries) (*string, error)
 
 	GetTransaction(ctx context.Context, log logger.Logger, userId string, transactionId string) (*pb.Transaction, error)
 
@@ -68,18 +73,22 @@ func (r *FirestoreImpl) GetWallet(ctx context.Context, log logger.Logger, userId
 
 }
 
-func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logger, transactions *Transactions, batchId string) error {
+func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logger, entries *Entries) (*string, error) {
 
-	return r.firestore.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
-		for walletId, transaction := range *transactions {
+	batchId := nanoid.New()
+
+	err := r.firestore.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		for _, entry := range *entries {
 			transactionId := nanoid.New()
-			transaction.Name = fmt.Sprintf("users/%v/wallet/transactions/%v", walletId, transactionId)
+			transaction := entry.Transaction
+
+			transaction.Name = fmt.Sprintf("users/%v/wallet/transactions/%v", entry.UserId, transactionId)
 			transaction.BatchId = &batchId
 
 			createTime := time.Now()
 
 			doc := map[string]interface{}{
-				"walletId": walletId,
+				"walletId": entry.UserId,
 				"amount":   transaction.Amount,
 				"type":     pb.Transaction_Type_name[int32(transaction.Type.Number())],
 				"batchId":  batchId,
@@ -103,7 +112,7 @@ func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logge
 				amount = -amount
 			}
 
-			err := tx.Update(r.firestore.Doc(fmt.Sprintf("wallets/%v", walletId)), []firestore.Update{
+			err := tx.Update(r.firestore.Doc(fmt.Sprintf("wallets/%v", entry.UserId)), []firestore.Update{
 				{
 					Path:  "balance",
 					Value: firestore.Increment(amount),
@@ -117,6 +126,12 @@ func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logge
 
 		return nil
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &batchId, nil
 }
 
 func (r *FirestoreImpl) GetTransaction(ctx context.Context, log logger.Logger, userId string, transactionId string) (*pb.Transaction, error) {

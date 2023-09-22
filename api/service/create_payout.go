@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	"github.com/aidarkhanov/nanoid"
 	pb "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 )
@@ -64,18 +63,21 @@ func (service *WalletServiceServer) CreatePayout(ctx context.Context, req *conne
 	}
 
 	log.Info("Forming transactions")
-	transactions := &walletrepository.Transactions{
-		userId: &pb.Transaction{
+	entries := make(walletrepository.Entries, 1)
+	entry := walletrepository.Entry{
+		UserId: userId,
+		Transaction: &pb.Transaction{
 			Type:   pb.Transaction_TYPE_DEBIT,
 			Amount: req.Msg.Payout.Amount,
 		},
 	}
 
-	batchId := nanoid.New()
-	log.Debugf("Batch id: %s", batchId)
+	entries = append(entries, &entry)
 
 	log.Info("Creating transactions")
-	err = service.walletRepository.CreateTransactions(ctx, log, transactions, batchId)
+	batchId, err := service.walletRepository.CreateTransactions(ctx, log, &entries)
+
+	log.Debugf("Batch id: %s", *batchId)
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create transactions")

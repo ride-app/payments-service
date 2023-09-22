@@ -2,11 +2,9 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"connectrpc.com/connect"
-	"github.com/aidarkhanov/nanoid"
 	pb "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 )
@@ -22,13 +20,11 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 	}
 
 	log.Info("Generating batch id")
-	batchId := nanoid.New()
-	log.Debugf("Batch id: %s", batchId)
 
-	var transactions walletrepository.Transactions = make(map[string]*pb.Transaction)
+	var entries walletrepository.Entries = make(walletrepository.Entries, 0, len(req.Msg.Entries))
 
-	log.Info("Generating transactions")
-	for _, entry := range req.Msg.Transactions {
+	log.Info("Generating transaction entries")
+	for _, entry := range req.Msg.Entries {
 		userId := strings.Split(entry.Parent, "/")[1]
 		log.Infof("Creating transaction entry for user id: %s", userId)
 
@@ -45,15 +41,17 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 			return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("wallet"))
 		}
 
-		log.Info("Updating transaction name")
-		entry.Transaction.Name = fmt.Sprintf("%s/transactions/%s", entry.Parent, batchId)
+		log.Info("Adding transaction entry to batch")
+		entry := walletrepository.Entry{
+			UserId:      userId,
+			Transaction: entry.Transaction,
+		}
 
-		log.Info("Adding transaction to batch")
-		transactions[userId] = entry.Transaction
+		entries = append(entries, &entry)
 	}
 
 	log.Info("Creating transactions")
-	err := service.walletRepository.CreateTransactions(ctx, log, &transactions, nanoid.New())
+	batchId, err := service.walletRepository.CreateTransactions(ctx, log, &entries)
 
 	if err != nil {
 		log.WithError(err).Error("Failed to create transactions")
@@ -62,13 +60,13 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 
 	var transactionsInResponse []*pb.Transaction = make([]*pb.Transaction, 0)
 
-	for _, transaction := range transactions {
-		transactionsInResponse = append(transactionsInResponse, transaction)
+	for _, entry := range entries {
+		transactionsInResponse = append(transactionsInResponse, entry.Transaction)
 	}
 
 	log.Info("Creating response message")
 	response := connect.NewResponse(&pb.CreateTransactionsResponse{
-		BatchId:      batchId,
+		BatchId:      *batchId,
 		Transactions: transactionsInResponse,
 	})
 
