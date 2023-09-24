@@ -194,12 +194,12 @@ func (r *FirestoreImpl) CancelPayout(ctx context.Context, log logger.Logger, id 
 // docToPayout is a helper function that converts a Firestore document to a Payout struct.
 func docToPayout(doc *firestore.DocumentSnapshot) *pb.Payout {
 
-	if !(funk.Contains(doc.Data(), "wallet_id") && funk.Contains(doc.Data(), "amount") && funk.Contains(doc.Data(), "status")) {
+	if !(funk.Contains(doc.Data(), "amount") && funk.Contains(doc.Data(), "status")) {
 		return nil
 	}
 
 	return &pb.Payout{
-		Name:       "users/" + doc.Data()["wallet_id"].(string) + "/wallet/payouts/" + doc.Ref.ID,
+		Name:       "users/" + doc.Ref.ID + "/wallet/payouts/" + doc.Ref.ID,
 		Amount:     doc.Data()["amount"].(int32),
 		Status:     *pb.Payout_Status(pb.Payout_Status_value["STATUS_"+doc.Data()["status"].(string)]).Enum(),
 		CreateTime: timestamppb.New(doc.CreateTime),
