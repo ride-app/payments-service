@@ -27,11 +27,10 @@ func (service *WalletServiceServer) CreateTransfers(ctx context.Context, req *co
 		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transfers", err))
 	}
 
-	var entries walletrepository.Entries = make(walletrepository.Entries, 0, len(req.Msg.Transfers)*2)
+	entries := make(walletrepository.Entries, 0, len(req.Msg.Transfers)*2)
 
 	log.Info("Generating transactions")
 	for _, transfer := range req.Msg.Transfers {
-
 		entry := generateTransactionEntries(log, transfer)
 
 		entries = append(entries, *entry...)
