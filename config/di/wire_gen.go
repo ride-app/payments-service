@@ -12,6 +12,7 @@ import (
 	"github.com/ride-app/wallet-service/repositories/auth"
 	"github.com/ride-app/wallet-service/repositories/payout"
 	"github.com/ride-app/wallet-service/repositories/recharge"
+	"github.com/ride-app/wallet-service/repositories/transfer"
 	"github.com/ride-app/wallet-service/repositories/wallet"
 	"github.com/ride-app/wallet-service/third-party"
 	"github.com/ride-app/wallet-service/utils/logger"
@@ -32,6 +33,10 @@ func InitializeService(logger2 logger.Logger, config2 *config.Config) (*service.
 	if err != nil {
 		return nil, err
 	}
+	transferrepositoryFirestoreImpl, err := transferrepository.NewFirestoreTransferRepository(config2, app)
+	if err != nil {
+		return nil, err
+	}
 	client, err := thirdparty.NewPubSubClient(config2)
 	if err != nil {
 		return nil, err
@@ -45,6 +50,6 @@ func InitializeService(logger2 logger.Logger, config2 *config.Config) (*service.
 		return nil, err
 	}
 	razorpayClient := thirdparty.NewRazorpayClient(config2)
-	walletServiceServer := service.New(logger2, config2, firebaseImpl, firestoreImpl, rechargerepositoryFirestoreImpl, payoutrepositoryFirestoreImpl, razorpayClient)
+	walletServiceServer := service.New(logger2, config2, firebaseImpl, firestoreImpl, transferrepositoryFirestoreImpl, rechargerepositoryFirestoreImpl, payoutrepositoryFirestoreImpl, razorpayClient)
 	return walletServiceServer, nil
 }

@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "validate/validate.proto";
 
 import "ride/wallet/v1alpha1/wallet.proto";
+import "ride/wallet/v1alpha1/transfer.proto";
 import "ride/wallet/v1alpha1/transaction.proto";
 import "ride/wallet/v1alpha1/recharge.proto";
 import "ride/wallet/v1alpha1/payout.proto";
@@ -27,12 +28,20 @@ service WalletService {
   // }
 
   // Create multiple transactions at once in a single atomic reuqest.
-  rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
+  rpc CreateTransfers(CreateTransfersRequest) returns (CreateTransfersResponse) {
     option (google.api.http) = {
-      post: "/v1alpha1/users/-/wallet/transactions",
+      post: "/v1alpha1/transfers",
       body: "*"
     };
   }
+
+  // Create multiple transactions at once in a single atomic reuqest.
+  // rpc CreateTransactions(CreateTransactionsRequest) returns (CreateTransactionsResponse) {
+  //   option (google.api.http) = {
+  //     post: "/v1alpha1/users/-/wallet/transactions",
+  //     body: "*"
+  //   };
+  // }
 
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse) {
     option (google.api.http) = {
@@ -138,6 +147,22 @@ message GetWalletResponse {
 //   // The created transaction
 //   Transaction transaction = 1;
 // }
+
+message CreateTransfersRequest {
+  // A unique request ID for server to detect duplicated requests for idempotency.
+  string request_id = 1;
+
+  // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
+  repeated Transfer transfers = 2 [(validate.rules).repeated.min_items = 1];
+}
+
+message CreateTransfersResponse {
+  // Output only. The batch id of the created transactions.
+  string batch_id = 1;
+
+  // The created transactions.
+  repeated Transfer transfers = 2 [(validate.rules).repeated.min_items = 1];
+}
 
 message CreateTransactionsRequest {
   // A unique request ID for server to detect duplicated requests for idempotency.

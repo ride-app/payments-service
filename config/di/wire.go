@@ -9,6 +9,7 @@ import (
 	authrepository "github.com/ride-app/wallet-service/repositories/auth"
 	payoutrepository "github.com/ride-app/wallet-service/repositories/payout"
 	rechargerepository "github.com/ride-app/wallet-service/repositories/recharge"
+	transferrepository "github.com/ride-app/wallet-service/repositories/transfer"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 	thirdparty "github.com/ride-app/wallet-service/third-party"
 	"github.com/ride-app/wallet-service/utils/logger"
@@ -29,6 +30,11 @@ func InitializeService(logger logger.Logger, config *config.Config) (*service.Wa
 			wire.Bind(
 				new(walletrepository.WalletRepository),
 				new(*walletrepository.FirestoreImpl),
+			),
+			transferrepository.NewFirestoreTransferRepository,
+			wire.Bind(
+				new(transferrepository.TransferRepository),
+				new(*transferrepository.FirestoreImpl),
 			),
 			rechargerepository.NewFirestoreRechargeRepository,
 			wire.Bind(

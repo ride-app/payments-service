@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	walletv1alpha1 "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
+	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 	logger "github.com/ride-app/wallet-service/utils/logger"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -37,17 +38,18 @@ func (m *MockWalletRepository) EXPECT() *MockWalletRepositoryMockRecorder {
 }
 
 // CreateTransactions mocks base method.
-func (m *MockWalletRepository) CreateTransactions(arg0 context.Context, arg1 logger.Logger, arg2 *map[string]*walletv1alpha1.Transaction, arg3 string) error {
+func (m *MockWalletRepository) CreateTransactions(arg0 context.Context, arg1 logger.Logger, arg2 *[]*walletrepository.Entry) (*string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTransactions", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "CreateTransactions", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateTransactions indicates an expected call of CreateTransactions.
-func (mr *MockWalletRepositoryMockRecorder) CreateTransactions(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockWalletRepositoryMockRecorder) CreateTransactions(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTransactions", reflect.TypeOf((*MockWalletRepository)(nil).CreateTransactions), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTransactions", reflect.TypeOf((*MockWalletRepository)(nil).CreateTransactions), arg0, arg1, arg2)
 }
 
 // GetTransaction mocks base method.

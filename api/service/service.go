@@ -6,6 +6,7 @@ import (
 	ar "github.com/ride-app/wallet-service/repositories/auth"
 	pr "github.com/ride-app/wallet-service/repositories/payout"
 	rr "github.com/ride-app/wallet-service/repositories/recharge"
+	tr "github.com/ride-app/wallet-service/repositories/transfer"
 	wr "github.com/ride-app/wallet-service/repositories/wallet"
 	"github.com/ride-app/wallet-service/utils/logger"
 )
@@ -15,6 +16,7 @@ type WalletServiceServer struct {
 	config             *config.Config
 	authRepository     ar.AuthRepository
 	walletRepository   wr.WalletRepository
+	transferRepository tr.TransferRepository
 	rechargeRepository rr.RechargeRepository
 	payoutRepository   pr.PayoutRepository
 	razorpay           *razorpay.Client
@@ -25,6 +27,7 @@ func New(
 	config *config.Config,
 	authRepository ar.AuthRepository,
 	walletRepository wr.WalletRepository,
+	transferRepository tr.TransferRepository,
 	rechargeRepository rr.RechargeRepository,
 	payoutRepository pr.PayoutRepository,
 	razorpay *razorpay.Client,
@@ -34,6 +37,7 @@ func New(
 		config:             config,
 		authRepository:     authRepository,
 		walletRepository:   walletRepository,
+		transferRepository: transferRepository,
 		payoutRepository:   payoutRepository,
 		rechargeRepository: rechargeRepository,
 		razorpay:           razorpay,
