@@ -58,8 +58,9 @@ func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req 
 		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transactions", err))
 	}
 
-	var transactionsInResponse []*pb.Transaction = make([]*pb.Transaction, 0)
+	transactionsInResponse := make([]*pb.Transaction, 0)
 
+	log.Info("Mapping transactions to response")
 	for _, entry := range entries {
 		transactionsInResponse = append(transactionsInResponse, entry.Transaction)
 	}

@@ -20,6 +20,7 @@ func (service *WalletServiceServer) CreateTransfers(ctx context.Context, req *co
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
+	log.Info("Creating transfers")
 	transfers, err := service.transferRepository.CreateTransfers(ctx, log, &req.Msg.Transfers)
 
 	if err != nil {
@@ -57,8 +58,8 @@ func (service *WalletServiceServer) CreateTransfers(ctx context.Context, req *co
 		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
-	defer log.WithField("response", response.Msg).Debug("Returned CreateTransactions response")
-	log.Info("Returning CreateTransactions response")
+	defer log.WithField("response", response.Msg).Debug("Returned CreateTransfers response")
+	log.Info("Returning CreateTransfers response")
 	return response, nil
 }
 

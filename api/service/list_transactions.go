@@ -18,11 +18,14 @@ func (service *WalletServiceServer) ListTransactions(ctx context.Context, req *c
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
+	log.Info("Extracting user id from request message")
 	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.Debugf("User id: %s", userId)
 
 	log.Info("Fetching transactions for user")
 	transactions, err := service.walletRepository.GetTransactions(ctx, log, userId, nil)
 	if err != nil {
+		log.WithError(err).Error("Failed to fetch transactions")
 		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("transactions", err))
 	}
 

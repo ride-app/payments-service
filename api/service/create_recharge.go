@@ -73,7 +73,7 @@ func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *con
 		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("recharge", err))
 	}
 
-	log.Info("Creating transactions")
+	log.Info("Creating transaction entries")
 	entries := make(walletrepository.Entries, 1)
 	entry := walletrepository.Entry{
 		UserId: userId,

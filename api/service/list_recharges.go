@@ -10,27 +10,38 @@ import (
 
 func (service *WalletServiceServer) ListRecharges(ctx context.Context, req *connect.Request[pb.ListRechargesRequest]) (*connect.Response[pb.ListRechargesResponse], error) {
 	log := service.logger.WithField("method", "ListRecharges")
+	log.WithField("request", req.Msg).Debug("Received ListRecharges request")
 
+	log.Info("Validating request")
 	if err := req.Msg.Validate(); err != nil {
+		log.WithError(err).Error("Invalid request")
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
+	log.Info("Extracting user id from request message")
 	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.Debugf("User id: %s", userId)
 
+	log.Info("Fetching recharges")
 	recharges, err := service.rechargeRepository.GetRecharges(ctx, log, userId)
 
 	if err != nil {
+		log.WithError(err).Error("Failed to fetch recharges")
 		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("recharges", err))
 	}
 
+	log.Info("Creating response message")
 	response := connect.NewResponse(&pb.ListRechargesResponse{
 		Recharges:     recharges,
 		NextPageToken: "",
 	})
 
+	log.Info("Validating response message")
 	if err := response.Msg.Validate(); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
+	defer log.WithField("response", response.Msg).Debug("Returned ListRecharges response")
+	log.Info("Returning ListRecharges response")
 	return response, nil
 }
