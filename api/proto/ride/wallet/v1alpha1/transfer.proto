@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+package ride.wallet.v1alpha1;
+
+message Transfer {
+  // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
+  string name = 1 [(validate.rules).string = {
+                    pattern: "^transfers/[A-Za-z0-9_-]+$",
+                    ignore_empty: true
+                  }];
+
+  // The transaction amount in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
+  int32 amount = 2 [(validate.rules).int32.gt = 0];
+
+  // Output only. Current status of the Transfer.
+  Status status = 3;
+
+  // Relative resource name of the Wallet, for example, "users/user1/wallet"
+  string source = 4 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+
+  // Relative resource name of the Wallet, for example, "users/user1/wallet"
+  string destination = 5 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+  
+  Details details = 6;
+
+  // Output only. The timestamp when the transaction was created
+  google.protobuf.Timestamp create_time = 7;
+
+  // Output only. The timestamp when the transaction was updated
+  google.protobuf.Timestamp update_time = 8;
+
+  message Details {
+    // The short human understandable description of the transaction.
+    string display_name = 1 [(validate.rules).string = { min_len: 1, max_len: 32 }];
+
+    // Full description of the transaction.
+    optional string description = 2 [(validate.rules).string = { max_bytes: 128, ignore_empty: true }];
+
+    // Any type of identifier that can explain what action caused this transaction.
+    string reference = 3 [(validate.rules).string.max_bytes = 128];
+  }
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    STATUS_PENDING = 1;
+    STATUS_SUCCESS = 2;
+    STATUS_FAILED = 3;
+  }
+}
