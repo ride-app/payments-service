@@ -88,16 +88,16 @@ func (r *FirestoreImpl) CreateTransactions(ctx context.Context, log logger.Logge
 			createTime := time.Now()
 
 			doc := map[string]interface{}{
-				"walletId": entry.UserId,
-				"amount":   transaction.Amount,
-				"type":     pb.Transaction_Type_name[int32(transaction.Type.Number())],
-				"batchId":  batchId,
+				"wallet_id": entry.UserId,
+				"amount":    transaction.Amount,
+				"type":      pb.Transaction_Type_name[int32(transaction.Type.Number())],
+				"batch_id":  batchId,
 				"details": map[string]interface{}{
-					"displayName": transaction.Details.DisplayName,
-					"description": transaction.Details.Description,
-					"reference":   transaction.Details.Reference,
+					"display_name": transaction.Details.DisplayName,
+					"description":  transaction.Details.Description,
+					"reference":    transaction.Details.Reference,
 				},
-				"createTime": createTime,
+				"create_time": createTime,
 			}
 
 			transaction.CreateTime = timestamppb.New(createTime)
@@ -151,10 +151,10 @@ func (r *FirestoreImpl) GetTransaction(ctx context.Context, log logger.Logger, u
 }
 
 func (r *FirestoreImpl) GetTransactions(ctx context.Context, log logger.Logger, userId string, batchId *string) ([]*pb.Transaction, error) {
-	query := r.firestore.Collection("transactions").Where("walletId", "==", userId)
+	query := r.firestore.Collection("transactions").Where("wallet_id", "==", userId)
 
 	if batchId != nil {
-		query = query.Where("batchId", "==", *batchId)
+		query = query.Where("batch_id", "==", *batchId)
 	}
 
 	iter := query.Documents(ctx)
@@ -183,17 +183,17 @@ func (r *FirestoreImpl) GetTransactions(ctx context.Context, log logger.Logger, 
 
 func transactionFromDoc(doc *firestore.DocumentSnapshot) *pb.Transaction {
 	transaction := &pb.Transaction{
-		Name:       "users/" + doc.Data()["walletId"].(string) + "/wallet/transactions/" + doc.Ref.ID,
+		Name:       "users/" + doc.Data()["wallet_id"].(string) + "/wallet/transactions/" + doc.Ref.ID,
 		Amount:     doc.Data()["amount"].(int32),
 		CreateTime: timestamppb.New(doc.CreateTime),
 		Type:       pb.Transaction_Type(pb.Transaction_Type_value[doc.Data()["type"].(string)]),
 		Details: &pb.Transaction_Details{
-			DisplayName: doc.Data()["details"].(map[string]interface{})["displayName"].(string),
+			DisplayName: doc.Data()["details"].(map[string]interface{})["display_name"].(string),
 			Reference:   doc.Data()["details"].(map[string]interface{})["reference"].(string),
 		},
 	}
 
-	batchIdData, err := doc.DataAt("batchId")
+	batchIdData, err := doc.DataAt("batch_id")
 
 	if err == nil {
 		batchId := batchIdData.(string)
