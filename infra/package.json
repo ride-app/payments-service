@@ -3,7 +3,7 @@
   "main": "index.ts",
   "dependencies": {
     "@pulumi/gcp": "^6.66.0",
-    "@pulumi/pulumi": "^3.84.0"
+    "@pulumi/pulumi": "^3.85.0"
   },
   "devDependencies": {
     "@types/node": "^20.6.3"
