@@ -21,7 +21,7 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - uses: bufbuild/buf-setup-action@v1.26.1
+      - uses: bufbuild/buf-setup-action@v1.27.0
         with:
           github_token: ${{ github.token }}
 
