@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/firestore v1.13.0
 	cloud.google.com/go/pubsub v1.33.0
 	connectrpc.com/connect v1.11.1
-	firebase.google.com/go/v4 v4.12.0
+	firebase.google.com/go/v4 v4.12.1
 	github.com/MicahParks/keyfunc/v2 v2.1.0
 	github.com/aidarkhanov/nanoid v1.0.8
 	github.com/envoyproxy/protoc-gen-validate v1.0.2
