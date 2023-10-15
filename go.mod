@@ -18,7 +18,7 @@ require (
 	github.com/onsi/gomega v1.27.6
 	github.com/razorpay/razorpay-go v1.2.0
 	github.com/thoas/go-funk v0.9.3
-	go.uber.org/mock v0.2.0
+	go.uber.org/mock v0.3.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/net v0.17.0
 	google.golang.org/api v0.147.0
