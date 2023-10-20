@@ -3,7 +3,7 @@ module github.com/ride-app/wallet-service
 go 1.21
 
 require (
-	cloud.google.com/go/firestore v1.13.0
+	cloud.google.com/go/firestore v1.14.0
 	cloud.google.com/go/pubsub v1.33.0
 	connectrpc.com/connect v1.11.1
 	firebase.google.com/go/v4 v4.12.1
