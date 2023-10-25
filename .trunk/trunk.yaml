@@ -24,6 +24,9 @@ actions:
     - trunk-fmt-pre-commit
 
 lint:
+  definitions:
+    - name: osv-scanner
+      runtime: go
   enabled:
     - renovate@37.8.1
     - sort-package-json@2.6.0
