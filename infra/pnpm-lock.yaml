@@ -9,8 +9,8 @@ dependencies:
     specifier: ^6.67.0
     version: 6.67.0
   '@pulumi/pulumi':
-    specifier: ^3.91.1
-    version: 3.91.1
+    specifier: ^3.92.0
+    version: 3.92.0
 
 devDependencies:
   '@types/node':
@@ -19,8 +19,8 @@ devDependencies:
 
 packages:
 
-  /@grpc/grpc-js@1.9.3:
-    resolution: {integrity: sha512-b8iWtdrYIeT5fdZdS4Br/6h/kuk0PW5EVBUGk1amSbrpL8DlktJD43CdcCWwRdd6+jgwHhADSbL9CsNnm6EUPA==}
+  /@grpc/grpc-js@1.9.6:
+    resolution: {integrity: sha512-yq3qTy23u++8zdvf+h4mz4ohDFi681JAkMZZPTKh8zmUVh0AKLisFlgxcn22FMNowXz15oJ6pqgwT7DJ+PdJvg==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.9
@@ -231,18 +231,18 @@ packages:
   /@pulumi/gcp@6.67.0:
     resolution: {integrity: sha512-HEnUfTJVyafWPHS3y8NIZf09WgXSutfHYL3smP45x6vqdbvx3k8iLfcd0i462v0rxsWUh0PRf6kgFWQcmMpXjA==}
     dependencies:
-      '@pulumi/pulumi': 3.91.1
+      '@pulumi/pulumi': 3.92.0
       '@types/express': 4.17.17
       read-package-json: 2.1.2
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@pulumi/pulumi@3.91.1:
-    resolution: {integrity: sha512-ZKX9twt1+EDSb/Sg3d9fffA74f3Ikx90Xc8k7C++qdaOkcwKd2RTycciZdzvM/ri7KW4B6CYU2qCgKy33li6tQ==}
+  /@pulumi/pulumi@3.92.0:
+    resolution: {integrity: sha512-G0LqldpT+IMjIySUP0GJ5NAxU9dY9cCQrVnTeXoeuZk6YWyo/xMNOyZFodUpgVl3Xbmf2jVVoAnD+5FT3vaeAQ==}
     engines: {node: '>=8.13.0 || >=10.10.0'}
     dependencies:
-      '@grpc/grpc-js': 1.9.3
+      '@grpc/grpc-js': 1.9.6
       '@logdna/tail-file': 2.2.0
       '@opentelemetry/api': 1.6.0
       '@opentelemetry/exporter-zipkin': 1.17.0(@opentelemetry/api@1.6.0)
