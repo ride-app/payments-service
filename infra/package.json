@@ -2,7 +2,7 @@
   "name": "wallet-service",
   "main": "index.ts",
   "dependencies": {
-    "@pulumi/gcp": "^6.67.0",
+    "@pulumi/gcp": "^6.67.1",
     "@pulumi/pulumi": "^3.92.0"
   },
   "devDependencies": {
