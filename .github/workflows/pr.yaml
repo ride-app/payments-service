@@ -11,12 +11,9 @@ on:
 permissions: read-all
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
-    name: Lint
-    env:
-      GOPRIVATE: go.buf.build
-      BUF_USER: debkanchan
+    name: Build
     permissions:
       checks: write # For trunk to post annotations
       contents: read
@@ -37,6 +34,3 @@ jobs:
 
       - name: Build protobuf
         run: buf generate
-
-      - name: Lint
-        uses: trunk-io/trunk-action@97ecd21fe6c743bf7a606791584b683a7995c70e # v1
