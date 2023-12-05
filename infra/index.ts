@@ -17,7 +17,6 @@ const repository = new gcp.cloudbuildv2.Repository("repository", {
 });
 
 new gcp.cloudbuild.Trigger("build-trigger", {
-  name: serviceName,
   location,
   repositoryEventConfig: {
     repository: repository.id,
