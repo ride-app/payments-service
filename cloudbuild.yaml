@@ -3,12 +3,12 @@ substitutions:
 
 steps:
   # Step 1: Generate from Protobuf
-  - name: bufbuild/buf
+  - name: bufbuild/buf@sha256:e59a3f1722f4dafabdb6c7129795a269b087acaddadb08bc7866a0a86c9d0451
     args:
       - generate
 
   # Step 2: Build a Docker image
-  - name: gcr.io/cloud-builders/docker
+  - name: gcr.io/cloud-builders/docker@sha256:bf4796a70ad14d933af98b714ab973146f9bccc0342216b18ff0e026f541e0d8
     args:
       - build
       - -t
@@ -20,13 +20,13 @@ steps:
       - .
 
   # Step 3: Push a Docker image
-  - name: gcr.io/cloud-builders/docker
+  - name: gcr.io/cloud-builders/docker@sha256:bf4796a70ad14d933af98b714ab973146f9bccc0342216b18ff0e026f541e0d8
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
 
   # Step 4: Push the new Cloud Run revision
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:c3b4a119ec24a1481d7d4ef72a4486496279a90a7acb615c7cf1481fff977398
     entrypoint: gcloud
     args:
       - run
