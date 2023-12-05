@@ -1,3 +1,2 @@
-config:
-  gcp:project: ride-app-dev-2
-  logDebug: true
+environment:
+  - dev

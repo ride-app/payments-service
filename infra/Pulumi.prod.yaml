@@ -1,2 +1,2 @@
-config:
-  gcp:project: ride-app-prod
+environment:
+  - dev
