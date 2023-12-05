@@ -64,3 +64,6 @@ lint:
 merge:
   required_statuses:
     - Lint
+tools:
+  enabled:
+    - bazel@6.4.0
