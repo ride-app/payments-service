@@ -9,6 +9,7 @@ jobs:
   trunk_check:
     name: Trunk Check Upload
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       GOPRIVATE: go.buf.build
       BUF_USER: debkanchan
