@@ -10,10 +10,6 @@ jobs:
     name: Trunk Check Upload
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      GOPRIVATE: go.buf.build
-      BUF_USER: debkanchan
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
@@ -24,13 +20,17 @@ jobs:
 
       - uses: bufbuild/buf-setup-action@382440cdb8ec7bc25a68d7b4711163d95f7cc3aa # v1.28.1
         with:
+          buf_user: ${{ env.BUF_USER }}
+          buf_api_token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
 
-      - name: Authenticate buf
-        run: echo ${{ secrets.BUF_TOKEN }} | buf registry login --username ${{ env.BUF_USER }} --token-stdin
-
       - name: Build protobuf
-        run: buf generate
+        uses: trunk-io/breakpoint@f8a1f08369323ed46f3ef7161d3d0a2fdc3488df # v1
+        with:
+          breakpoint-id: buf-generate
+          run: buf generate
+          trunk-token: ${{ secrets.TRUNK_TOKEN }}
+          org: ride
 
       - name: Trunk Check
         uses: trunk-io/trunk-action@97ecd21fe6c743bf7a606791584b683a7995c70e # v1
