@@ -21,7 +21,7 @@ require (
 	go.uber.org/mock v0.3.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/net v0.19.0
-	google.golang.org/api v0.153.0
+	google.golang.org/api v0.154.0
 	google.golang.org/genproto 989df2bf70f3
 	google.golang.org/genproto/googleapis/api 989df2bf70f3
 	google.golang.org/protobuf v1.31.0
