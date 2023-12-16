@@ -16,7 +16,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/onsi/ginkgo/v2 v2.13.2
 	github.com/onsi/gomega v1.30.0
-	github.com/razorpay/razorpay-go v1.2.0
+	github.com/razorpay/razorpay-go v1.3.0
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.3.0
 	go.uber.org/zap v1.26.0
