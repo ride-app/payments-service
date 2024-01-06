@@ -22,7 +22,7 @@ require (
 	go.uber.org/zap v1.26.0
 	golang.org/x/net v0.19.0
 	google.golang.org/api v0.155.0
-	google.golang.org/genproto v0.0.0-20231212172506-995d672761c0
+	google.golang.org/genproto 50ed04b92917
 	google.golang.org/genproto/googleapis/api 50ed04b92917
 	google.golang.org/protobuf v1.32.0
 )
