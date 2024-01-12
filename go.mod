@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/pubsub v1.33.0
 	connectrpc.com/connect v1.14.0
 	firebase.google.com/go/v4 v4.13.0
-	github.com/MicahParks/keyfunc/v2 v2.1.0
+	github.com/MicahParks/keyfunc/v3 v3.2.3
 	github.com/aidarkhanov/nanoid v1.0.8
 	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/golang-jwt/jwt/v5 v5.2.0
