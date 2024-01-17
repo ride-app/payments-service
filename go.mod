@@ -1,6 +1,6 @@
 module github.com/ride-app/wallet-service
 
-go 1.21.5
+go 1.21.6
 
 toolchain go1.21.6
 
