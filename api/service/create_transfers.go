@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
+	"github.com/ride-app/go/pkg/logger"
 	pb "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
-	"github.com/ride-app/wallet-service/utils/logger"
 )
 
 func (service *WalletServiceServer) CreateTransfers(ctx context.Context, req *connect.Request[pb.CreateTransfersRequest]) (*connect.Response[pb.CreateTransfersResponse], error) {

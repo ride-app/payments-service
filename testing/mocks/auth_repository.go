@@ -9,8 +9,8 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	logger "github.com/ride-app/go/pkg/logger"
 	authrepository "github.com/ride-app/wallet-service/repositories/auth"
-	logger "github.com/ride-app/wallet-service/utils/logger"
 )
 
 // MockAuthRepository is a mock of AuthRepository interface.

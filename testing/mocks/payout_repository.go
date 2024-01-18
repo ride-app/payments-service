@@ -10,8 +10,8 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	logger "github.com/ride-app/go/pkg/logger"
 	walletv1alpha1 "github.com/ride-app/wallet-service/api/gen/ride/wallet/v1alpha1"
-	logger "github.com/ride-app/wallet-service/utils/logger"
 )
 
 // MockPayoutRepository is a mock of PayoutRepository interface.

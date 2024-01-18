@@ -4,6 +4,7 @@ package di
 
 import (
 	"github.com/google/wire"
+	"github.com/ride-app/go/pkg/logger"
 	"github.com/ride-app/wallet-service/api/service"
 	"github.com/ride-app/wallet-service/config"
 	authrepository "github.com/ride-app/wallet-service/repositories/auth"
@@ -12,7 +13,6 @@ import (
 	transferrepository "github.com/ride-app/wallet-service/repositories/transfer"
 	walletrepository "github.com/ride-app/wallet-service/repositories/wallet"
 	thirdparty "github.com/ride-app/wallet-service/third-party"
-	"github.com/ride-app/wallet-service/utils/logger"
 )
 
 func InitializeService(logger logger.Logger, config *config.Config) (*service.WalletServiceServer, error) {

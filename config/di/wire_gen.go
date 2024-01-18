@@ -7,6 +7,7 @@
 package di
 
 import (
+	"github.com/ride-app/go/pkg/logger"
 	"github.com/ride-app/wallet-service/api/service"
 	"github.com/ride-app/wallet-service/config"
 	"github.com/ride-app/wallet-service/repositories/auth"
@@ -15,7 +16,6 @@ import (
 	"github.com/ride-app/wallet-service/repositories/transfer"
 	"github.com/ride-app/wallet-service/repositories/wallet"
 	"github.com/ride-app/wallet-service/third-party"
-	"github.com/ride-app/wallet-service/utils/logger"
 )
 
 // Injectors from wire.go:

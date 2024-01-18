@@ -2,13 +2,13 @@ package service
 
 import (
 	"github.com/razorpay/razorpay-go"
+	"github.com/ride-app/go/pkg/logger"
 	"github.com/ride-app/wallet-service/config"
 	ar "github.com/ride-app/wallet-service/repositories/auth"
 	pr "github.com/ride-app/wallet-service/repositories/payout"
 	rr "github.com/ride-app/wallet-service/repositories/recharge"
 	tr "github.com/ride-app/wallet-service/repositories/transfer"
 	wr "github.com/ride-app/wallet-service/repositories/wallet"
-	"github.com/ride-app/wallet-service/utils/logger"
 )
 
 type WalletServiceServer struct {

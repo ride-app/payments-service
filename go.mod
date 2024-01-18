@@ -1,31 +1,28 @@
 module github.com/ride-app/wallet-service
 
-go 1.21.5
-
-toolchain go1.21.6
+go 1.21.6
 
 require (
 	cloud.google.com/go/firestore v1.14.0
 	cloud.google.com/go/pubsub v1.33.0
 	connectrpc.com/connect v1.14.0
 	firebase.google.com/go/v4 v4.13.0
-	github.com/MicahParks/keyfunc/v3 v3.2.3
 	github.com/aidarkhanov/nanoid v1.0.8
 	github.com/envoyproxy/protoc-gen-validate v1.0.3
-	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.5.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
 	github.com/razorpay/razorpay-go v1.3.1
+	github.com/ride-app/go v0.0.0-20240118060024-3d68e1bf6c3d
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/net v0.20.0
 	google.golang.org/api v0.156.0
-	google.golang.org/genproto a9fa1716bcac
-	google.golang.org/genproto/googleapis/api a9fa1716bcac
+	google.golang.org/genproto v0.0.0-20240116215550-a9fa1716bcac
+	google.golang.org/genproto/googleapis/api v0.0.0-20240116215550-a9fa1716bcac
 	google.golang.org/protobuf v1.32.0
 )
 
@@ -37,13 +34,15 @@ require (
 	cloud.google.com/go/longrunning v0.5.4 // indirect
 	cloud.google.com/go/storage v1.36.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/MicahParks/jwkset v0.5.6 // indirect
+	github.com/MicahParks/jwkset v0.5.7 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
+	github.com/MicahParks/keyfunc/v3 v3.2.4 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
