@@ -1,38 +1,23 @@
 name: Nightly
 
+permissions: read-all
+
 on:
   schedule:
     - cron: 0 0 * * 0-6
   workflow_dispatch:
 
 jobs:
-  trunk_check:
-    name: Trunk Check Upload
+  trunk_upgrade:
+    name: Upgrade Trunk
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write # For trunk to create PRs
+      pull-requests: write # For trunk to create PRs
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
-      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5
-        with:
-          go-version-file: go.mod
-
-      - uses: bufbuild/buf-setup-action@382440cdb8ec7bc25a68d7b4711163d95f7cc3aa # v1.28.1
-        with:
-          buf_user: ${{ env.BUF_USER }}
-          buf_api_token: ${{ secrets.BUF_TOKEN }}
-          github_token: ${{ github.token }}
-
-      - name: Build protobuf
-        uses: trunk-io/breakpoint@f8a1f08369323ed46f3ef7161d3d0a2fdc3488df # v1
-        with:
-          breakpoint-id: buf-generate
-          run: buf generate
-          trunk-token: ${{ secrets.TRUNK_TOKEN }}
-          org: ride
-
-      - name: Trunk Check
-        uses: trunk-io/trunk-action@97ecd21fe6c743bf7a606791584b683a7995c70e # v1
-        with:
-          trunk-token: ${{ secrets.TRUNK_TOKEN }}
+      - name: Trunk Upgrade
+        uses: trunk-io/trunk-action/upgrade@97ecd21fe6c743bf7a606791584b683a7995c70e # v1

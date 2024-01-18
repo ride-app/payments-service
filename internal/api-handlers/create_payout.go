@@ -1,0 +1,99 @@
+package apihandlers
+
+import (
+	"context"
+	"errors"
+	"strings"
+
+	"connectrpc.com/connect"
+	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
+	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+)
+
+func (service *WalletServiceServer) CreatePayout(ctx context.Context, req *connect.Request[pb.CreatePayoutRequest]) (*connect.Response[pb.CreatePayoutResponse], error) {
+	log := service.logger.WithField("method", "CreatePayout")
+	log.WithField("request", req.Msg).Debug("Received CreatePayout request")
+
+	log.Info("Validating request")
+	if err := req.Msg.Validate(); err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
+	}
+
+	log.Info("Extracting user id from request message")
+	userId := strings.Split(req.Msg.Parent, "/")[1]
+	log.Debugf("User id: %s", userId)
+
+	log.Info("Fetching wallet for user")
+	wallet, err := service.walletRepository.GetWallet(ctx, log, userId)
+
+	if err != nil {
+		log.WithError(err).Error("Failed to fetch wallet")
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("wallet", err))
+	}
+
+	if wallet == nil {
+		log.Error("Wallet not found")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("wallet"))
+	}
+
+	log.Info("Checking if payout amount is greater than wallet balance")
+	if req.Msg.Payout.Amount > wallet.Balance {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("amount must be smaller than wallet balance"))
+	}
+
+	log.Info("Fetching payout account")
+	payoutAccount, err := service.payoutRepository.GetPayoutAccount(ctx, log, userId)
+
+	if err != nil {
+		log.WithError(err).Error("Failed to fetch payout account")
+		return nil, connect.NewError(connect.CodeInternal, failedToFetchError("payout account", err))
+	}
+
+	if payoutAccount == nil {
+		log.Error("Payout account not found")
+		return nil, connect.NewError(connect.CodeFailedPrecondition, notFoundError("payout account"))
+	}
+
+	log.Info("Creating payout")
+	payout, err := service.payoutRepository.CreatePayout(ctx, log, payoutAccount, req.Msg.Payout)
+
+	if err != nil {
+		log.WithError(err).Error("Failed to create payout")
+		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("payout", err))
+	}
+
+	log.Info("Forming transactions")
+	entries := make(walletrepository.Entries, 1)
+	entry := walletrepository.Entry{
+		UserId: userId,
+		Transaction: &pb.Transaction{
+			Type:   pb.Transaction_TYPE_DEBIT,
+			Amount: req.Msg.Payout.Amount,
+		},
+	}
+
+	entries = append(entries, &entry)
+
+	log.Info("Creating transactions")
+	batchId, err := service.walletRepository.CreateTransactions(ctx, log, &entries)
+
+	log.Debugf("Batch id: %s", *batchId)
+
+	if err != nil {
+		log.WithError(err).Error("Failed to create transactions")
+		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transactions", err))
+	}
+
+	response := connect.NewResponse(&pb.CreatePayoutResponse{
+		Payout: payout,
+	})
+
+	log.Info("Validating response message")
+	if err = response.Msg.Validate(); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
+	}
+
+	defer log.WithField("response", response.Msg).Debug("Returned CreatePayout response")
+	log.Info("Returning CreatePayout response")
+	return response, nil
+}

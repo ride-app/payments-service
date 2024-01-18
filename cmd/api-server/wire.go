@@ -1,0 +1,51 @@
+//go:build wireinject
+
+package main
+
+import (
+	"github.com/google/wire"
+	"github.com/ride-app/go/pkg/logger"
+	"github.com/ride-app/wallet-service/config"
+	authrepository "github.com/ride-app/wallet-service/internal/repositories/auth"
+	payoutrepository "github.com/ride-app/wallet-service/internal/repositories/payout"
+	rechargerepository "github.com/ride-app/wallet-service/internal/repositories/recharge"
+	transferrepository "github.com/ride-app/wallet-service/internal/repositories/transfer"
+	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+	thirdparty "github.com/ride-app/wallet-service/third-party"
+)
+
+func InitializeService(logger logger.Logger, config *config.Config) (*apihandlers.WalletServiceServer, error) {
+	panic(
+		wire.Build(
+			thirdparty.NewFirebaseApp,
+			thirdparty.NewPubSubClient,
+			thirdparty.NewRazorpayClient,
+			authrepository.NewFirebaseAuthRepository,
+			wire.Bind(
+				new(authrepository.AuthRepository),
+				new(*authrepository.FirebaseImpl),
+			),
+			walletrepository.NewFirestoreWalletRepository,
+			wire.Bind(
+				new(walletrepository.WalletRepository),
+				new(*walletrepository.FirestoreImpl),
+			),
+			transferrepository.NewFirestoreTransferRepository,
+			wire.Bind(
+				new(transferrepository.TransferRepository),
+				new(*transferrepository.FirestoreImpl),
+			),
+			rechargerepository.NewFirestoreRechargeRepository,
+			wire.Bind(
+				new(rechargerepository.RechargeRepository),
+				new(*rechargerepository.FirestoreImpl),
+			),
+			payoutrepository.NewFirestorePayoutRepository,
+			wire.Bind(
+				new(payoutrepository.PayoutRepository),
+				new(*payoutrepository.FirestoreImpl),
+			),
+			apihandlers.New,
+		),
+	)
+}
