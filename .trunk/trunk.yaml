@@ -55,7 +55,7 @@ lint:
   ignore:
     - linters: [ALL]
       paths:
-        - utils/tools
+        - tools
 
     - linters: [goimports]
       paths:
