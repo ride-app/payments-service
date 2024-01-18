@@ -13,7 +13,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/onsi/ginkgo/v2 v2.15.0
-	github.com/onsi/gomega v1.30.0
+	github.com/onsi/gomega v1.31.0
 	github.com/razorpay/razorpay-go v1.3.1
 	github.com/ride-app/go v0.0.0-20240118060024-3d68e1bf6c3d
 	github.com/thoas/go-funk v0.9.3
