@@ -15,7 +15,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.31.1
 	github.com/razorpay/razorpay-go v1.3.1
-	github.com/ride-app/go v0.0.0-20240118060024-3d68e1bf6c3d
+	github.com/ride-app/go v0.0.0-20240119181736-1f791e3c3e3c
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
 	go.uber.org/zap v1.26.0
