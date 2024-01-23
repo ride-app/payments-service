@@ -2,12 +2,7 @@ substitutions:
   _SERVICE_NAME: wallet-service
 
 steps:
-  # Step 1: Generate from Protobuf
-  - name: bufbuild/buf@sha256:c7aed89bb749415ee2c54df102472182c539e3d7da74b06c430891bed34f6493
-    args:
-      - generate
-
-  # Step 2: Build a Docker image
+  # Build Docker image
   - name: gcr.io/cloud-builders/docker@sha256:0a5bbd5d30b1f19f6bf979fe97bdec5384f7b65cc7e7aaad5a68c78f1d1cba8d
     args:
       - build
@@ -15,17 +10,15 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
       - -t
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
-      - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:latest
       - .
 
-  # Step 3: Push a Docker image
+  # Push a Docker image
   - name: gcr.io/cloud-builders/docker@sha256:0a5bbd5d30b1f19f6bf979fe97bdec5384f7b65cc7e7aaad5a68c78f1d1cba8d
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
 
-  # Step 4: Push the new Cloud Run revision
+  # Push the new Cloud Run revision
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:258469157a163f86d168bf6566fc6c4acb532d9ef939aef2edcc49197804dbdb
     entrypoint: gcloud
     args:
@@ -44,3 +37,4 @@ steps:
 
 images:
   - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
