@@ -18,7 +18,6 @@ require (
 	github.com/ride-app/go v0.0.0-20240120170945-d4712e689141
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
-	go.uber.org/zap v1.26.0
 	golang.org/x/net v0.20.0
 	google.golang.org/api v0.157.0
 	google.golang.org/genproto v0.0.0-20240123012728-ef4313101c80
@@ -59,6 +58,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.21.0 // indirect
 	go.opentelemetry.io/otel/trace v1.21.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/oauth2 v0.16.0 // indirect
