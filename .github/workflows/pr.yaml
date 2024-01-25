@@ -32,10 +32,5 @@ jobs:
           buf_api_token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
 
-      - name: Build protobuf
-        uses: trunk-io/breakpoint@f8a1f08369323ed46f3ef7161d3d0a2fdc3488df # v1
-        with:
-          breakpoint-id: buf-generate
-          run: buf generate
-          trunk-token: ${{ secrets.TRUNK_TOKEN }}
-          org: ride
+      - name: Build
+        run: docker build .
