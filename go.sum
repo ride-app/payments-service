@@ -129,6 +129,8 @@ github.com/ride-app/go v0.0.0-20240120170945-d4712e689141 h1:gWzfLTSOzdh9Fq7fo0U
 github.com/ride-app/go v0.0.0-20240120170945-d4712e689141/go.mod h1:U+GR/zyvVB0we9lveG2/MxJT+FsdZ849wLNZkKS8Uls=
 github.com/ride-app/go v0.0.0-20240125103124-f6fd08fb3b2c h1:wyo+fxowr4CAbQyXWppQgtxq3Eb2tge2tgqzS6abEx0=
 github.com/ride-app/go v0.0.0-20240125103124-f6fd08fb3b2c/go.mod h1:U+GR/zyvVB0we9lveG2/MxJT+FsdZ849wLNZkKS8Uls=
+github.com/ride-app/go v0.0.0-20240125234728-9e3d9aaf8146 h1:79qgmEJsYh4KTygGdbM2OsNudky2uJxLeMeKan4NC40=
+github.com/ride-app/go v0.0.0-20240125234728-9e3d9aaf8146/go.mod h1:U+GR/zyvVB0we9lveG2/MxJT+FsdZ849wLNZkKS8Uls=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
