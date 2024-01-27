@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"connectrpc.com/authn"
 	"connectrpc.com/connect"
-	interceptors "github.com/ride-app/go/pkg/connect-interceptors"
-	"github.com/ride-app/go/pkg/logger"
+	interceptors "github.com/deb-tech-n-sol/go/pkg/connect-interceptors"
+	middlewares "github.com/deb-tech-n-sol/go/pkg/connect-middlewares"
+	"github.com/deb-tech-n-sol/go/pkg/logger"
 	"github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1/walletv1alpha1connect"
 	"github.com/ride-app/wallet-service/config"
 	"golang.org/x/net/http2"
@@ -28,19 +30,13 @@ func main() {
 
 	defer cancel()
 
-	panicInterceptor, err := interceptors.NewPanicInterceptor(ctx, log)
+	panicInterceptor, err := interceptors.NewPanicInterceptor(ctx)
 
 	if err != nil {
 		log.Fatalf("Failed to initialize panic interceptor: %v", err)
 	}
 
-	authInterceptor, err := interceptors.NewFirebaseAuthInterceptor(ctx, log)
-
-	if err != nil {
-		log.Fatalf("Failed to initialize auth interceptor: %v", err)
-	}
-
-	connectInterceptors := connect.WithInterceptors(panicInterceptor, authInterceptor)
+	connectInterceptors := connect.WithInterceptors(panicInterceptor)
 
 	service, err := InitializeService(log, config)
 
@@ -50,15 +46,17 @@ func main() {
 
 	log.Info("Service Initialized")
 
-	path, handler := walletv1alpha1connect.NewWalletServiceHandler(service, connectInterceptors)
 	mux := http.NewServeMux()
-	mux.Handle(path, handler)
+	mux.Handle(walletv1alpha1connect.NewWalletServiceHandler(service, connectInterceptors))
+
+	middleware := authn.NewMiddleware(middlewares.FirebaseAuth)
+	handler := middleware.Wrap(mux)
 
 	// trunk-ignore(semgrep/go.lang.security.audit.net.use-tls.use-tls)
 	panic(http.ListenAndServe(
 		fmt.Sprintf("0.0.0.0:%d", config.Port),
 		// Use h2c so we can serve HTTP/2 without TLS.
-		h2c.NewHandler(mux, &http2.Server{}),
+		h2c.NewHandler(handler, &http2.Server{}),
 	))
 
 }

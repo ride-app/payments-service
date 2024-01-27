@@ -7,7 +7,7 @@
 package main
 
 import (
-	"github.com/ride-app/go/pkg/logger"
+	"github.com/deb-tech-n-sol/go/pkg/logger"
 	"github.com/ride-app/wallet-service/config"
 	"github.com/ride-app/wallet-service/internal/api-handlers"
 	"github.com/ride-app/wallet-service/internal/repositories/auth"

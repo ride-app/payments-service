@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	"github.com/ride-app/go/pkg/logger"
+	"github.com/deb-tech-n-sol/go/pkg/logger"
 	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
 	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
 )

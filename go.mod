@@ -5,9 +5,11 @@ go 1.21.6
 require (
 	cloud.google.com/go/firestore v1.14.0
 	cloud.google.com/go/pubsub v1.36.0
+	connectrpc.com/authn v0.1.0
 	connectrpc.com/connect v1.14.0
 	firebase.google.com/go/v4 v4.13.0
 	github.com/aidarkhanov/nanoid v1.0.8
+	github.com/deb-tech-n-sol/go v0.2.3
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.5.0
@@ -15,7 +17,6 @@ require (
 	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.31.1
 	github.com/razorpay/razorpay-go v1.3.1
-	github.com/ride-app/go v0.0.0-20240125234728-9e3d9aaf8146
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.20.0
@@ -33,7 +34,7 @@ require (
 	cloud.google.com/go/longrunning v0.5.4 // indirect
 	cloud.google.com/go/storage v1.36.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/MicahParks/jwkset v0.5.7 // indirect
+	github.com/MicahParks/jwkset v0.5.10 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/MicahParks/keyfunc/v3 v3.2.4 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
