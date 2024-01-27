@@ -8,8 +8,8 @@ import (
 	context "context"
 	reflect "reflect"
 
+	logger "github.com/deb-tech-n-sol/go/pkg/logger"
 	gomock "github.com/golang/mock/gomock"
-	logger "github.com/ride-app/go/pkg/logger"
 	authrepository "github.com/ride-app/wallet-service/internal/repositories/auth"
 )
 

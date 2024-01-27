@@ -3,9 +3,10 @@
 package main
 
 import (
+	"github.com/deb-tech-n-sol/go/pkg/logger"
 	"github.com/google/wire"
-	"github.com/ride-app/go/pkg/logger"
 	"github.com/ride-app/wallet-service/config"
+	apihandlers "github.com/ride-app/wallet-service/internal/api-handlers"
 	authrepository "github.com/ride-app/wallet-service/internal/repositories/auth"
 	payoutrepository "github.com/ride-app/wallet-service/internal/repositories/payout"
 	rechargerepository "github.com/ride-app/wallet-service/internal/repositories/recharge"

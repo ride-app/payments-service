@@ -7,7 +7,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	auth "firebase.google.com/go/v4/auth"
-	"github.com/ride-app/go/pkg/logger"
+	"github.com/deb-tech-n-sol/go/pkg/logger"
 )
 
 type AuthRepository interface {
