@@ -1,5 +1,5 @@
 {
-  "name": "wallet-service",
+  "name": "payment-service",
   "main": "index.ts",
   "dependencies": {
     "@pulumi/gcp": "^7.0.0",
