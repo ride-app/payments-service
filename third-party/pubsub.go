@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"cloud.google.com/go/pubsub"
-	"github.com/ride-app/wallet-service/config"
+	"github.com/ride-app/payments-service/config"
 )
 
 func NewPubSubClient(config *config.Config) (*pubsub.Client, error) {

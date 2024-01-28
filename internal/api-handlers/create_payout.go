@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
-	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
+	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 )
 
-func (service *WalletServiceServer) CreatePayout(ctx context.Context, req *connect.Request[pb.CreatePayoutRequest]) (*connect.Response[pb.CreatePayoutResponse], error) {
+func (service *PaymentsServiceServer) CreatePayout(ctx context.Context, req *connect.Request[pb.CreatePayoutRequest]) (*connect.Response[pb.CreatePayoutResponse], error) {
 	log := service.logger.WithField("method", "CreatePayout")
 	log.WithField("request", req.Msg).Debug("Received CreatePayout request")
 

@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-package ride.wallet.v1alpha1;
+package ride.payments.v1alpha1;
 
 message Payout {
   // Relative resource name of Payout, for example: "users/user1/wallet/payouts/payout1"

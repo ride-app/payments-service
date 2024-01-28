@@ -5,15 +5,15 @@ import "google/type/interval.proto";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 
-import "ride/wallet/v1alpha1/wallet.proto";
-import "ride/wallet/v1alpha1/transfer.proto";
-import "ride/wallet/v1alpha1/transaction.proto";
-import "ride/wallet/v1alpha1/recharge.proto";
-import "ride/wallet/v1alpha1/payout.proto";
+import "ride/payments/v1alpha1/wallet.proto";
+import "ride/payments/v1alpha1/transfer.proto";
+import "ride/payments/v1alpha1/transaction.proto";
+import "ride/payments/v1alpha1/recharge.proto";
+import "ride/payments/v1alpha1/payout.proto";
 
-package ride.wallet.v1alpha1;
+package ride.payments.v1alpha1;
 
-service WalletService {
+service PaymentsService {
   rpc GetWallet(GetWalletRequest) returns (GetWalletResponse) {
     option (google.api.http) = {
     get: "/v1alpha1/{name=users/*/wallet}"

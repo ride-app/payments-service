@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
+	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 )
 
-func (service *WalletServiceServer) ListRecharges(ctx context.Context, req *connect.Request[pb.ListRechargesRequest]) (*connect.Response[pb.ListRechargesResponse], error) {
+func (service *PaymentsServiceServer) ListRecharges(ctx context.Context, req *connect.Request[pb.ListRechargesRequest]) (*connect.Response[pb.ListRechargesResponse], error) {
 	log := service.logger.WithField("method", "ListRecharges")
 	log.WithField("request", req.Msg).Debug("Received ListRecharges request")
 

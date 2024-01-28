@@ -8,12 +8,12 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/aidarkhanov/nanoid"
-	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
-	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
+	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (service *WalletServiceServer) CreateRecharge(ctx context.Context, req *connect.Request[pb.CreateRechargeRequest]) (*connect.Response[pb.CreateRechargeResponse], error) {
+func (service *PaymentsServiceServer) CreateRecharge(ctx context.Context, req *connect.Request[pb.CreateRechargeRequest]) (*connect.Response[pb.CreateRechargeResponse], error) {
 	log := service.logger.WithField("method", "CreateRecharge")
 	log.WithField("request", req.Msg).Debug("Received CreateRecharge request")
 
