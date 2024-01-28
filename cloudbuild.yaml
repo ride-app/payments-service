@@ -1,5 +1,5 @@
 substitutions:
-  _SERVICE_NAME: wallet-service
+  _SERVICE_NAME: payments-service
 
 steps:
   # Build Docker image
