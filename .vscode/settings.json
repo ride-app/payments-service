@@ -1,9 +1,9 @@
 {
-	"[typescript]": {
-		"editor.defaultFormatter": "Trunk.io",
-		"editor.formatOnType": true,
-		"editor.formatOnSave": true
-	},
-	"jest.jestCommandLine": "npm test --",
-	"typescript.tsdk": "node_modules/typescript/lib"
+  "[typescript]": {
+    "editor.defaultFormatter": "Trunk.io",
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true
+  },
+  "jest.jestCommandLine": "npm test --",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
