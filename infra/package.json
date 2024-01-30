@@ -1,9 +1,9 @@
 {
-  "name": "wallet-service",
+  "name": "payments-service",
   "main": "index.ts",
   "dependencies": {
     "@pulumi/gcp": "^7.0.0",
-    "@pulumi/pulumi": "^3.94.2"
+    "@pulumi/pulumi": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "20.11.10"

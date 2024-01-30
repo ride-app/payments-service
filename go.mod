@@ -1,4 +1,4 @@
-module github.com/ride-app/wallet-service
+module github.com/ride-app/payments-service
 
 go 1.21.6
 

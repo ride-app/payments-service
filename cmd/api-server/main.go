@@ -10,8 +10,8 @@ import (
 	interceptors "github.com/deb-tech-n-sol/go/pkg/connect-interceptors"
 	middlewares "github.com/deb-tech-n-sol/go/pkg/connect-middlewares"
 	"github.com/deb-tech-n-sol/go/pkg/logger"
-	"github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1/walletv1alpha1connect"
-	"github.com/ride-app/wallet-service/config"
+	"github.com/ride-app/payments-service/api/ride/payments/v1alpha1/paymentsv1alpha1connect"
+	"github.com/ride-app/payments-service/config"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -47,7 +47,7 @@ func main() {
 	log.Info("Service Initialized")
 
 	mux := http.NewServeMux()
-	mux.Handle(walletv1alpha1connect.NewWalletServiceHandler(service, connectInterceptors))
+	mux.Handle(paymentsv1alpha1connect.NewPaymentsServiceHandler(service, connectInterceptors))
 
 	middleware := authn.NewMiddleware(middlewares.FirebaseAuth)
 	handler := middleware.Wrap(mux)

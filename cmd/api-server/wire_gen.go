@@ -8,19 +8,19 @@ package main
 
 import (
 	"github.com/deb-tech-n-sol/go/pkg/logger"
-	"github.com/ride-app/wallet-service/config"
-	"github.com/ride-app/wallet-service/internal/api-handlers"
-	"github.com/ride-app/wallet-service/internal/repositories/auth"
-	"github.com/ride-app/wallet-service/internal/repositories/payout"
-	"github.com/ride-app/wallet-service/internal/repositories/recharge"
-	"github.com/ride-app/wallet-service/internal/repositories/transfer"
-	"github.com/ride-app/wallet-service/internal/repositories/wallet"
-	"github.com/ride-app/wallet-service/third-party"
+	"github.com/ride-app/payments-service/config"
+	"github.com/ride-app/payments-service/internal/api-handlers"
+	"github.com/ride-app/payments-service/internal/repositories/auth"
+	"github.com/ride-app/payments-service/internal/repositories/payout"
+	"github.com/ride-app/payments-service/internal/repositories/recharge"
+	"github.com/ride-app/payments-service/internal/repositories/transfer"
+	"github.com/ride-app/payments-service/internal/repositories/wallet"
+	"github.com/ride-app/payments-service/third-party"
 )
 
 // Injectors from wire.go:
 
-func InitializeService(logger2 logger.Logger, config2 *config.Config) (*apihandlers.WalletServiceServer, error) {
+func InitializeService(logger2 logger.Logger, config2 *config.Config) (*apihandlers.PaymentsServiceServer, error) {
 	app, err := thirdparty.NewFirebaseApp(config2)
 	if err != nil {
 		return nil, err
@@ -50,6 +50,6 @@ func InitializeService(logger2 logger.Logger, config2 *config.Config) (*apihandl
 		return nil, err
 	}
 	razorpayClient := thirdparty.NewRazorpayClient(config2)
-	walletServiceServer := apihandlers.New(logger2, config2, firebaseImpl, firestoreImpl, transferrepositoryFirestoreImpl, rechargerepositoryFirestoreImpl, payoutrepositoryFirestoreImpl, razorpayClient)
-	return walletServiceServer, nil
+	paymentsServiceServer := apihandlers.New(logger2, config2, firebaseImpl, firestoreImpl, transferrepositoryFirestoreImpl, rechargerepositoryFirestoreImpl, payoutrepositoryFirestoreImpl, razorpayClient)
+	return paymentsServiceServer, nil
 }

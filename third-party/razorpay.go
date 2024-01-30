@@ -2,7 +2,7 @@ package thirdparty
 
 import (
 	razorpay "github.com/razorpay/razorpay-go"
-	"github.com/ride-app/wallet-service/config"
+	"github.com/ride-app/payments-service/config"
 )
 
 func NewRazorpayClient(config *config.Config) *razorpay.Client {

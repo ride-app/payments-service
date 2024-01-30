@@ -5,17 +5,17 @@ package main
 import (
 	"github.com/deb-tech-n-sol/go/pkg/logger"
 	"github.com/google/wire"
-	"github.com/ride-app/wallet-service/config"
-	apihandlers "github.com/ride-app/wallet-service/internal/api-handlers"
-	authrepository "github.com/ride-app/wallet-service/internal/repositories/auth"
-	payoutrepository "github.com/ride-app/wallet-service/internal/repositories/payout"
-	rechargerepository "github.com/ride-app/wallet-service/internal/repositories/recharge"
-	transferrepository "github.com/ride-app/wallet-service/internal/repositories/transfer"
-	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
-	thirdparty "github.com/ride-app/wallet-service/third-party"
+	"github.com/ride-app/payments-service/config"
+	apihandlers "github.com/ride-app/payments-service/internal/api-handlers"
+	authrepository "github.com/ride-app/payments-service/internal/repositories/auth"
+	payoutrepository "github.com/ride-app/payments-service/internal/repositories/payout"
+	rechargerepository "github.com/ride-app/payments-service/internal/repositories/recharge"
+	transferrepository "github.com/ride-app/payments-service/internal/repositories/transfer"
+	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
+	thirdparty "github.com/ride-app/payments-service/third-party"
 )
 
-func InitializeService(logger logger.Logger, config *config.Config) (*apihandlers.WalletServiceServer, error) {
+func InitializeService(logger logger.Logger, config *config.Config) (*apihandlers.PaymentsServiceServer, error) {
 	panic(
 		wire.Build(
 			thirdparty.NewFirebaseApp,

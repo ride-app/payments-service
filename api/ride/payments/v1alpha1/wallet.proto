@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-package ride.wallet.v1alpha1;
+package ride.payments.v1alpha1;
 
 // A Wallet is a singleton resource that represents a user's wallet. There can only be one Wallet per user.
 message Wallet {

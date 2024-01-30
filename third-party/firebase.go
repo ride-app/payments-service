@@ -5,7 +5,7 @@ import (
 	"log"
 
 	firebase "firebase.google.com/go/v4"
-	"github.com/ride-app/wallet-service/config"
+	"github.com/ride-app/payments-service/config"
 )
 
 func NewFirebaseApp(config *config.Config) (*firebase.App, error) {

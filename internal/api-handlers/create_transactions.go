@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
-	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
-	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
+	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 )
 
-func (service *WalletServiceServer) CreateTransactions(ctx context.Context, req *connect.Request[pb.CreateTransactionsRequest]) (*connect.Response[pb.CreateTransactionsResponse], error) {
+func (service *PaymentsServiceServer) CreateTransactions(ctx context.Context, req *connect.Request[pb.CreateTransactionsRequest]) (*connect.Response[pb.CreateTransactionsResponse], error) {
 	log := service.logger.WithField("method", "CreateTransactions")
 	log.WithField("request", req.Msg).Debug("Received CreateTransactions request")
 

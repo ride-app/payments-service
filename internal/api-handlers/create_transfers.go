@@ -6,11 +6,11 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/deb-tech-n-sol/go/pkg/logger"
-	pb "github.com/ride-app/wallet-service/api/ride/wallet/v1alpha1"
-	walletrepository "github.com/ride-app/wallet-service/internal/repositories/wallet"
+	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
+	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 )
 
-func (service *WalletServiceServer) CreateTransfers(ctx context.Context, req *connect.Request[pb.CreateTransfersRequest]) (*connect.Response[pb.CreateTransfersResponse], error) {
+func (service *PaymentsServiceServer) CreateTransfers(ctx context.Context, req *connect.Request[pb.CreateTransfersRequest]) (*connect.Response[pb.CreateTransfersResponse], error) {
 	log := service.logger.WithField("method", "CreateTransfers")
 	log.WithField("request", req.Msg).Debug("Received CreateTransfers request")
 
