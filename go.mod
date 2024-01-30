@@ -20,7 +20,7 @@ require (
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.20.0
-	google.golang.org/api v0.159.0
+	google.golang.org/api v0.160.0
 	google.golang.org/genproto v0.0.0-20240125205218-1f4bbc51befe
 	google.golang.org/genproto/googleapis/api v0.0.0-20240125205218-1f4bbc51befe
 	google.golang.org/protobuf v1.32.0
