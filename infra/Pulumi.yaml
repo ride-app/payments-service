@@ -1,9 +1,9 @@
-name: wallet-service
+name: payments-service
 runtime: nodejs
 description: A minimal Google Cloud TypeScript Pulumi program
 config:
   gcp:region: asia-east1
-  service:name: wallet-service
+  service:name: payments-service
   pulumi:tags:
     value:
       pulumi:template: gcp-typescript
