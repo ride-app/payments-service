@@ -6,6 +6,6 @@
     "@pulumi/pulumi": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "20.11.14"
+    "@types/node": "20.11.15"
   }
 }
