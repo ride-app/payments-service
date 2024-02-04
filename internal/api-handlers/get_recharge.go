@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 )
 
@@ -12,9 +13,17 @@ func (service *PaymentsServiceServer) GetRecharge(ctx context.Context, req *conn
 	log := service.logger.WithField("method", "GetRecharge")
 	log.WithField("request", req.Msg).Debug("Received GetRecharge request")
 
+	validator, err := protovalidate.New()
+	if err != nil {
+		log.WithError(err).Info("Failed to initialize validator")
+
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
 	log.Info("Validating request")
-	if err := req.Msg.Validate(); err != nil {
-		log.WithError(err).Error("Invalid request")
+	if err := validator.Validate(req.Msg); err != nil {
+		log.WithError(err).Info("Invalid request")
+
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
@@ -40,16 +49,17 @@ func (service *PaymentsServiceServer) GetRecharge(ctx context.Context, req *conn
 	}
 
 	log.Info("Creating response message")
-	response := connect.NewResponse(&pb.GetRechargeResponse{
+	res := connect.NewResponse(&pb.GetRechargeResponse{
 		Recharge: recharge,
 	})
 
 	log.Info("Validating response message")
-	if err := response.Msg.Validate(); err != nil {
+	if err := validator.Validate(res.Msg); err != nil {
+		log.WithError(err).Error("Invalid response")
 		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
-	defer log.WithField("response", response.Msg).Debug("Returned GetRecharge response")
+	defer log.WithField("response", res.Msg).Debug("Returned GetRecharge response")
 	log.Info("Returning GetRecharge response")
-	return response, nil
+	return res, nil
 }
