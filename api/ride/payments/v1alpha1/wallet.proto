@@ -1,17 +1,19 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
-import "validate/validate.proto";
+import "buf/validate/validate.proto";
 
 package ride.payments.v1alpha1;
+
+option go_package = "github.com/ride-app/payments-service/api/ride/payments/v1alpha1";
 
 // A Wallet is a singleton resource that represents a user's wallet. There can only be one Wallet per user.
 message Wallet {
   // Relative resource name of the Wallet, for example, "users/user1/wallet"
-  string name = 1 [(validate.rules).string = {
-                    pattern: "^users/[A-Za-z0-9_-]+/wallet$",
-                    ignore_empty: true
-                  }];
+  string name = 1 [
+                    (buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$",
+                    (buf.validate.field).ignore_empty = true
+                  ];
 
   // Output only. The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
   int32 balance = 2;
