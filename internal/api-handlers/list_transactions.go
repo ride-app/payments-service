@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 )
 
@@ -12,9 +13,17 @@ func (service *PaymentsServiceServer) ListTransactions(ctx context.Context, req 
 	log := service.logger.WithField("method", "ListTransactions")
 	log.WithField("request", req.Msg).Debug("Received ListTransactions request:")
 
-	log.Info("Validating request message")
-	if err := req.Msg.Validate(); err != nil {
-		log.WithError(err).Error("Invalid argument")
+	validator, err := protovalidate.New()
+	if err != nil {
+		log.WithError(err).Info("Failed to initialize validator")
+
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	log.Info("Validating request")
+	if err := validator.Validate(req.Msg); err != nil {
+		log.WithError(err).Info("Invalid request")
+
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
@@ -36,7 +45,8 @@ func (service *PaymentsServiceServer) ListTransactions(ctx context.Context, req 
 	})
 
 	log.Info("Validating response message")
-	if err := res.Msg.Validate(); err != nil {
+	if err := validator.Validate(res.Msg); err != nil {
+		log.WithError(err).Error("Invalid response")
 		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 

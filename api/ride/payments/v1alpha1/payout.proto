@@ -1,19 +1,21 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
-import "validate/validate.proto";
+import "buf/validate/validate.proto";
 
 package ride.payments.v1alpha1;
 
+option go_package = "github.com/ride-app/payments-service/api/ride/payments/v1alpha1";
+
 message Payout {
   // Relative resource name of Payout, for example: "users/user1/wallet/payouts/payout1"
-  string name = 1 [(validate.rules).string = {
-                    pattern: "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$",
-                    ignore_empty: true
-                  }];
+  string name = 1 [
+                    (buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$",
+                    (buf.validate.field).ignore_empty = true
+                  ];
 
   // The amount of money to be charged in the smallest currency unit. **Must** be greater than 0. For example, $1.75 must be represented as 175.
-  int32 amount = 2 [(validate.rules).int32.gt = 0];
+  int32 amount = 2 [(buf.validate.field).int32.gt = 0];
 
   // Output only. Current status of the Payout.
   Status status = 3;
@@ -43,10 +45,10 @@ message Payout {
 
 message PayoutAccount {
   // Relative resource name of PayoutAccount, for example: "users/user1/wallet/payout-account"
-  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
+  string name = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
 
   // The currency code of the PayoutAccount. For example, "INR".
-  string currency_code = 2 [(validate.rules).string = {in: ["INR"]}];
+  string currency_code = 2 [(buf.validate.field).string = {in: ["INR"]}];
 
   oneof destination {
     // The bank account information of the PayoutAccount.

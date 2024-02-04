@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 )
 
@@ -12,9 +13,17 @@ func (service *PaymentsServiceServer) GetTransaction(ctx context.Context, req *c
 	log := service.logger.WithField("method", "GetTransaction")
 	log.WithField("request", req.Msg).Debug("Received GetTransaction request")
 
+	validator, err := protovalidate.New()
+	if err != nil {
+		log.WithError(err).Info("Failed to initialize validator")
+
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
 	log.Info("Validating request")
-	if err := req.Msg.Validate(); err != nil {
-		log.WithError(err).Error("Invalid request")
+	if err := validator.Validate(req.Msg); err != nil {
+		log.WithError(err).Info("Invalid request")
+
 		return nil, connect.NewError(connect.CodeInvalidArgument, invalidArgumentError(err))
 	}
 
@@ -35,16 +44,17 @@ func (service *PaymentsServiceServer) GetTransaction(ctx context.Context, req *c
 	}
 
 	log.Info("Creating response message")
-	response := connect.NewResponse(&pb.GetTransactionResponse{
+	res := connect.NewResponse(&pb.GetTransactionResponse{
 		Transaction: transaction,
 	})
 
 	log.Info("Validating response message")
-	if err := response.Msg.Validate(); err != nil {
+	if err := validator.Validate(res.Msg); err != nil {
+		log.WithError(err).Error("Invalid response")
 		return nil, connect.NewError(connect.CodeInternal, invalidResponseError(err))
 	}
 
-	defer log.WithField("response", response.Msg).Debug("Returned GetTransaction response")
+	defer log.WithField("response", res.Msg).Debug("Returned GetTransaction response")
 	log.Info("Returning GetTransaction response")
-	return response, nil
+	return res, nil
 }

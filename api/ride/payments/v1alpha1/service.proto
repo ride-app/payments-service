@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/field_mask.proto";
 import "google/type/interval.proto";
 import "google/api/annotations.proto";
-import "validate/validate.proto";
+import "buf/validate/validate.proto";
 
 import "ride/payments/v1alpha1/wallet.proto";
 import "ride/payments/v1alpha1/transfer.proto";
@@ -12,6 +12,8 @@ import "ride/payments/v1alpha1/recharge.proto";
 import "ride/payments/v1alpha1/payout.proto";
 
 package ride.payments.v1alpha1;
+
+option go_package = "github.com/ride-app/payments-service/api/ride/payments/v1alpha1";
 
 service PaymentsService {
   rpc GetWallet(GetWalletRequest) returns (GetWalletResponse) {
@@ -122,7 +124,7 @@ service PaymentsService {
 
 message GetWalletRequest {
   // Relative Resource name of the Wallet, for example, "users/user1/wallet"
-  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+  string name = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
 
   optional google.protobuf.FieldMask fields = 99;
 }
@@ -137,10 +139,10 @@ message GetWalletResponse {
 //   string request_id = 1;
 
 //   // Relative resource name of the Wallet, for example, "users/user1/wallet"
-//   string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+//   string parent = 2 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
 //   // The Transaction to be created. Client **must** not set the Transaction.name field.
-//   Transaction transaction = 3 [(validate.rules).message.required = true];
+//   Transaction transaction = 3 [(buf.validate.field).message.required = true];
 // }
 
 // message CreateTransactionResponse {
@@ -153,7 +155,7 @@ message CreateTransfersRequest {
   string request_id = 1;
 
   // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
-  repeated Transfer transfers = 2 [(validate.rules).repeated.min_items = 1];
+  repeated Transfer transfers = 2 [(buf.validate.field).repeated.min_items = 1];
 }
 
 message CreateTransfersResponse {
@@ -161,7 +163,7 @@ message CreateTransfersResponse {
   string batch_id = 1;
 
   // The created transactions.
-  repeated Transfer transfers = 2 [(validate.rules).repeated.min_items = 1];
+  repeated Transfer transfers = 2 [(buf.validate.field).repeated.min_items = 1];
 }
 
 message CreateTransactionsRequest {
@@ -169,14 +171,14 @@ message CreateTransactionsRequest {
   string request_id = 1;
 
   // All the Transactions to be created in a single atomic batch. Client **must** not set the Transaction.name field.
-  repeated Entry entries = 2 [(validate.rules).repeated.min_items = 2];
+  repeated Entry entries = 2 [(buf.validate.field).repeated.min_items = 2];
 
   message Entry {
     // Relative resource name of the Wallet, for example, "users/user1/wallet"
-    string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+    string parent = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
     // The Transaction to be created. Client **must** not set the Transaction.name field.
-    Transaction transaction = 2 [(validate.rules).message.required = true];
+    Transaction transaction = 2 [(buf.validate.field).required = true];
   }
 }
 
@@ -185,12 +187,12 @@ message CreateTransactionsResponse {
   string batch_id = 1;
 
   // The created transactions.
-  repeated Transaction transactions = 2 [(validate.rules).repeated.min_items = 2];
+  repeated Transaction transactions = 2 [(buf.validate.field).repeated.min_items = 2];
 }
 
 message GetTransactionRequest {
   // Relative resource name of the Transaction, for example, "users/user1/wallet/transactions/transaction1"
-  string name = 1[(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$"];
+  string name = 1[(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/transactions/[A-Za-z0-9_-]+$"];
 
   optional google.protobuf.FieldMask fields = 99;
 }
@@ -202,7 +204,7 @@ message GetTransactionResponse {
 
 message ListTransactionsRequest {
   // Relative resource name of the Wallet, for example, "users/user1/wallet".
-  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
+  string parent = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];;
 
   // The maximum number of items to return.
   int32 page_size = 2;
@@ -235,15 +237,15 @@ message CreateRechargeRequest {
   string request_id = 1;
 
   // The parent wallet name where the Recharge is to be created. example: "users/user1/wallet"
-  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+  string parent = 2 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
   // The Recharge to be created. Client **must** not set Recharge.name.
-  Recharge recharge = 3 [(validate.rules).message.required = true];
+  Recharge recharge = 3 [(buf.validate.field).required = true];
 }
 
 message CreateRechargeResponse {
   // The created Recharge
-  Recharge recharge = 1 [(validate.rules).message.required = true];
+  Recharge recharge = 1 [(buf.validate.field).required = true];
 
   // Information required for the checkout payment gateway.
   map<string, string> checkout_info = 2;
@@ -251,19 +253,19 @@ message CreateRechargeResponse {
 
 message GetRechargeRequest {
   // Relative Resource name of the Recharge, for example, "users/user1/wallet/recharges/recharge1"
-  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/recharges/[A-Za-z0-9_-]+$"];
+  string name = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/recharges/[A-Za-z0-9_-]+$"];
 
   optional google.protobuf.FieldMask fields = 99;
 }
 
 message GetRechargeResponse {
   // The requested recharge.
-  Recharge recharge = 1 [(validate.rules).message.required = true];
+  Recharge recharge = 1 [(buf.validate.field).required = true];
 }
 
 message ListRechargesRequest {
   // The parent wallet name, for example, "users/user1/wallet"
-  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
+  string parent = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
 
   // The maximum number of items to return.
   int32 page_size = 2;
@@ -295,32 +297,32 @@ message CreatePayoutRequest {
   string request_id = 1;
 
   // The parent wallet name where the Payout is to be created. example: "users/user1/wallet"
-  string parent = 2 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
+  string parent = 2 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet$"];
 
   // The Payout to be created. Client **must** not set Payout.name.
-  Payout payout = 3 [(validate.rules).message.required = true];
+  Payout payout = 3 [(buf.validate.field).required = true];
 }
 
 message CreatePayoutResponse {
   // The created Payout
-  Payout payout = 1 [(validate.rules).message.required = true];
+  Payout payout = 1 [(buf.validate.field).required = true];
 }
 
 message GetPayoutRequest {
   // Relative Resource name of the Payout, for example, "users/user1/wallet/payouts/payout1"
-  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$"];
+  string name = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payouts/[A-Za-z0-9_-]+$"];
 
   optional google.protobuf.FieldMask fields = 99;
 }
 
 message GetPayoutResponse {
   // The requested payout.
-  Payout payout = 1 [(validate.rules).message.required = true];
+  Payout payout = 1 [(buf.validate.field).required = true];
 }
 
 message ListPayoutsRequest {
   // The parent wallet name, for example, "users/user1/wallet"
-  string parent = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
+  string parent = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet"];
 
   // The maximum number of items to return.
   int32 page_size = 2;
@@ -355,24 +357,24 @@ message CreatePayoutAccountRequest {
   string request_id = 1;
 
   // The PayoutAccount to be created. Client **must** set PayoutAccount.name.
-  PayoutAccount payout_account = 2 [(validate.rules).message.required = true];
+  PayoutAccount payout_account = 2 [(buf.validate.field).required = true];
 }
 
 message CreatePayoutAccountResponse {
   // The created PayoutAccount
-  PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+  PayoutAccount payout_account = 1 [(buf.validate.field).required = true];
 }
 
 message GetPayoutAccountRequest {
   // Relative Resource name of the PayoutAccount, for example, "users/user1/wallet/payout-account"
-  string name = 1 [(validate.rules).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
+  string name = 1 [(buf.validate.field).string.pattern = "^users/[A-Za-z0-9_-]+/wallet/payout-account$"];
 
   optional google.protobuf.FieldMask fields = 99;
 }
 
 message GetPayoutAccountResponse {
   // The requested payout account.
-  PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+  PayoutAccount payout_account = 1 [(buf.validate.field).required = true];
 }
 
 // message UpdatePayoutAccountRequest {
@@ -380,7 +382,7 @@ message GetPayoutAccountResponse {
 //   string request_id = 1;
 
 //   // The PayoutAccount to be updated. Client **must** set PayoutAccount.name.
-//   PayoutAccount payout_account = 2 [(validate.rules).message.required = true];
+//   PayoutAccount payout_account = 2 [(buf.validate.field).message.required = true];
 
 //   // The update mask applies to the resource. For the `FieldMask` definition, see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
 //   google.protobuf.FieldMask update_mask = 3;
@@ -388,5 +390,5 @@ message GetPayoutAccountResponse {
 
 // message UpdatePayoutAccountResponse {
 //   // The updated PayoutAccount
-//   PayoutAccount payout_account = 1 [(validate.rules).message.required = true];
+//   PayoutAccount payout_account = 1 [(buf.validate.field).message.required = true];
 // }

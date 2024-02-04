@@ -2,7 +2,7 @@
 //
 // Source: ride/payments/v1alpha1/service.proto
 
-package paymentsv1alpha1connect
+package v1alpha1connect
 
 import (
 	context "context"
