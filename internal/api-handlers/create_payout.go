@@ -47,7 +47,8 @@ func (service *PaymentsServiceServer) CreatePayout(ctx context.Context, req *con
 	}
 
 	log.Info("Checking if payout amount is greater than wallet balance")
-	if req.Msg.Payout.Amount > wallet.Balance {
+	// TODO: change payout amount type to int64
+	if int64(req.Msg.Payout.Amount) > wallet.Balance {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("amount must be smaller than wallet balance"))
 	}
 
