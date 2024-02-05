@@ -64,7 +64,7 @@ func (r *FirestoreImpl) GetWallet(ctx context.Context, log logger.Logger, userId
 
 	wallet := pb.Wallet{
 		Name:       "users/" + userId + "/wallet",
-		Balance:    doc.Data()["balance"].(int32),
+		Balance:    doc.Data()["balance"].(int64),
 		CreateTime: timestamppb.New(doc.CreateTime),
 		UpdateTime: timestamppb.New(doc.UpdateTime),
 	}

@@ -16,7 +16,7 @@ message Wallet {
                   ];
 
   // Output only. The balance in the Wallet in smallest currecy unit, for example, Rs. 1.75 is 175.
-  int32 balance = 2;
+  int64 balance = 2;
 
   // Output only. Timestamp when the Wallet was created.
   google.protobuf.Timestamp create_time = 3;
