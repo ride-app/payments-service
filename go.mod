@@ -13,7 +13,7 @@ require (
 	github.com/bufbuild/protovalidate-go v0.5.1
 	github.com/deb-tech-n-sol/go v0.2.3
 	github.com/golang/mock v1.6.0
-	github.com/google/wire v0.5.0
+	github.com/google/wire v0.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.31.1
