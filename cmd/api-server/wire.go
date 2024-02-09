@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/deb-tech-n-sol/go/pkg/logger"
+	"github.com/dragonfish-tech/go/pkg/logger"
 	"github.com/google/wire"
 	"github.com/ride-app/payments-service/config"
 	apihandlers "github.com/ride-app/payments-service/internal/api-handlers"

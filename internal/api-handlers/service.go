@@ -1,7 +1,7 @@
 package apihandlers
 
 import (
-	"github.com/deb-tech-n-sol/go/pkg/logger"
+	"github.com/dragonfish-tech/go/pkg/logger"
 	"github.com/razorpay/razorpay-go"
 	"github.com/ride-app/payments-service/config"
 	ar "github.com/ride-app/payments-service/internal/repositories/auth"

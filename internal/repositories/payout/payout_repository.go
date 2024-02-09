@@ -15,7 +15,7 @@ import (
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
 	"github.com/aidarkhanov/nanoid"
-	"github.com/deb-tech-n-sol/go/pkg/logger"
+	"github.com/dragonfish-tech/go/pkg/logger"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 	"github.com/ride-app/payments-service/config"
 	"github.com/thoas/go-funk"

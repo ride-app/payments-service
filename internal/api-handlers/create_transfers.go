@@ -6,7 +6,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
-	"github.com/deb-tech-n-sol/go/pkg/logger"
+	"github.com/dragonfish-tech/go/pkg/logger"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 )

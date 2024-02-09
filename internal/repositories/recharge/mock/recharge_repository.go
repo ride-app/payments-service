@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 	time "time"
 
-	logger "github.com/deb-tech-n-sol/go/pkg/logger"
+	logger "github.com/dragonfish-tech/go/pkg/logger"
 	gomock "github.com/golang/mock/gomock"
 	paymentsv1alpha1 "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 )
