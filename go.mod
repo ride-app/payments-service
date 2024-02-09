@@ -1,6 +1,6 @@
 module github.com/ride-app/payments-service
 
-go 1.22.0
+go 1.21.7
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.32.0-20231115204500-e097f827e652.1
