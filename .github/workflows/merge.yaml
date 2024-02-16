@@ -1,0 +1,27 @@
+name: merge
+
+on:
+  push:
+    branches:
+      - trunk-merge/**
+
+permissions: read-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Build
+    permissions:
+      checks: write # For trunk to post annotations
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build
+        run: docker build .
