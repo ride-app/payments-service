@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	logger "github.com/dragonfish-tech/go/pkg/logger"
+	logger "github.com/dragonfish/go/pkg/logger"
 	gomock "github.com/golang/mock/gomock"
 	authrepository "github.com/ride-app/payments-service/internal/repositories/auth"
 )
