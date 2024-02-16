@@ -6,7 +6,7 @@ import (
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
-	"github.com/dragonfish-tech/go/pkg/logger"
+	"github.com/dragonfish/go/pkg/logger"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 	walletrepository "github.com/ride-app/payments-service/internal/repositories/wallet"
 )
@@ -31,7 +31,6 @@ func (service *PaymentsServiceServer) CreateTransfers(ctx context.Context, req *
 
 	log.Info("Creating transfers")
 	transfers, err := service.transferRepository.CreateTransfers(ctx, log, &req.Msg.Transfers)
-
 	if err != nil {
 		log.WithError(err).Error("Failed to create transfers")
 		return nil, connect.NewError(connect.CodeInternal, failedToCreateError("transfers", err))
