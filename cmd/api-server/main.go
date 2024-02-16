@@ -7,8 +7,8 @@ import (
 
 	"connectrpc.com/authn"
 	"connectrpc.com/connect"
-	interceptors "github.com/dragonfish-tech/go/pkg/connect/interceptors"
-	middlewares "github.com/dragonfish-tech/go/pkg/connect/middlewares"
+	interceptors "github.com/dragonfish/go/pkg/connect/interceptors"
+	middlewares "github.com/dragonfish/go/pkg/connect/middlewares"
 	"github.com/dragonfish-tech/go/pkg/logger"
 	"github.com/ride-app/payments-service/api/ride/payments/v1alpha1/v1alpha1connect"
 	"github.com/ride-app/payments-service/config"
