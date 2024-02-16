@@ -1,4 +1,4 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>ride-app/.github:renovate"]
+  "extends": ["github>dragonfish/configs:renovate"]
 }
