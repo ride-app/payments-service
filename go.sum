@@ -56,6 +56,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dragonfish/go v1.0.1 h1:D5qIA3HvtwShLG4mbit6Afax7akQvTOFz4FT6+DFuEI=
 github.com/dragonfish/go v1.0.1/go.mod h1:LB8dt6cwhZT4yEYe/PksKyh3HMuUsIfyeBz16eJBfKw=
+github.com/dragonfish/go v1.1.0 h1:1Fpf23HGHH9uH2JUNebzvHN9yOBv+6nIxUxE9Ou2Xec=
+github.com/dragonfish/go v1.1.0/go.mod h1:LB8dt6cwhZT4yEYe/PksKyh3HMuUsIfyeBz16eJBfKw=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
