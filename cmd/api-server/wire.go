@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/dragonfish/go/pkg/logger"
+	"github.com/dragonfish/go/v2/pkg/logger"
 	"github.com/google/wire"
 	"github.com/ride-app/payments-service/config"
 	apihandlers "github.com/ride-app/payments-service/internal/api-handlers"
