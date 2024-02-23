@@ -1,15 +1,14 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
 	"connectrpc.com/authn"
 	"connectrpc.com/connect"
-	interceptors "github.com/dragonfish/go/pkg/connect/interceptors"
-	middlewares "github.com/dragonfish/go/pkg/connect/middlewares"
-	"github.com/dragonfish/go/pkg/logger"
+	interceptors "github.com/dragonfish/go/v2/pkg/connect/interceptors"
+	middlewares "github.com/dragonfish/go/v2/pkg/connect/middlewares"
+	"github.com/dragonfish/go/v2/pkg/logger"
 	"github.com/ride-app/payments-service/api/ride/payments/v1alpha1/v1alpha1connect"
 	"github.com/ride-app/payments-service/config"
 	"golang.org/x/net/http2"
@@ -25,12 +24,7 @@ func main() {
 		log.WithError(err).Fatal("Failed to read environment variables")
 	}
 
-	// Create a context that, when cancelled, ends the JWKS background refresh goroutine.
-	ctx, cancel := context.WithCancel(context.Background())
-
-	defer cancel()
-
-	panicInterceptor, err := interceptors.NewPanicInterceptor(ctx)
+	panicInterceptor, err := interceptors.NewPanicInterceptor()
 
 	if err != nil {
 		log.Fatalf("Failed to initialize panic interceptor: %v", err)

@@ -10,7 +10,7 @@ import (
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
 	"github.com/aidarkhanov/nanoid"
-	"github.com/dragonfish/go/pkg/logger"
+	"github.com/dragonfish/go/v2/pkg/logger"
 	pb "github.com/ride-app/payments-service/api/ride/payments/v1alpha1"
 	"github.com/ride-app/payments-service/config"
 	"google.golang.org/api/iterator"
