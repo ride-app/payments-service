@@ -1,5 +1,20 @@
-# Created by https://www.toptal.com/developers/gitignore/api/go,git,macos,dotenv,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=go,git,macos,dotenv,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/go,git,macos,dotenv,visualstudiocode,bazel
+# Edit at https://www.toptal.com/developers/gitignore?templates=go,git,macos,dotenv,visualstudiocode,bazel
+
+### Bazel ###
+# gitignore template for Bazel build system
+# website: https://bazel.build/
+
+# Ignore all bazel-* symlinks. There is no full list since this can change
+# based on the name of the directory bazel is cloned into.
+/bazel-*
+
+# Directories for the Bazel IntelliJ plugin containing the generated
+# IntelliJ project files and plugin configuration. Seperate directories are
+# for the IntelliJ, Android Studio and CLion versions of the plugin.
+/.ijwb/
+/.aswb/
+/.clwb/
 
 ### dotenv ###
 .env
@@ -41,10 +56,6 @@
 
 # Go workspace file
 go.work
-
-### Go Patch ###
-/vendor/
-/Godeps/
 
 ### macOS ###
 # General
@@ -98,12 +109,4 @@ Temporary Items
 .history
 .ionide
 
-# Support for Project snippet scope
-.vscode/*.code-snippets
-
-# Ignore code-workspaces
-*.code-workspace
-
-# End of https://www.toptal.com/developers/gitignore/api/go,git,macos,dotenv,visualstudiocode
-
-buf_token.txt
+# End of https://www.toptal.com/developers/gitignore/api/go,git,macos,dotenv,visualstudiocode,bazel
