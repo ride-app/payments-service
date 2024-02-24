@@ -2,24 +2,75 @@ substitutions:
   _SERVICE_NAME: payments-service
 
 steps:
-  # Build Docker image
-  - name: gcr.io/cloud-builders/docker@sha256:9ea38536e9a3f577adfea2a6b93e88e987109320e613fec6c4834ff345e550db
-    args:
-      - build
-      - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
-      - -t
-      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
-      - .
+  # Step 1: Generate from Protobuf
+  # - name: bufbuild/buf@sha256:d104e96432a276ee21eaa2c905c22c81c6ebb3a5ffb0750332f91930a426858e
+  #   args:
+  #     - generate
 
-  # Push a Docker image
+  # Step 2: Build Docker image using Bazel
+  - name: gcr.io/cloud-builders/bazel:7.0.1@sha256:a63d0f8415f876ed813ef0789aff8984c3167b4ee1e486c28dadad6a8e671527
+    id: build
+    args:
+      [
+        run,
+        //cmd/api-server:container,
+        --remote_cache=https://storage.googleapis.com/$_BAZEL_REMOTE_CACHE_BUCKET,
+        --google_default_credentials,
+      ]
+
+  # Step 3: Tag image
   - name: gcr.io/cloud-builders/docker@sha256:9ea38536e9a3f577adfea2a6b93e88e987109320e613fec6c4834ff345e550db
+    id: tag-sha
+    waitFor:
+      - build
+    args:
+      - tag
+      - api-server:latest
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
+
+  # Step 3: Tag image
+  - name: gcr.io/cloud-builders/docker@sha256:9ea38536e9a3f577adfea2a6b93e88e987109320e613fec6c4834ff345e550db
+    waitFor:
+      - build
+    args:
+      - tag
+      - api-server:latest
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
+
+  # Step 3: Tag image
+  - name: gcr.io/cloud-builders/docker@sha256:9ea38536e9a3f577adfea2a6b93e88e987109320e613fec6c4834ff345e550db
+    waitFor:
+      - build
+    args:
+      - tag
+      - api-server:latest
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:latest
+
+  # Step 4: Push a Docker image
+  - name: gcr.io/cloud-builders/docker@sha256:9ea38536e9a3f577adfea2a6b93e88e987109320e613fec6c4834ff345e550db
+    id: push
+    waitFor:
+      - tag-sha
     args:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
 
-  # Push the new Cloud Run revision
+  # Test the image.
+  - name: gcr.io/gcp-runtimes/container-structure-test@sha256:377f9a9bc00376b9fa6dc6a3a020dbe40e84ebe9481b71969aa3ff9d1c9ea17e
+    id: test
+    args:
+      [
+        test,
+        --image,
+        asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA,
+        --config,
+        cmd/api-server/container_structure_test.yaml,
+      ]
+
+  # Step 5: Push the new Cloud Run revision
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:80df07a487793712cecef1b1dd22af2968f200d831f168d1f9c7db50ecbff7fb
+    waitFor:
+        - push
     entrypoint: gcloud
     args:
       - run
@@ -29,7 +80,7 @@ steps:
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
       - --region=asia-south2
       - --allow-unauthenticated
-      - --set-env-vars=PROJECT_ID=$PROJECT_ID,LOG_DEBUG=$_LOG_DEBUG
+      - --set-env-vars=PROJECT_ID=$PROJECT_ID,LOG_DEBUG=$_LOG_DEBUG,WALLET_SERVICE_HOST=$_WALLET_SERVICE_HOST
       - --update-secrets=RAZORPAY_KEY=razorpay-key:latest,RAZORPAY_SECRET=razorpay-secret:latest,RAZORPAY_ACCOUNT_NUMBER=razorpay-account-number:latest
       - --max-instances=10
       - --port=50051
