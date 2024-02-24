@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "mock",
+    srcs = ["transfer-repository.go"],
+    importpath = "github.com/ride-app/payments-service/internal/repositories/transfer/mock",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//api/ride/payments/v1alpha1",
+        "@com_github_dragonfish_go_v2//pkg/logger",
+        "@com_github_golang_mock//gomock",
+    ],
+)

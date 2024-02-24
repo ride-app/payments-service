@@ -1,0 +1,18 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "third-party",
+    srcs = [
+        "firebase.go",
+        "pubsub.go",
+        "razorpay.go",
+    ],
+    importpath = "github.com/ride-app/payments-service/third-party",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//config",
+        "@com_github_razorpay_razorpay_go//:razorpay-go",
+        "@com_google_cloud_go_pubsub//:pubsub",
+        "@com_google_firebase_go_v4//:go",
+    ],
+)

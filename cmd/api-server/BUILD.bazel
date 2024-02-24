@@ -1,0 +1,35 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "api-server_lib",
+    srcs = [
+        "main.go",
+        "wire_gen.go",
+    ],
+    importpath = "github.com/ride-app/payments-service/cmd/api-server",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//api/ride/payments/v1alpha1/v1alpha1connect",
+        "//config",
+        "//internal/api-handlers",
+        "//internal/repositories/auth",
+        "//internal/repositories/payout",
+        "//internal/repositories/recharge",
+        "//internal/repositories/transfer",
+        "//internal/repositories/wallet",
+        "//third-party",
+        "@com_connectrpc_authn//:authn",
+        "@com_connectrpc_connect//:connect",
+        "@com_github_dragonfish_go_v2//pkg/connect/interceptors",
+        "@com_github_dragonfish_go_v2//pkg/connect/middlewares",
+        "@com_github_dragonfish_go_v2//pkg/logger",
+        "@org_golang_x_net//http2",
+        "@org_golang_x_net//http2/h2c",
+    ],
+)
+
+go_binary(
+    name = "api-server",
+    embed = [":api-server_lib"],
+    visibility = ["//visibility:public"],
+)
