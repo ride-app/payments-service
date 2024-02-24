@@ -31,5 +31,36 @@ go_library(
 go_binary(
     name = "api-server",
     embed = [":api-server_lib"],
+    goarch = "amd64",
+    goos = "linux",
+    pure = "on",
     visibility = ["//visibility:public"],
+    x_defs = {"google.golang.org/protobuf/reflect/protoregistry.conflictPolicy": "warn"},
+)
+
+pkg_tar(
+    name = "tar_layer",
+    srcs = [":api-server"],
+    owner = "65532.65532",
+    package_dir = "home/nonroot",
+)
+
+oci_image(
+    name = "image",
+    base = "@distroless",
+    entrypoint = ["./api-server"],
+    exposed_ports = ["50051/tcp"],
+    tars = [":tar_layer"],
+)
+
+oci_tarball(
+    name = "container",
+    image = ":image",
+    repo_tags = ["api-server:latest"],
+)
+
+container_structure_test(
+    name = "container_structure_test",
+    configs = ["container_structure_test.yaml"],
+    image = ":image",
 )
