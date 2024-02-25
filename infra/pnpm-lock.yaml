@@ -7,7 +7,7 @@ settings:
 dependencies:
   '@pulumi/gcp':
     specifier: ^7.0.0
-    version: 7.7.0
+    version: 7.11.0
   '@pulumi/pulumi':
     specifier: ^3.0.0
     version: 3.107.0
@@ -228,8 +228,8 @@ packages:
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
     dev: false
 
-  /@pulumi/gcp@7.7.0:
-    resolution: {integrity: sha512-tJI976XNzbJl2yWj883TLHzCHKDghIvfzFncSp8qwkgqrd5k2+6VtCvaqdJUivkRaPpKmiMQ1U7DhfgiAnKxrA==}
+  /@pulumi/gcp@7.11.0:
+    resolution: {integrity: sha512-6dBcyXU001S1GUMTvUiCZW2zYMUjUqIyQbaY0REFm+8ISVaQdNGTqSyFu4JttE/JbbEhgjzYjFG9TIRP8UoUWA==}
     dependencies:
       '@pulumi/pulumi': 3.107.0
       '@types/express': 4.17.21
@@ -314,8 +314,8 @@ packages:
       '@types/node': 20.11.20
     dev: false
 
-  /@types/express-serve-static-core@4.17.42:
-    resolution: {integrity: sha512-ckM3jm2bf/MfB3+spLPWYPUH573plBFwpOhqQ2WottxYV85j1HQFlxmnTq57X1yHY9awZPig06hL/cLMgNWHIQ==}
+  /@types/express-serve-static-core@4.17.43:
+    resolution: {integrity: sha512-oaYtiBirUOPQGSWNGPWnzyAFJ0BP3cwvN4oWZQY+zUBwpVIGsKUkpBpSztp74drYcjavs7SKFZ4DX1V2QeN8rg==}
     dependencies:
       '@types/node': 20.11.20
       '@types/qs': 6.9.11
@@ -327,7 +327,7 @@ packages:
     resolution: {integrity: sha512-ejlPM315qwLpaQlQDTjPdsUFSc6ZsP4AN6AlWnogPjQ7CVi7PYF3YVz+CY3jE2pwYf7E/7HlDAN0rV2GxTG0HQ==}
     dependencies:
       '@types/body-parser': 1.19.5
-      '@types/express-serve-static-core': 4.17.42
+      '@types/express-serve-static-core': 4.17.43
       '@types/qs': 6.9.11
       '@types/serve-static': 1.15.5
     dev: false
