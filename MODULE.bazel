@@ -3,7 +3,7 @@ bazel_dep(name = "rules_pkg", version = "0.9.1")
 bazel_dep(name = "rules_oci", version = "1.7.2")
 
 # TODO: remove this later. See https://github.com/bazel-contrib/rules_oci/issues/425#issuecomment-1860211483
-bazel_dep(name = "aspect_bazel_lib", version = "2.4.2")
+bazel_dep(name = "aspect_bazel_lib", version = "2.5.0")
 bazel_dep(name = "container_structure_test", version = "1.16.0")
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
