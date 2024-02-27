@@ -24,7 +24,7 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=warn" ./cmd/api-server
 
 # Run
-FROM gcr.io/distroless/static:nonroot@sha256:49af06135e8bbe8ddc46c1d28b0bd00961aae9c9ed090bbc0237f58e1462dd4b
+FROM gcr.io/distroless/static:nonroot@sha256:efea8b525e9deefb309c6ed41b8e69c85d901e0da30658e476e9f176f88c1b36
 
 WORKDIR /
 
