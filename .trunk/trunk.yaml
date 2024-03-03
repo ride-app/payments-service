@@ -5,7 +5,7 @@ cli:
 plugins:
   sources:
     - id: trunk
-      ref: v1.4.3
+      ref: v1.4.4
       uri: https://github.com/trunk-io/plugins
 
 runtimes:
@@ -28,7 +28,7 @@ lint:
     - name: osv-scanner
       runtime: go
   enabled:
-    - renovate@37.220.1
+    - renovate@37.221.4
     - sort-package-json@2.8.0
     - markdownlint@0.39.0
     - checkov@3.2.28
