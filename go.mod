@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.32.0-20240221180331-f05a6f4403ce.1
-	cloud.google.com/go/firestore v1.14.0
+	cloud.google.com/go/firestore v1.15.0
 	cloud.google.com/go/pubsub v1.36.2
 	connectrpc.com/authn v0.1.0
 	connectrpc.com/connect v1.15.0
