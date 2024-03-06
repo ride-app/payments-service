@@ -28,10 +28,10 @@ lint:
     - name: osv-scanner
       runtime: go
   enabled:
-    - renovate@37.226.0
+    - renovate@37.227.1
     - sort-package-json@2.8.0
     - markdownlint@0.39.0
-    - checkov@3.2.30
+    - checkov@3.2.31
     - gokart@0.5.1
     - osv-scanner@1.6.2
     - terrascan@1.18.12
