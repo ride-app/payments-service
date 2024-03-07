@@ -28,7 +28,7 @@ lint:
     - name: osv-scanner
       runtime: go
   enabled:
-    - renovate@37.227.1
+    - renovate@37.229.3
     - sort-package-json@2.8.0
     - markdownlint@0.39.0
     - checkov@3.2.31
