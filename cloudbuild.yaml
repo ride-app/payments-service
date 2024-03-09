@@ -8,7 +8,7 @@ steps:
   #     - generate
 
   # Step 2: Build Docker image using Bazel
-  - name: gcr.io/cloud-builders/bazel:7.0.1@sha256:7b2d23ddb180dc1d612f1bc983daa4e3fdfe35c6cb1ffa7bafc10eb67e727770
+  - name: gcr.io/cloud-builders/bazel:7.0.1@sha256:88db387c5f3b365588d113b18242e94324d79d3130db42c62e104ecca21ab199
     id: build
     args:
       [
