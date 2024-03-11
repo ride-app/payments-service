@@ -23,7 +23,7 @@ require (
 	golang.org/x/net v0.22.0
 	google.golang.org/api v0.169.0
 	google.golang.org/genproto v0.0.0-20240311132316-a219d84964c2
-	google.golang.org/genproto/googleapis/api v0.0.0-20240308144416-29370a3891b7
+	google.golang.org/genproto/googleapis/api v0.0.0-20240311132316-a219d84964c2
 	google.golang.org/protobuf v1.33.0
 )
 
