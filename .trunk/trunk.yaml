@@ -31,12 +31,12 @@ lint:
     - renovate@37.231.2
     - sort-package-json@2.8.0
     - markdownlint@0.39.0
-    - checkov@3.2.32
+    - checkov@3.2.34
     - gokart@0.5.1
     - osv-scanner@1.6.2
     - terrascan@1.19.1
     - trivy@0.49.1
-    - trufflehog@3.68.5
+    - trufflehog@3.69.0
     - git-diff-check
     - yamllint@1.35.1
     - shellcheck@0.10.0
@@ -66,4 +66,4 @@ merge:
     - Build
 tools:
   enabled:
-    - bazel@7.0.2
+    - bazel@7.1.0
