@@ -7,55 +7,23 @@ plugins:
     - id: trunk
       ref: v1.4.4
       uri: https://github.com/trunk-io/plugins
-
-runtimes:
-  enabled:
-    - go@1.21.0
-    - node@18.12.1
-    - python@3.10.8
-
-actions:
-  enabled:
-    - trunk-announce
-    - buf-gen
-    - go-mod-tidy
-    - trunk-upgrade-available
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
+    - id: trunk-plugins
+      ref: v1.0.0
+      uri: https://github.com/dragonfish/trunk-plugins
+    - id: trunk-configs
+      ref: v1.1.0
+      uri: https://github.com/dragonfish/trunk-configs
 
 lint:
-  definitions:
-    - name: osv-scanner
-      runtime: go
-  enabled:
-    - renovate@37.231.2
-    - sort-package-json@2.8.0
-    - markdownlint@0.39.0
-    - checkov@3.2.32
-    - gokart@0.5.1
-    - osv-scanner@1.6.2
-    - terrascan@1.19.1
-    - trivy@0.49.1
-    - trufflehog@3.68.5
-    - git-diff-check
-    - yamllint@1.35.1
-    - shellcheck@0.10.0
-    - shfmt@3.6.0
-    - goimports@0.9.1
-    - actionlint@1.6.27
-    - semgrep@1.64.0
-    - prettier@3.2.5
-    - gitleaks@8.18.2
-    - gofmt@1.20.4
-    - golangci-lint@1.56.2
-    - hadolint@2.12.0
-    - buf-breaking@1.30.0
-    - buf-lint@1.30.0
+  disabled:
+    - gokart
 
   ignore:
     - linters: [ALL]
       paths:
         - tools
+        - "**/node_modules/**"
+        - "**/pnpm-lock.yaml"
 
     - linters: [goimports]
       paths:
@@ -64,6 +32,3 @@ lint:
 merge:
   required_statuses:
     - Build
-tools:
-  enabled:
-    - bazel@7.0.2
