@@ -22,17 +22,17 @@ require (
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.22.0
 	google.golang.org/api v0.170.0
-	google.golang.org/genproto v0.0.0-20240314234333-6e1732d8331c
+	google.golang.org/genproto v0.0.0-20240318140521-94a12d6c2237
 	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237
 	google.golang.org/protobuf v1.33.0
 )
 
 require (
 	cloud.google.com/go v0.112.1 // indirect
-	cloud.google.com/go/compute v1.25.0 // indirect
+	cloud.google.com/go/compute v1.25.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/iam v1.1.6 // indirect
-	cloud.google.com/go/longrunning v0.5.5 // indirect
+	cloud.google.com/go/iam v1.1.7 // indirect
+	cloud.google.com/go/longrunning v0.5.6 // indirect
 	cloud.google.com/go/storage v1.38.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/MicahParks/jwkset v0.5.12 // indirect
