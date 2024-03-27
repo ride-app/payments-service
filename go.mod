@@ -21,7 +21,7 @@ require (
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.22.0
-	google.golang.org/api v0.171.0
+	google.golang.org/api v0.172.0
 	google.golang.org/genproto v0.0.0-20240325203815-454cdb8f5daa
 	google.golang.org/genproto/googleapis/api v0.0.0-20240325203815-454cdb8f5daa
 	google.golang.org/protobuf v1.33.0
