@@ -20,7 +20,7 @@ require (
 	github.com/razorpay/razorpay-go v1.3.1
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	google.golang.org/api v0.172.0
 	google.golang.org/genproto v0.0.0-20240401170217-c3f982113cda
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda
