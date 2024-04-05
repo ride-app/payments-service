@@ -68,7 +68,7 @@ steps:
       ]
 
   # Step 5: Push the new Cloud Run revision
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:f89761af76fc0993cf2489f7282f3029e87a06d38811d95f5a702b5932ccd98b
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:5e71c05dae513afb3cd4180aef08793e1560899fc0c46463b6dd1c2c4b078639
     waitFor:
         - push
     entrypoint: gcloud
