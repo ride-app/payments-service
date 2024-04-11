@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/pubsub v1.37.0
 	connectrpc.com/authn v0.1.0
 	connectrpc.com/connect v1.16.0
-	firebase.google.com/go/v4 v4.13.0
+	firebase.google.com/go/v4 v4.14.0
 	github.com/aidarkhanov/nanoid v1.0.8
 	github.com/bufbuild/protovalidate-go v0.6.1
 	github.com/dragonfish/go/v2 v2.1.0
@@ -33,7 +33,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v1.1.7 // indirect
 	cloud.google.com/go/longrunning v0.5.6 // indirect
-	cloud.google.com/go/storage v1.39.1 // indirect
+	cloud.google.com/go/storage v1.40.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/MicahParks/jwkset v0.5.12 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
