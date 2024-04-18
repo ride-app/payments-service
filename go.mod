@@ -16,7 +16,7 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/onsi/ginkgo/v2 v2.17.1
-	github.com/onsi/gomega v1.32.0
+	github.com/onsi/gomega v1.33.0
 	github.com/razorpay/razorpay-go v1.3.2
 	github.com/thoas/go-funk v0.9.3
 	go.uber.org/mock v0.4.0
