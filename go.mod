@@ -10,7 +10,7 @@ require (
 	connectrpc.com/connect v1.16.1
 	firebase.google.com/go/v4 v4.14.0
 	github.com/aidarkhanov/nanoid v1.0.8
-	github.com/bufbuild/protovalidate-go v0.6.1
+	github.com/bufbuild/protovalidate-go v0.6.2
 	github.com/dragonfish/go/v2 v2.1.0
 	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.6.0
