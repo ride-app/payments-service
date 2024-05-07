@@ -25,7 +25,7 @@ require (
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.25.0
 	google.golang.org/api v0.177.0
-	google.golang.org/genproto v0.0.0-20240429193739-8cf5692501f6
+	google.golang.org/genproto v0.0.0-20240506185236-b8a5c65736ae
 	google.golang.org/genproto/googleapis/api v0.0.0-20240506185236-b8a5c65736ae
 	google.golang.org/protobuf v1.34.1
 )
@@ -35,8 +35,8 @@ require (
 	cloud.google.com/go/auth v0.3.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
-	cloud.google.com/go/iam v1.1.7 // indirect
-	cloud.google.com/go/longrunning v0.5.6 // indirect
+	cloud.google.com/go/iam v1.1.8 // indirect
+	cloud.google.com/go/longrunning v0.5.7 // indirect
 	cloud.google.com/go/storage v1.40.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/MicahParks/jwkset v0.5.12 // indirect
