@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@pulumi/gcp':
         specifier: ^7.0.0
-        version: 7.21.1
+        version: 7.21.2
       '@pulumi/pulumi':
         specifier: ^3.0.0
         version: 3.115.2
@@ -213,8 +213,8 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@pulumi/gcp@7.21.1':
-    resolution: {integrity: sha512-HoCS6IxLRC+n4V+45aQdD/VOnbnESN0owMHWCWd/midE0pEHANEFUGa170fkz30yVNrCd89XAdfdntXw5uePAA==}
+  '@pulumi/gcp@7.21.2':
+    resolution: {integrity: sha512-JE7FTsbAsM8w3DG0PrURVadtJWtd61RY0STmekFdxRFGPRLGgXhheWMsyGxy4G5BHK0LyEUaEtQOERkkBY36Bg==}
 
   '@pulumi/pulumi@3.115.2':
     resolution: {integrity: sha512-IgKk5UsBp7QfQetBcFKUvpkUfCz6JeiIjnD084uvEFML8okJPjzpTvHRkPGXlVvAIIj3q77UVlkB42NPI7vd+w==}
@@ -522,8 +522,8 @@ packages:
     resolution: {integrity: sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg==}
     engines: {node: '>=10'}
 
-  glob@10.3.12:
-    resolution: {integrity: sha512-TCNv8vJ+xz4QiqTpfOJA7HvYv+tNIRHKfUWw/q+v2jdgN4ebz+KY9tGx5J4rHP0o84mNP+ApH66HRX8us3Khqg==}
+  glob@10.3.14:
+    resolution: {integrity: sha512-4fkAqu93xe9Mk7le9v0y3VrPDqLKHarNi2s4Pv7f2yOvfhWfhc7hRPHC/JyqMqb8B/Dt/eGS4n7ykwf3fOsl8g==}
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
@@ -866,8 +866,8 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
-  path-scurry@1.10.2:
-    resolution: {integrity: sha512-7xTavNy5RQXnsjANvVvMkEjvloOinkAjv/Z6Ildz9v2RinZ4SBKTWFOVRbaF8p0vpHnyjV/UwNDdKuUv6M5qcA==}
+  path-scurry@1.11.0:
+    resolution: {integrity: sha512-LNHTaVkzaYaLGlO+0u3rQTz7QrHTFOuKyba9JMTQutkmtNew8dw8wOD7mTU/5fCPZzCWpfW0XnQKzY61P0aTaw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   picomatch@3.0.1:
@@ -1251,7 +1251,7 @@ snapshots:
   '@npmcli/map-workspaces@3.0.6':
     dependencies:
       '@npmcli/name-from-folder': 2.0.0
-      glob: 10.3.12
+      glob: 10.3.14
       minimatch: 9.0.4
       read-package-json-fast: 3.0.2
 
@@ -1273,7 +1273,7 @@ snapshots:
   '@npmcli/package-json@5.1.0':
     dependencies:
       '@npmcli/git': 5.0.7
-      glob: 10.3.12
+      glob: 10.3.14
       hosted-git-info: 7.0.2
       json-parse-even-better-errors: 3.0.2
       normalize-package-data: 6.0.1
@@ -1409,7 +1409,7 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@pulumi/gcp@7.21.1':
+  '@pulumi/gcp@7.21.2':
     dependencies:
       '@pulumi/pulumi': 3.115.2
       '@types/express': 4.17.21
@@ -1621,7 +1621,7 @@ snapshots:
     dependencies:
       '@npmcli/fs': 3.1.0
       fs-minipass: 3.0.3
-      glob: 10.3.12
+      glob: 10.3.14
       lru-cache: 10.2.2
       minipass: 7.1.0
       minipass-collect: 2.0.1
@@ -1759,13 +1759,13 @@ snapshots:
 
   get-stream@6.0.1: {}
 
-  glob@10.3.12:
+  glob@10.3.14:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 2.3.6
       minimatch: 9.0.4
       minipass: 7.1.0
-      path-scurry: 1.10.2
+      path-scurry: 1.11.0
 
   glob@7.2.3:
     dependencies:
@@ -2004,7 +2004,7 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       exponential-backoff: 3.1.1
-      glob: 10.3.12
+      glob: 10.3.14
       graceful-fs: 4.2.11
       make-fetch-happen: 13.0.1
       nopt: 7.2.1
@@ -2141,7 +2141,7 @@ snapshots:
 
   path-parse@1.0.7: {}
 
-  path-scurry@1.10.2:
+  path-scurry@1.11.0:
     dependencies:
       lru-cache: 10.2.2
       minipass: 7.1.0
