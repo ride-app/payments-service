@@ -3,7 +3,7 @@ module github.com/ride-app/payments-service
 go 1.22.2
 
 // HACK: pin protobuf version to fix build failure
-replace google.golang.org/protobuf => google.golang.org/protobuf v1.34.1
+replace google.golang.org/protobuf => google.golang.org/protobuf v1.34.2
 
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.1-20240508200655-46a4cf4ba109.1
@@ -27,7 +27,7 @@ require (
 	google.golang.org/api v0.183.0
 	google.golang.org/genproto v0.0.0-20240610135401-a8a62080eff3
 	google.golang.org/genproto/googleapis/api v0.0.0-20240610135401-a8a62080eff3
-	google.golang.org/protobuf v1.34.1
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
