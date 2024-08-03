@@ -1,0 +1,59 @@
+version: "3"
+
+vars:
+  PROJECT_NAME: payments-service
+  API_IMAGE_NAME: "{{.PROJECT_NAME}}-api-server"
+  # EVENT_IMAGE_NAME: "{{.PROJECT_NAME}}-event"
+  TAG: latest
+  API_PATH: ./cmd/api-server
+  # EVENT_PATH: ./cmd/event-handler
+
+tasks:
+  build-api:
+    desc: Build the API server Docker image
+    cmds:
+      - docker build -t {{.API_IMAGE_NAME}}:{{.TAG}} .
+
+  # build-event:
+  #   desc: Build the Event Handler Docker image
+  #   cmds:
+  #     - docker build
+  #       --build-arg PROGRAM_PATH={{.EVENT_PATH}}
+  #       -t {{.EVENT_IMAGE_NAME}}:{{.TAG}} .
+
+  build:
+    desc: Build both Docker images
+    deps: [build-api]
+
+  run-api:
+    desc: Run the API server container
+    cmds:
+      - docker run -d --name {{.API_IMAGE_NAME}}-container {{.API_IMAGE_NAME}}:{{.TAG}}
+
+  # run-event:
+  #   desc: Run the Event Handler container
+  #   cmds:
+  #     - docker run -d --name {{.EVENT_IMAGE_NAME}}-container {{.EVENT_IMAGE_NAME}}:{{.TAG}}
+
+  stop-api:
+    desc: Stop and remove the API server container
+    cmds:
+      - docker stop {{.API_IMAGE_NAME}}-container
+      - docker rm {{.API_IMAGE_NAME}}-container
+
+  # stop-event:
+  #   desc: Stop and remove the Event Handler container
+  #   cmds:
+  #     - docker stop {{.EVENT_IMAGE_NAME}}-container
+  #     - docker rm {{.EVENT_IMAGE_NAME}}-container
+
+  clean:
+    desc: Remove Docker images
+    cmds:
+      - docker rmi {{.API_IMAGE_NAME}}:{{.TAG}}
+      # - docker rmi {{.EVENT_IMAGE_NAME}}:{{.TAG}}
+
+  default:
+    desc: Display help information
+    cmds:
+      - task --list

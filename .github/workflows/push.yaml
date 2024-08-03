@@ -39,21 +39,24 @@ jobs:
   #         fail_ci_if_error: true
   #         verbose: true
 
-  cache:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    name: Cache Bazel
+    name: Build
+    env:
+      TEST_TAG: ride/payments-service
     steps:
       - name: Checkout Code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
 
-      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4
-        with:
-          path: |
-            ~/.cache/bazel
-          key: ${{ runner.os }}-bazel-${{ hashFiles('WORKSPACE','MODULE.bazel') }}
-          restore-keys: |
-            ${{ runner.os }}-bazel-
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@988b5a0280414f521da01fcc63a27aeeb4b104db # v3
 
-      - name: Build
-        run: bazelisk build //...
+      - name: Build and export cache
+        uses: docker/build-push-action@5176d81f87c23d6fc96624dfdbcd9f3830bbe445 # v6
+        with:
+          load: true
+          tags: ${{ env.TEST_TAG }}
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
