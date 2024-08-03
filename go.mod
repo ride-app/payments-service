@@ -8,7 +8,7 @@ replace google.golang.org/protobuf => google.golang.org/protobuf v1.34.2
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
 	cloud.google.com/go/firestore v1.16.0
-	cloud.google.com/go/pubsub v1.40.0
+	cloud.google.com/go/pubsub v1.41.0
 	connectrpc.com/authn v0.1.0
 	connectrpc.com/connect v1.16.2
 	firebase.google.com/go/v4 v4.14.1
