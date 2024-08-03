@@ -2,24 +2,19 @@ substitutions:
   _SERVICE_NAME: payments-service
 
 steps:
-  # Step 1: Generate from Protobuf
-  # - name: bufbuild/buf@sha256:d104e96432a276ee21eaa2c905c22c81c6ebb3a5ffb0750332f91930a426858e
-  #   args:
-  #     - generate
-
-  # Step 2: Build Docker image using Bazel
-  - name: gcr.io/cloud-builders/bazel:7.0.1@sha256:9286caa3c9a0a95e517b0ebc0ac0a36b77512980f39bd0e7f9bdeed26d6577dd
+  # Step 1: Build Docker image
+  - name: gcr.io/cloud-builders/docker@sha256:367b243ad863186e076637bf7c3538364538b9e78814f7244da7df8a8788d9bc
     id: build
     args:
-      [
-        run,
-        //cmd/api-server:container,
-        --remote_cache=https://storage.googleapis.com/$_BAZEL_REMOTE_CACHE_BUCKET,
-        --google_default_credentials,
-      ]
+      - build
+      - -t
+      - api-server:latest
+      - .
+      - --cache-from
+      - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
 
-  # Step 3: Tag image
-  - name: gcr.io/cloud-builders/docker@sha256:45c04c058d8ad9f639a0b8c5a26e5f43afd95008e613c3aad6f929c716eeea6a
+  # Step 2: Tag image with COMMIT_SHA
+  - name: gcr.io/cloud-builders/docker@sha256:367b243ad863186e076637bf7c3538364538b9e78814f7244da7df8a8788d9bc
     id: tag-sha
     waitFor:
       - build
@@ -28,8 +23,9 @@ steps:
       - api-server:latest
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
 
-  # Step 3: Tag image
-  - name: gcr.io/cloud-builders/docker@sha256:45c04c058d8ad9f639a0b8c5a26e5f43afd95008e613c3aad6f929c716eeea6a
+  # Step 3: Tag image with BRANCH_NAME
+  - name: gcr.io/cloud-builders/docker@sha256:367b243ad863186e076637bf7c3538364538b9e78814f7244da7df8a8788d9bc
+    id: tag-branch
     waitFor:
       - build
     args:
@@ -37,8 +33,9 @@ steps:
       - api-server:latest
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
 
-  # Step 3: Tag image
-  - name: gcr.io/cloud-builders/docker@sha256:45c04c058d8ad9f639a0b8c5a26e5f43afd95008e613c3aad6f929c716eeea6a
+  # Step 4: Tag image as latest
+  - name: gcr.io/cloud-builders/docker@sha256:367b243ad863186e076637bf7c3538364538b9e78814f7244da7df8a8788d9bc
+    id: tag-latest
     waitFor:
       - build
     args:
@@ -46,8 +43,8 @@ steps:
       - api-server:latest
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:latest
 
-  # Step 4: Push a Docker image
-  - name: gcr.io/cloud-builders/docker@sha256:45c04c058d8ad9f639a0b8c5a26e5f43afd95008e613c3aad6f929c716eeea6a
+  # Step 5: Push Docker image
+  - name: gcr.io/cloud-builders/docker@sha256:367b243ad863186e076637bf7c3538364538b9e78814f7244da7df8a8788d9bc
     id: push
     waitFor:
       - tag-sha
@@ -55,22 +52,11 @@ steps:
       - push
       - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
 
-  # Test the image.
-  - name: gcr.io/gcp-runtimes/container-structure-test@sha256:377f9a9bc00376b9fa6dc6a3a020dbe40e84ebe9481b71969aa3ff9d1c9ea17e
-    id: test
-    args:
-      [
-        test,
-        --image,
-        asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA,
-        --config,
-        cmd/api-server/container_structure_test.yaml,
-      ]
-
-  # Step 5: Push the new Cloud Run revision
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:48d13f032d8acf5a6f96c519fc1c868945eeb89ed2424eedfff77c444867ab97
+  # Step 6: Deploy to Cloud Run
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk@sha256:04693d745dcaf6a4da7cece39e5bb23d2e7dc3f25c01d40544e038690cd4e2e2
+    id: deploy
     waitFor:
-        - push
+      - push
     entrypoint: gcloud
     args:
       - run
@@ -89,3 +75,4 @@ steps:
 images:
   - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$COMMIT_SHA
   - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:$BRANCH_NAME
+  - asia-south2-docker.pkg.dev/$PROJECT_ID/docker-registry/$_SERVICE_NAME:latest

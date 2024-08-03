@@ -7,5 +7,10 @@ branch: main
 gha_enabled: True
 # This is the description of your project. It will be used by sweep when creating PRs. You can tell Sweep what's unique about your project, what frameworks you use, or anything else you want.
 # Here's an example: sweepai/sweep is a python project. The main api endpoints are in sweepai/api.py. Write code that adheres to PEP8.
-description: ride-app/payment-service is a go microservice that manages user wallet, transactions, recharges and payouts. api definition is in /api and api handlers are in /internal/api-handlers. It uses connectrpc/go instead of plain http or grpc. Infrastructure is managed by a typescript project in /infra directory.
+description:
+  ride-app/payment-service is a go microservice that manages user wallet, transactions, recharges
+  and payouts. api definition is made using protocol buffers in /api and api handlers are in
+  /internal/api-handlers. It uses connectrpc.com/connect instead of plain http or grpc. The api
+  server code is in cmd/api-server. Infrastructure is managed by a pulumi typescript project in
+  /infra directory. It uses Taskfile as build system.
 # Default Values: https://github.com/sweepai/sweep/blob/main/sweep.yaml

@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1@sha256:fe40cf4e92cd0c467be2cfc30657a680ae2398318afd50b0c80585784c604f28
 
 # Create .netrc file for private go module
-# FROM bufbuild/buf:1.26.1 as buf
+# FROM bufbuild/buf:1.25.1 as buf
 
 # ARG BUF_USERNAME ""
 
@@ -10,7 +10,7 @@
 #   buf registry login --username=$BUF_USERNAME --token-stdin < /run/secrets/BUF_TOKEN
 
 # Build go binary
-FROM golang:1.22-alpine@sha256:0d3653dd6f35159ec6e3d10263a42372f6f194c3dea0b35235d72aabde86486e as build
+FROM golang:1.22-alpine@sha256:0d3653dd6f35159ec6e3d10263a42372f6f194c3dea0b35235d72aabde86486e AS build
 
 WORKDIR /go/src/app
 
@@ -26,9 +26,7 @@ RUN CGO_ENABLED=0 go build -o /go/bin/app -ldflags "-X google.golang.org/protobu
 # Run
 FROM gcr.io/distroless/static:nonroot@sha256:8dd8d3ca2cf283383304fd45a5c9c74d5f2cd9da8d3b077d720e264880077c65
 
-WORKDIR /
-
 COPY --from=build /go/bin/app .
 
 EXPOSE 50051
-CMD ["/app"]
+ENTRYPOINT ["/home/nonroot/app"]
