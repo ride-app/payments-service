@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 10
     name: Build
     env:
-      TEST_TAG: ride/driver-service
+      TEST_TAG: ride/payments-service
     steps:
       - name: Checkout Code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
