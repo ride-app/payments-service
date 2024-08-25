@@ -13,7 +13,7 @@ require (
 	connectrpc.com/connect v1.16.2
 	firebase.google.com/go/v4 v4.14.1
 	github.com/aidarkhanov/nanoid v1.0.8
-	github.com/bufbuild/protovalidate-go v0.6.3
+	github.com/bufbuild/protovalidate-go v0.6.4
 	github.com/dragonfish/go/v2 v2.1.0
 	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.6.0
@@ -52,7 +52,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/cel-go v0.20.1 // indirect
+	github.com/google/cel-go v0.21.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20240424215950-a892ee059fd6 // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
