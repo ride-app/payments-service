@@ -48,7 +48,7 @@ lint:
 plugins:
   sources:
     - id: trunk
-      ref: v1.6.1
+      ref: v1.6.2
       uri: https://github.com/trunk-io/plugins
     - id: trunk-plugins
       ref: v1.2.0
